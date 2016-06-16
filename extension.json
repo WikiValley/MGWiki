@@ -1,0 +1,38 @@
+{
+	"@note": "When updating this file please also update MGWikiHooks.php with the same changes.",
+	"load_composer_autoloader": true,
+	"name": "MGWiki Hooks",
+	"version": "0.1",
+	"author": [
+		"Sébastien Beyou"
+	],
+	"url": "https://mgwiki.univ-lyon1.fr",
+	"descriptionmsg": "mgwikihooks-desc",
+	"license-name": "LGPL-2.0+",
+	"type": "other",
+	"ExtensionFunctions": [
+	],
+	"require": {
+		"MediaWiki": ">= 1.25.0"
+	},
+	"MessagesDirs": {
+		"MGWikiHooks": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"MGWikiHooks": "MGWikiHooks.php"
+	},
+	"Hooks": {
+		"sfHTMLBeforeForm": [
+			"MGWikiHooks::onsfHTMLBeforeForm"
+		],
+		"PrefsEmailAudit": [
+			"MGWikiHooks::onPrefsEmailAudit"
+		],
+		"SMWSQLStore3::updateDataBefore": [
+			"MGWikiHooks::onSMW_SQLStore_AfterDataUpdateComplete"
+		]
+	},
+	"manifest_version": 1
+}

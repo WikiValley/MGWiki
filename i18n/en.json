@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"Sébastien Beyou"
+		]
+	},
+	"mgwikihooks-desc": "Specific hooks for MGWiki",
+	"userpage-without-useraccount": "The userpage exists but not the MediaWiki user account.",
+	"useraccount-without-userpage": "The user account exists but not the userpage."
+}
