@@ -55,11 +55,11 @@ class MGWikiHooks {
 
 	public static function onSMW_SQLStore_AfterDataUpdateComplete( SMWSQLStore3 $store, SMWSemanticData $semanticData ) {//, CompositePropertyTableDiffIterator $compositePropertyTableDiffIterator ) {
 
-		var_dump( $store );
-		echo "\n\n------------------------\n\n";
-		var_dump( $semanticData );
-		echo "\n\n------------------------\n\n";
-		var_dump( $compositePropertyTableDiffIterator );
-		exit;
+		#var_dump( $store );
+		#echo "\n\n------------------------\n\n";
+		#var_dump( $semanticData );
+		#echo "\n\n------------------------\n\n";
+		#var_dump( $compositePropertyTableDiffIterator );
+		#exit;
 	}	
 }
