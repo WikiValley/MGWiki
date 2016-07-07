@@ -1,0 +1,13 @@
+{
+	"@metadata": {
+		"authors": [
+			"Sébastien Beyou"
+		]
+	},
+	"mgwiki-desc": ""{{desc|name=MGWiki|url=https://mgwiki.univ-lyon1.fr}}",
+	"right-mgwikimanageusers": "{{doc-right|right-mgwikimanageusers}}Right to manage users",
+	"mgwiki-userpage-without-useraccount": "Warning message on top of a form",
+	"mgwiki-useraccount-without-userpage": "Warning message on top of a form",
+	"mgwiki-create-userpage": "Summary when a userpage is created",
+	"mgwiki-template-new-userpage": "Wikitext template when a userpage is initialised"
+}
