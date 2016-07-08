@@ -23,13 +23,14 @@ $GLOBALS['wgHooks']['SMW::SQLStore::AfterDataUpdateComplete'][] = 'MGWiki::onSMW
 
 $GLOBALS['wgGroupPermissions']['sysop']['mgwikimanageusers'] = true;
 
-use SMW\DataValueFactory;
 
 class MGWiki {
 
 	const nomField = 'Nom';
 	const prenomField = 'Prénom';
 	const emailField = 'E-mail';
+	const typeDeGroupeField = 'Type_de_groupe';
+	const statutPersonneField = 'Statut_personne';
 	const fields = array( self::nomField, self::prenomField, self::emailField );
 
 	/**
@@ -174,9 +175,8 @@ class MGWiki {
 		# Check permissions
 		#if( !$wgUser->isAllowed( 'mgwikimanageusers' ) ) return;
 
-		# Get properties after they are saved
-		$properties = $semanticData->getProperties();
-		if( count( $properties ) == 0 ) return;
+		# Get property values
+		$statements = self::collectSemanticData( [ self::typeDeGroupeField ], $semanticData, $complete );
 
 		# Search if there is a property 'Participant GEP ou GAPP'
 		if( !$semanticData->hasSubSemanticData() ) return;
@@ -184,33 +184,45 @@ class MGWiki {
 		$createdUsers = array();
 		foreach( $subSemanticData as $user => $userSemanticData ) {
 
-			# Init
-			$userData = array();
-			foreach( self::fields as $key )
-				$userData[$key] = '';
-
-			# Retrieve values
-			$userProperties = $userSemanticData->getProperties();
-			foreach( $userProperties as $key => $diProperty ) {
-				$values = $userSemanticData->getPropertyValues( $diProperty );
-				if( in_array( $diProperty->getKey(), self::fields ) && count( $values ) == 1 && current( $values )->getDIType() == SMWDataItem::TYPE_BLOB )
-					$userData[$diProperty->getKey()] = current( $values )->getString();
-			}
+			$userData = self::collectSemanticData( self::fields, $userSemanticData, $complete );
 
 			# Check if we have all mandatory values
-			$complete = true;
-			foreach( self::fields as $key )
-				$complete = $complete && $userData[$key];
-
 			if( $complete ) {
 
-				# Check if we have all mandatory values
+				$userData[self::statutPersonneField] = $statements[self::typeDeGroupeField] == 'GEP' ? 'Interne' : 'Médecin';
 				$username = $userData[self::prenomField].' '.$userData[self::nomField];
 				self::createUser( $username, $userData );
 
 				$createdUsers[] = $userData;
 			}
 		}
+	}
+
+	/**
+	 * 
+	 */
+	protected static function collectSemanticData( array $fields, SMW\SemanticData $semanticData, &$complete ) {
+
+		# Init
+		$userData = array();
+		$count = 0;
+
+		# Retrieve values
+		$properties = $semanticData->getProperties();
+
+		foreach( $properties as $key => $diProperty ) {
+			$values = $semanticData->getPropertyValues( $diProperty );
+			if( in_array( $diProperty->getKey(), $fields ) && count( $values ) == 1 && current( $values )->getDIType() == SMWDataItem::TYPE_BLOB ) {
+				$userData[$diProperty->getKey()] = current( $values )->getString();
+				$count++;
+			}
+		}
+
+		# Check if we have all mandatory values
+		$complete = false;
+		if( $count == count( $fields ) ) $complete = true;
+
+		return $userData;
 	}
 
 	/**
@@ -249,7 +261,7 @@ class MGWiki {
 		$userArticle = WikiPage::factory( $userTitle );
 		$summary = wfMessage( 'mgwiki-create-userpage' )->inContentLanguage()->text();
 		$content = new WikitextContent( wfMessage( 'mgwiki-template-new-userpage',
-			$username, $userData[self::prenomField], $userData[self::nomField], $userData[self::emailField]
+			$username, $userData[self::prenomField], $userData[self::nomField], $userData[self::emailField], $userData[self::statutPersonneField]
 		)->inContentLanguage()->plain() );
 		$flags = EDIT_NEW;
 		$userArticle->doEditContent( $content, $summary, $flags, false, $wgUser );

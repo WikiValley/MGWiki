@@ -9,5 +9,5 @@
 	"mgwiki-userpage-without-useraccount": "Warning message on top of a form",
 	"mgwiki-useraccount-without-userpage": "Warning message on top of a form",
 	"mgwiki-create-userpage": "Summary when a userpage is created",
-	"mgwiki-template-new-userpage": "Wikitext template when a userpage is initialised"
+	"mgwiki-template-new-userpage": "Wikitext template when a userpage is initialised.\nParameters:\n* $1 - username\n* $2 - first name\n* $3 - family name\n* $4 - email\n* $5 - status (interne/médecin)"
 }

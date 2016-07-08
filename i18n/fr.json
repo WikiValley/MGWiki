@@ -9,5 +9,5 @@
 	"mgwiki-userpage-without-useraccount": "La page utilisateur existe, mais pas le compte utilisateur MediaWiki.",
 	"mgwiki-useraccount-without-userpage": "Le compte utilisateur existe, mais pas la page utilisateur.",
 	"mgwiki-create-userpage": "Initialisation de la page utilisateur",
-	"mgwiki-template-new-userpage": "{{Personne\n|Prénom=$2\n|Nom=$3\n|E-mail=$4\n|Statut personne=Interne\n|Spécialité ou profession=Médecine générale\n|Année de promotion=2012-2013\n|Tuteur référent=127.0.0.1\n}}"
+	"mgwiki-template-new-userpage": "{{Personne\n|Prénom=$2\n|Nom=$3\n|E-mail=$4\n|Statut personne=$5\n|Spécialité ou profession=\n|Année de promotion=\n|Tuteur référent=\n}}"
 }
