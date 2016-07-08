@@ -44,7 +44,7 @@ class MGWiki {
 	 */
 	public static function onuserCan( Title &$title, User &$user, $action, &$result ) {
 
-		if( $action != 'edit' || $title->getNamespace() != NS_USER || $title->getText() != $user->getName() )
+		if( $action != 'edit' || $title->getNamespace() != NS_USER || $title->getText() == $user->getName() )
 			return true;
 
 		# Check permissions when the user wants to edit someone else’s user page
