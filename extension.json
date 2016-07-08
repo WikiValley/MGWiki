@@ -25,6 +25,9 @@
 		"MGWiki": "MGWiki.php"
 	},
 	"Hooks": {
+		"userCan": [
+			"MGWiki::onuserCan"
+		],
 		"sfHTMLBeforeForm": [
 			"MGWiki::onsfHTMLBeforeForm"
 		],

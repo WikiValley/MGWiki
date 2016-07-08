@@ -42,16 +42,17 @@ class MGWiki {
 	 * @param string $action Requested action
 	 * @param bool|mixed $result True or false to authorize or deny the action
 	 */
-	public static function onuserCan( Title $title, User $user, $action, $result ) {
+	public static function onuserCan( Title &$title, User &$user, $action, &$result ) {
 
-		if( $action != 'edit' || $title->getNamespace() != NS_USER || $title->getText() == $user->getName() )
+		if( $action != 'edit' || $title->getNamespace() != NS_USER || $title->getText() != $user->getName() )
 			return true;
 
 		# Check permissions when the user wants to edit someone else’s user page
 		if( !$user->isAllowed( 'mgwikimanageusers' ) )
 			$result = false;
 
-		return true;
+		# Return false to stop evaluation of further permissions from other extensions
+		return false;
 	}
 
 	/**
@@ -194,7 +195,7 @@ class MGWiki {
 		if( $subject->getNamespace() != NS_MAIN ) return;
 
 		# Check permissions
-		#if( !$wgUser->isAllowed( 'mgwikimanageusers' ) ) return;
+		if( !$wgUser->isAllowed( 'mgwikimanageusers' ) ) return;
 
 		# Get property values
 		$statements = self::collectSemanticData( [ self::typeDeGroupeField ], $semanticData, $complete );
