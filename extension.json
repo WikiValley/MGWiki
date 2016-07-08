@@ -9,6 +9,9 @@
 	"descriptionmsg": "mgwiki-desc",
 	"license-name": "LGPL-2.0+",
 	"type": "other",
+	"config": {
+		"InitialDelayBeforeInactive": 1209600
+	},
 	"ExtensionFunctions": [
 	],
 	"GroupPermissions": {

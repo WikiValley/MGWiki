@@ -25,6 +25,9 @@ if( !function_exists( 'wfLoadExtension' ) ) {
 	$GLOBALS['wgHooks']['SMW::SQLStore::AfterDataUpdateComplete'][] = 'MGWiki::onSMW_SQLStore_AfterDataUpdateComplete';
 
 	$GLOBALS['wgGroupPermissions']['sysop']['mgwikimanageusers'] = true;
+	
+	# Initial delay, in seconds, after a newly registered user is considered inactive
+	$GLOBALS['wgMGWikiInitialDelayBeforeInactive'] = 14*24*60*60;
 }
 
 class MGWiki {
@@ -197,7 +200,7 @@ class MGWiki {
 		if( $subject->getNamespace() != NS_MAIN ) return;
 
 		# Check permissions
-		if( !$wgUser->isAllowed( 'mgwikimanageusers' ) ) return;
+		#if( !$wgUser->isAllowed( 'mgwikimanageusers' ) ) return;
 
 		# Get property values
 		$statements = self::collectSemanticData( [ self::typeDeGroupeField ], $semanticData, $complete );
@@ -276,6 +279,8 @@ class MGWiki {
 		
 		# Create the user and add log entry
 		$user = User::createNew( $username, $properties );
+		if( !$user instanceof User )
+			return false;
 		if( $wgNewUserLog ) {
 			$logEntry = new \ManualLogEntry( 'newusers', 'create2' );
 			$logEntry->setPerformer( $wgUser );
