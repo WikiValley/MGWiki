@@ -5,25 +5,27 @@
  * @license LGPL-2.0+
  */
 
-$GLOBALS['wgExtensionCredits']['other'][] = array(
-	'path' => __FILE__,
-	'name' => 'MGWiki',
-	'version' => '0.1',
-	'author' => array( 'Sébastien Beyou' ),
-	'url' => 'https://mgwiki.univ-lyon1.fr',
-	'descriptionmsg' => 'mgwiki-desc',
-	'license-name' => 'LGPL-2.0+'
-);
+if( !function_exists( 'wfLoadExtension' ) ) {
 
-$GLOBALS['wgMessagesDirs']['MGWiki'] = __DIR__ . '/i18n';
+	$GLOBALS['wgExtensionCredits']['other'][] = array(
+		'path' => __FILE__,
+		'name' => 'MGWiki',
+		'version' => '0.1',
+		'author' => array( 'Sébastien Beyou' ),
+		'url' => 'https://mgwiki.univ-lyon1.fr',
+		'descriptionmsg' => 'mgwiki-desc',
+		'license-name' => 'LGPL-2.0+'
+	);
 
-$GLOBALS['wgHooks']['userCan'][] = 'MGWiki::onuserCan';
-$GLOBALS['wgHooks']['sfHTMLBeforeForm'][] = 'MGWiki::onsfHTMLBeforeForm';
-$GLOBALS['wgHooks']['PrefsEmailAudit'][] = 'MGWiki::onPrefsEmailAudit';
-$GLOBALS['wgHooks']['SMW::SQLStore::AfterDataUpdateComplete'][] = 'MGWiki::onSMW_SQLStore_AfterDataUpdateComplete';
+	$GLOBALS['wgMessagesDirs']['MGWiki'] = __DIR__ . '/i18n';
 
-$GLOBALS['wgGroupPermissions']['sysop']['mgwikimanageusers'] = true;
+	$GLOBALS['wgHooks']['userCan'][] = 'MGWiki::onuserCan';
+	$GLOBALS['wgHooks']['sfHTMLBeforeForm'][] = 'MGWiki::onsfHTMLBeforeForm';
+	$GLOBALS['wgHooks']['PrefsEmailAudit'][] = 'MGWiki::onPrefsEmailAudit';
+	$GLOBALS['wgHooks']['SMW::SQLStore::AfterDataUpdateComplete'][] = 'MGWiki::onSMW_SQLStore_AfterDataUpdateComplete';
 
+	$GLOBALS['wgGroupPermissions']['sysop']['mgwikimanageusers'] = true;
+}
 
 class MGWiki {
 
