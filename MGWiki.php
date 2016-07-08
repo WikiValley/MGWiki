@@ -53,7 +53,7 @@ class MGWiki {
 			return true;
 
 		# Check permissions when the user wants to edit someone else’s user page
-		if( !$user->isAllowed( 'mgwikimanageusers' ) )
+		if( !$user->isAllowed( 'mgwikimanageusers' ) ) {
 			$result = false;
 			# Return false to stop evaluation of further permissions from other extensions
 			return false;
