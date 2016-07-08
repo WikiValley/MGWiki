@@ -293,6 +293,9 @@ class MGWiki {
 		$flags = EDIT_NEW;
 		$userArticle->doEditContent( $content, $summary, $flags, false, $wgUser );
 
+		# Send email
+		$user->sendConfirmationMail( 'created_by_mgwiki' );
+
 		return true;
 	}
 }
