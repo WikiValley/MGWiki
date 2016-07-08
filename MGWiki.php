@@ -17,6 +17,7 @@ $GLOBALS['wgExtensionCredits']['other'][] = array(
 
 $GLOBALS['wgMessagesDirs']['MGWiki'] = __DIR__ . '/i18n';
 
+$GLOBALS['wgHooks']['userCan'][] = 'MGWiki::onuserCan';
 $GLOBALS['wgHooks']['sfHTMLBeforeForm'][] = 'MGWiki::onsfHTMLBeforeForm';
 $GLOBALS['wgHooks']['PrefsEmailAudit'][] = 'MGWiki::onPrefsEmailAudit';
 $GLOBALS['wgHooks']['SMW::SQLStore::AfterDataUpdateComplete'][] = 'MGWiki::onSMW_SQLStore_AfterDataUpdateComplete';
@@ -32,6 +33,26 @@ class MGWiki {
 	const typeDeGroupeField = 'Type_de_groupe';
 	const statutPersonneField = 'Statut_personne';
 	const fields = array( self::nomField, self::prenomField, self::emailField );
+
+	/**
+	 * Check permissions for actions.
+	 *
+	 * @param Title $title Title of the page
+	 * @param User $user User about to do the action
+	 * @param string $action Requested action
+	 * @param bool|mixed $result True or false to authorize or deny the action
+	 */
+	public static function onuserCan( Title $title, User $user, $action, $result ) {
+
+		if( $action != 'edit' || $title->getNamespace() != NS_USER || $title->getText() == $user->getName() )
+			return true;
+
+		# Check permissions when the user wants to edit someone else’s user page
+		if( !$user->isAllowed( 'mgwikimanageusers' ) )
+			$result = false;
+
+		return true;
+	}
 
 	/**
 	 * Display a warning if the user account and user page don’t together exist or are missing.
@@ -199,7 +220,12 @@ class MGWiki {
 	}
 
 	/**
-	 * 
+	 * Collect the requested data.
+	 *
+	 * @param array $fields Field names
+	 * @param SMW\SemanticData $semanticData Semantic data
+	 * @param bool $complete Is set to true or false depending if all fields were found in the data
+	 * @return array Requested data
 	 */
 	protected static function collectSemanticData( array $fields, SMW\SemanticData $semanticData, &$complete ) {
 
