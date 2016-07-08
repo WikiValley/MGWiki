@@ -55,9 +55,11 @@ class MGWiki {
 		# Check permissions when the user wants to edit someone else’s user page
 		if( !$user->isAllowed( 'mgwikimanageusers' ) )
 			$result = false;
+			# Return false to stop evaluation of further permissions from other extensions
+			return false;
+		}
 
-		# Return false to stop evaluation of further permissions from other extensions
-		return false;
+		return true;
 	}
 
 	/**
@@ -282,7 +284,7 @@ class MGWiki {
 		if( !$user instanceof User )
 			return false;
 		if( $wgNewUserLog ) {
-			$logEntry = new \ManualLogEntry( 'newusers', 'create2' );
+			$logEntry = new ManualLogEntry( 'newusers', 'create2' );
 			$logEntry->setPerformer( $wgUser );
 			$logEntry->setTarget( $user->getUserPage() );
 			$logEntry->setParameters( array( '4::userid' => $user->getId() ) );
