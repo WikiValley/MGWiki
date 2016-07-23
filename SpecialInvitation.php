@@ -39,7 +39,7 @@ class Invitation extends LoginSignupSpecialPage {
 		$data = [];
 		$data['emailtoken'] = '69e48e046e9d1afa99e297433a9c5ab5';
 		$data[$this->getTokenName()] = $this->getToken()->toString();
-		var_dump($this->getToken()->toString());
+		#var_dump($this->getToken()->toString());
 		$this->setRequest( $data, true );
 	}
 
@@ -107,8 +107,8 @@ class Invitation extends LoginSignupSpecialPage {
 		}
 
 		$this->loadAuth( '', AuthManager::ACTION_LOGIN );
-		var_dump($this->authAction);
-		var_dump($this->authRequests);
+		#var_dump($this->authAction);
+		#var_dump($this->authRequests);
 		#var_dump( $this->trySubmit() );
 
 		parent::execute( $code );
@@ -140,7 +140,7 @@ class Invitation extends LoginSignupSpecialPage {
 		$user->saveSettings();
 
 		# Connect the user
-			var_dump('specialinvationok');
+			#var_dump('specialinvationok');
 			#exit;
 		
 
