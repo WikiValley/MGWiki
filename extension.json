@@ -10,13 +10,63 @@
 	"license-name": "LGPL-2.0+",
 	"type": "other",
 	"config": {
-		"InitialDelayBeforeInactive": 1209600
+		"MGWikiInitialDelayBeforeInactive": 1209600,
+		"MGWikiForms": {
+			"Personne": {
+				"RegexPageName": "/^User:.+$/",
+				"RequiredRights": "mgwikimanagelevel1",
+				"Level1": true,
+				"Level2": false
+			},
+			"Groupe": {
+				"RegexPageName": "/^(GEP|GAPP)/",
+				"RequiredRights": "mgwikimanagelevel1",
+				"Level1": true,
+				"Level2": false
+			},
+			"Groupe de niveau 2": {
+				"RegexPageName": "/^(Tuteurs|Modérateurs)/",
+				"RequiredRights": "mgwikimanagelevel2",
+				"Level1": true,
+				"Level2": false
+			},
+			"Nouveaux utilisateurs": {
+				"RegexPageName": "/^Nouveaux utilisateurs/",
+				"RequiredRights": "mgwikimanagelevel2",
+				"Level1": true,
+				"Level2": false
+			},
+			"Nouveaux tuteurs ou modérateurs": {
+				"RegexPageName": "/^Nouveaux tuteurs ou modérateurs/",
+				"RequiredRights": ["mgwikimanagelevel2"],
+				"Level1": true,
+				"Level2": false
+			}
+		},
+		"MGWikiLevel1": ["interne", "médecin", "scientifique"],
+		"MGWikiLevel2": ["tuteur", "modérateur"]
 	},
 	"ExtensionFunctions": [
 	],
+	"SpecialPages": {
+		"Invitation": "Invitation"
+	},
 	"GroupPermissions": {
+		"interne": {},
+		"médecin": {},
+		"scientifique": {},
+		"tuteur": {
+			"mgwikimanageusers": true,
+			"mgwikimanagelevel1": true
+		},
+		"modérateur": {
+			"mgwikimanageusers": true,
+			"mgwikimanagelevel1": true
+		},
 		"sysop": {
-			"mgwikimanageusers": true
+			"mgwikimanageusers": true,
+			"mgwikimanagelevel1": true,
+			"mgwikimanagelevel2": true
 		}
 	},
 	"MessagesDirs": {
@@ -24,8 +74,14 @@
 			"i18n"
 		]
 	},
+	"ExtensionMessagesFiles": {
+		"MGWikiAlias": "MGWiki.alias.php"
+	},
 	"AutoloadClasses": {
-		"MGWiki": "MGWiki.php"
+		"MGWiki": "MGWiki.php",
+		"Invitation": "SpecialInvitation.php",
+		"MediaWiki\\Auth\\EmailTokenAuthenticationRequest": "EmailTokenAuthenticationRequest.php",
+		"MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider": "EmailTokenPrimaryAuthenticationProvider.php"
 	},
 	"Hooks": {
 		"userCan": [

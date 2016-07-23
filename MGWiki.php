@@ -49,14 +49,29 @@ class MGWiki {
 	 */
 	public static function onuserCan( Title &$title, User &$user, $action, &$result ) {
 
-		if( $action != 'edit' || $title->getNamespace() != NS_USER || $title->getText() == $user->getName() )
+		global $wgMGWikiForms;
+
+		# Only edit permission is checked
+		if( $action != 'edit' )
 			return true;
 
 		# Check permissions when the user wants to edit someone else’s user page
-		if( !$user->isAllowed( 'mgwikimanageusers' ) ) {
-			$result = false;
-			# Return false to stop evaluation of further permissions from other extensions
-			return false;
+		if( $title->getNamespace() == NS_USER && $title->getText() == $user->getName() ) {
+			return true;
+		}
+
+		# Check permissions for forms
+		$titleEnglish = '';
+		$ns = MWNamespace::getCanonicalName( $title->getNamespace() );
+		if( $ns ) $titleEnglish .= $ns . ':';
+		$titleEnglish .= $title->getText();
+		foreach( $wgMGWikiForms as $form => $params ) {
+			if( array_key_exists( 'RegexPageName', $params ) && preg_match( $params['RegexPageName'], $titleEnglish ) && array_key_exists( 'RequiredRights', $params ) && is_string( $params['RequiredRights'] ) ) {
+				if( !$user->isAllowed( $params['RequiredRights'] ) ) {
+					$result = false;
+					return false;
+				}
+			}
 		}
 
 		return true;
@@ -280,16 +295,43 @@ class MGWiki {
 			$properties['email'] = $userData[self::emailField];
 		
 		# Create the user and add log entry
-		$user = User::createNew( $username, $properties );
-		if( !$user instanceof User )
-			return false;
-		if( $wgNewUserLog ) {
-			$logEntry = new ManualLogEntry( 'newusers', 'create2' );
-			$logEntry->setPerformer( $wgUser );
-			$logEntry->setTarget( $user->getUserPage() );
-			$logEntry->setParameters( array( '4::userid' => $user->getId() ) );
-			$logid = $logEntry->insert();
-			$logEntry->publish( $logid );
+		if( version_compare( $wgVersion, '1.27.0' ) >= 0 ) {
+			//$data = $properties; // Not to send the confirmation email through AuthManager since I want to customise it
+			$data = [];
+			$data['username'] = $username;
+			$data['password'] = $password;
+			$data['retype'] = $password;
+
+			# This comes from AuthManagerAuthPlugin
+			$reqs = AuthManager::singleton()->getAuthenticationRequests( AuthManager::ACTION_CREATE );
+			$reqs = AuthenticationRequest::loadRequestsFromSubmission( $reqs, $data );
+			$res = AuthManager::singleton()->beginAccountCreation( $wgUser, $reqs, 'null:' );
+			switch ( $res->status ) {
+				case AuthenticationResponse::PASS:
+					return true;
+				case AuthenticationResponse::FAIL:
+					// Hope it's not a PreAuthenticationProvider that failed...
+					$msg = $res->message instanceof \Message ? $res->message : new \Message( $res->message );
+					$this->logger->info( __METHOD__ . ': Authentication failed: ' . $msg->plain() );
+					return false;
+				default:
+					throw new \BadMethodCallException(
+						'AuthManager does not support such simplified account creation'
+					);
+			}
+			
+		} else {
+			$user = User::createNew( $username, $properties );
+			if( !$user instanceof User )
+				return false;
+			if( $wgNewUserLog ) {
+				$logEntry = new ManualLogEntry( 'newusers', 'create2' );
+				$logEntry->setPerformer( $wgUser );
+				$logEntry->setTarget( $user->getUserPage() );
+				$logEntry->setParameters( array( '4::userid' => $user->getId() ) );
+				$logid = $logEntry->insert();
+				$logEntry->publish( $logid );
+			}
 		}
 
 		# Add template on userpage

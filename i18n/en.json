@@ -10,5 +10,8 @@
 	"mgwiki-useraccount-without-userpage": "The user account exists but not the userpage.",
 	"mgwiki-create-userpage": "Userpage initialization",
 	"mgwiki-template-new-userpage": "{{Personne\n|Prénom=$2\n|Nom=$3\n|E-mail=$4\n|Statut personne=$5\n|Spécialité ou profession=\n|Année de promotion=\n|Tuteur référent=\n}}",
-	"confirmemail_body_created_by_mgwiki": "MGWiki <https://mgwiki.univ-lyon1.fr> is a website for medecine students\nand physicians aiming at exchanging their practices and knownledges. A moderator\nfrom MGWiki created this account \"$2\" for you with this email address.\n\nTo log in and confirm this account, open this link in your browser:\n\n$3\n\nIf you did *not* requested such an account, follow this link\nto cancel the email address confirmation:\n\n$5\n\nThis confirmation code will expire at $4."
+	"confirmemail_body_created_by_mgwiki": "MGWiki <https://mgwiki.univ-lyon1.fr> is a website for medecine students\nand physicians aiming at exchanging their practices and knownledges. A moderator\nfrom MGWiki created this account \"$2\" for you with this email address.\n\nTo log in and confirm this account, open this link in your browser:\n\n$3\n\nIf you did *not* requested such an account, follow this link\nto cancel the email address confirmation:\n\n$5\n\nThis confirmation code will expire at $4.",
+	"authmanager-emailtoken-label": "Email token",
+	"authmanager-emailtoken-help": "Email token of the user",
+	"invitation": "Invitation"
 }
