@@ -52,7 +52,7 @@ class EmailTokenPrimaryAuthenticationProvider
 
 	public function beginPrimaryAuthentication( array $reqs ) {
 		$req = AuthenticationRequest::getRequestByClass( $reqs, EmailTokenAuthenticationRequest::class );
-		if ( !$req || $req->emailtoken === null ) {
+		if ( !$req || !$req->emailtoken ) {
 			return AuthenticationResponse::newAbstain();
 		}
 

@@ -14,24 +14,67 @@
 		"MGWikiForms": {
 			"Personne": {
 				"RegexPageName": "/^User:.+$/",
-				"RequiredRight": "mgwikimanagelevel1"
-			},
-			"Groupe": {
-				"RegexPageName": "/^(GEP|GAPP)/",
-				"RequiredRight": "mgwikimanagelevel1"
-			},
-			"Groupe de niveau 2": {
-				"RegexPageName": "/^(Tuteurs|Modérateurs)/",
-				"RequiredRight": "mgwikimanagelevel2"
+				"RequiredRight": "mgwikimanagelevel1",
+				"EditOwnUserpage": true,
+				"SubObjects": false,
+				"Fields": ["Statut personne", "Statut additionnel personne"]
 			},
 			"Nouveaux utilisateurs": {
 				"RegexPageName": "/^Nouveaux utilisateurs/",
-				"RequiredRight": "mgwikimanagelevel2"
+				"RequiredRight": "mgwikimanagelevel1",
+				"SubObjects": true
+			},
+			"Groupe": {
+				"RegexPageName": "/^(GEP|GAPP)/",
+				"RequiredRight": "mgwikimanagelevel1",
+				"SubObjects": true
+			},
+			"Groupe de niveau 2": {
+				"RegexPageName": "/^(Tuteurs|Modérateurs)/",
+				"RequiredRight": "mgwikimanagelevel2",
+				"SubObjects": true
 			},
 			"Nouveaux tuteurs ou modérateurs": {
 				"RegexPageName": "/^Nouveaux tuteurs ou modérateurs/",
-				"RequiredRight": ["mgwikimanagelevel2"]
+				"RequiredRight": ["mgwikimanagelevel2"],
+				"SubObjects": true
 			}
+		},
+		"MGWikiFieldsGroups": {
+			"Statut personne": {
+				"RequiredRight": "mgwikimanagelevel1",
+				"EditOwnUserpage": true,
+				"Groups": ["interne", "médecin", "scientifique"],
+				"MapFromProperty": {
+					"Interne": "interne",
+					"Médecin": "médecin",
+					"Scientifique": "scientifique"
+				},
+				"MapFromTitle": {
+					"/^GEP/": "interne",
+					"/^GAPP/": "médecin"
+				}
+			},
+			"Statut additionnel personne": {
+				"RequiredRight": "mgwikimanagelevel2",
+				"Groups": ["", "tuteur", "modérateur"],
+				"MapFromProperty": {
+					"Aucun": "",
+					"Tuteur": "tuteur",
+					"Modérateur": "modérateur"
+				},
+				"MapFromTitle": {
+					"/^Tuteurs/": "tuteur",
+					"/^Modérateurs/": "modérateur"
+				}
+			}
+		},
+		"MGWikiUserProperties": {
+			"email": "E-mail",
+			"firstname": "Prénom",
+			"lastname": "Nom",
+			"statutPersonne": "Statut personne",
+			"statutAdditionnelPersonne": "Statut additionnel personne"
 		}
 	},
 	"SpecialPages": {
