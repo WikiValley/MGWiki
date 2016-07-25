@@ -97,5 +97,18 @@
 			"MGWiki::onSMW_SQLStore_AfterDataUpdateComplete"
 		]
 	},
+	"AuthManagerAutoConfig": {
+		"primaryauth": {
+			"MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider": {
+				"class": "MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider",
+				"args": [
+					{
+						"authoritative": false
+					}
+				],
+				"sort": 0
+			}
+		}
+	},
 	"manifest_version": 1
 }

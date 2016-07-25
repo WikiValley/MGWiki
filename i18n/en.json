@@ -13,5 +13,8 @@
 	"confirmemail_body_created_by_mgwiki": "MGWiki <https://mgwiki.univ-lyon1.fr> is a website for medecine students\nand physicians aiming at exchanging their practices and knownledges. A moderator\nfrom MGWiki created this account \"$2\" for you with this email address.\n\nTo log in and confirm this account, open this link in your browser:\n\n$3\n\nIf you did *not* requested such an account, follow this link\nto cancel the email address confirmation:\n\n$5\n\nThis confirmation code will expire at $4.",
 	"authmanager-emailtoken-label": "Email token",
 	"authmanager-emailtoken-help": "Email token of the user",
-	"invitation": "Invitation"
+	"right-mgwikimanagelevel1": "Manage MGWiki level-1 users (interns, physicians, scientists)",
+	"right-mgwikimanagelevel2": "Manage MGWiki level-2 users (moderators)",
+	"invitation": "Invitation",
+	"mgwiki-bad-email-token": "The initial connection link seems to be broken (bad email token). Please check the link was not truncated by copying and pasting in your browser the whole link from your email."
 }

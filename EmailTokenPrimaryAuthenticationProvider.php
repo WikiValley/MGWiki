@@ -34,6 +34,7 @@ class EmailTokenPrimaryAuthenticationProvider
 	public function getAuthenticationRequests( $action, array $options ) {
 		switch ( $action ) {
 			case AuthManager::ACTION_LOGIN:
+			case AuthManager::ACTION_LOGIN_CONTINUE:
 				#var_dump('dans emailtokenprimauthprov::getauthreq');
 				#var_dump(new EmailTokenAuthenticationRequest());
 				#exit;
@@ -51,8 +52,8 @@ class EmailTokenPrimaryAuthenticationProvider
 		}
 
 		$user = User::newFromConfirmationCode( $req->emailtoken, User::READ_LATEST );
-		if( !$user->getId() ) {
-			return AuthenticationResponse::newFail();
+		if( !($user instanceof User) || !$user->getId() ) {
+			return AuthenticationResponse::newFail( wfMessage( 'mgwiki-bad-email-token' ) );
 		}
 		$username = $user->getName();
 		return AuthenticationResponse::newPass( $username );
@@ -98,13 +99,9 @@ class EmailTokenPrimaryAuthenticationProvider
 		);
 	}
 
-	public function providerAllowsAuthenticationDataChange(
-		AuthenticationRequest $req, $checkData = true
-	) {
+	public function providerAllowsAuthenticationDataChange( AuthenticationRequest $req, $checkData = true ) {
 		return \StatusValue::newGood( 'ignored' );
 	}
 
-	public function providerChangeAuthenticationData( AuthenticationRequest $req ) {
-	}
+	public function providerChangeAuthenticationData( AuthenticationRequest $req ) {}
 }
-

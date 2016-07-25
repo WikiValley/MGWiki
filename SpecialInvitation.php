@@ -22,6 +22,8 @@
  */
 
 use MediaWiki\Auth\AuthManager;
+use MediaWiki\Auth\AuthenticationResponse;
+use MediaWiki\Auth\CreatedAccountAuthenticationRequest;
 
 /**
  * Special page allows users to request email confirmation message, and handles
@@ -34,13 +36,8 @@ use MediaWiki\Auth\AuthManager;
 #class Invitation extends AuthManagerSpecialPage {
 class Invitation extends LoginSignupSpecialPage {
 	public function __construct() {
-		parent::__construct( 'Invitation', 'editmyprivateinfo' );
-		#var_dump($this);
-		$data = [];
-		$data['emailtoken'] = '69e48e046e9d1afa99e297433a9c5ab5';
-		$data[$this->getTokenName()] = $this->getToken()->toString();
-		#var_dump($this->getToken()->toString());
-		$this->setRequest( $data, true );
+		parent::__construct( 'Invitation' );
+		$this->setListed( false );
 	}
 
 	public function doesWrites() {
@@ -54,7 +51,7 @@ class Invitation extends LoginSignupSpecialPage {
 	 * @return string an AuthManager::ACTION_* constant.
 	 */
 	protected function getDefaultAction( $subPage ) {
-		return AuthManager::ACTION_LOGIN;
+		return AuthManager::ACTION_LOGIN_CONTINUE;
 	}
 
 	protected function getLoginSecurityLevel() {
@@ -82,6 +79,14 @@ class Invitation extends LoginSignupSpecialPage {
 	protected function logAuthResult( $success, $status = null ) {
 	}
 
+	protected function beforeExecute( $subPage ) {
+		$data = [];
+		$data['emailtoken'] = $subPage;
+		$data[$this->getTokenName()] = $this->getToken()->toString();
+		$this->setRequest( $data, true );
+		parent::beforeExecute( $subPage );
+	}
+
 	/**
 	 * Main execution point
 	 *
@@ -94,62 +99,80 @@ class Invitation extends LoginSignupSpecialPage {
 		// Ignore things like master queries/connections on GET requests.
 		// It's very convenient to just allow formless link usage.
 		Profiler::instance()->getTransactionProfiler()->resetExpectations();
+		#$authManager = AuthManager::singleton();
 
 		$this->setHeaders();
 
 		$this->checkReadOnly();
 		$this->checkPermissions();
 
+		# Check the code has a good format
+		if( !$code || !preg_match( '/^[0-9a-f]{32}$/', $code ) ) {
+			$this->getOutput()->addWikiMsg( 'mgwiki-bad-email-token' );
+			$this->getOutput()->returnToMain();
+			return;
+		}
 		// This could also let someone check the current email address, so
 		// require both permissions.
-		if ( !$this->getUser()->isAllowed( 'viewmyprivateinfo' ) ) {
-			throw new PermissionsError( 'viewmyprivateinfo' );
-		}
+		#if ( !$this->getUser()->isAllowed( 'viewmyprivateinfo' ) ) {
+		#	throw new PermissionsError( 'viewmyprivateinfo' );
+		#}
 
 		$this->loadAuth( '', AuthManager::ACTION_LOGIN );
 		#var_dump($this->authAction);
 		#var_dump($this->authRequests);
-		#var_dump( $this->trySubmit() );
+		$status = $this->trySubmit();
+		#var_dump($this->authRequests);
 
-		parent::execute( $code );
+		$response = $status->getValue();
+		#var_dump($status);
+		#var_dump($response);
+		switch( $response->status ) {
+			case AuthenticationResponse::PASS:
+				# Update session data to immediately connect the user
+				$this->setSessionUserForCurrentRequest();
+
+				# Confirm the email (it was the authentication token)
+				$user = User::newFromName( $response->username );
+				$user->confirmEmail();
+				$user->saveSettings();
+
+				$this->successfulAction( true );
+				if( class_exists( 'SFForms' ) )
+					$this->getOutput()->redirect( $user->getUserPage()->getFullURL( 'action=formedit' ) );
+				else
+					$this->getOutput()->redirect( $user->getUserPage()->getFullURL() );
+				break;
+			case AuthenticationResponse::FAIL:
+				$this->getOutput()->addWikiMsg( 'mgwiki-bad-email-token' );
+				$this->getOutput()->returnToMain();
+				break;
+			default:
+				throw new LogicException( 'invalid AuthenticationResponse' );
+		}
+		#if( $response->status == AuthenticationResponse::PASS ) {
+			#foreach( $this->authRequests as &$req ) {
+			#	if( $req instanceof MediaWiki\Auth\EmailTokenAuthenticationRequest ) {
+			#		$req->username = $response->username;
+			#	}
+			#}
+			#$returnToUrl = $this->getPageTitle( 'return' )
+			#	->getFullURL( $this->getPreservedParams( true ), false, PROTO_HTTPS );
+			#$name = $response->username;
+			#$id = User::newFromName( $name );
+			#$reqCreation = new CreatedAccountAuthenticationRequest( $id, $name );
+			#var_dump($this->authRequests);
+			#$response2 = $authManager->beginAuthentication( $this->authRequests, $returnToUrl );
+			/*if( $response2->status == AuthenticationResponse::PASS )
+				var_dump('aull right');*/
+		#	$this->setSessionUserForCurrentRequest();
+		#}
+		#parent::execute( $code );
 		
-		if ( $code === null || $code === '' ) {
-			$this->requireLogin( 'confirmemail_needlogin' );
-		} else {
-			$this->attemptConfirm( $code );
-		}
-	}
-
-	/**
-	 * Attempt to confirm the user's email address and show success or failure
-	 * as needed; if successful, take the user to log in
-	 *
-	 * @param string $code Confirmation code
-	 */
-	function attemptConfirm( $code ) {
-
-		# Confirm email
-		$user = User::newFromConfirmationCode( $code, User::READ_LATEST );
-		if ( !is_object( $user ) ) {
-			$this->getOutput()->addWikiMsg( 'confirmemail_invalid' );
-
-			return;
-		}
-
-		$user->confirmEmail();
-		$user->saveSettings();
-
-		# Connect the user
-			#var_dump('specialinvationok');
-			#exit;
-		
-
-		$message = $this->getUser()->isLoggedIn() ? 'confirmemail_loggedin' : 'confirmemail_success';
-		$this->getOutput()->addWikiMsg( $message );
-
-		if ( !$this->getUser()->isLoggedIn() ) {
-			$title = SpecialPage::getTitleFor( 'Userlogin' );
-			$this->getOutput()->returnToMain( true, $title );
-		}
+		#if ( $code === null || $code === '' ) {
+		#	$this->requireLogin( 'confirmemail_needlogin' );
+		#} else {
+		#	$this->attemptConfirm( $code );
+		#}
 	}
 }
