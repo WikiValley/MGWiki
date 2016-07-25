@@ -1,4 +1,9 @@
 <?php
+/**
+ * MGWiki
+ * @author Sébastien Beyou <seb35@seb35.fr>
+ * @license GPL-3.0+
+ */
 
 namespace MediaWiki\Auth;
 

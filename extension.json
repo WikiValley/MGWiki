@@ -7,7 +7,7 @@
 	],
 	"url": "https://mgwiki.univ-lyon1.fr",
 	"descriptionmsg": "mgwiki-desc",
-	"license-name": "LGPL-2.0+",
+	"license-name": "GPL-3.0+",
 	"type": "other",
 	"config": {
 		"MGWikiInitialDelayBeforeInactive": 1209600,

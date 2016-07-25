@@ -2,8 +2,8 @@
 /**
  * Aliases for special pages
  *
- * @file
- * @ingroup Extensions
+ * @author Sébastien Beyou <seb35@seb35.fr>
+ * @license GPL-3.0+
  */
 // @codingStandardsIgnoreFile
 

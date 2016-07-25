@@ -2,7 +2,7 @@
 /**
  * MGWiki
  * @author Sébastien Beyou <seb35@seb35.fr>
- * @license LGPL-2.0+
+ * @license GPL-3.0+
  */
 
 if( !function_exists( 'wfLoadExtension' ) ) {
@@ -14,7 +14,7 @@ if( !function_exists( 'wfLoadExtension' ) ) {
 		'author' => array( 'Sébastien Beyou' ),
 		'url' => 'https://mgwiki.univ-lyon1.fr',
 		'descriptionmsg' => 'mgwiki-desc',
-		'license-name' => 'LGPL-2.0+'
+		'license-name' => 'GPL-3.0+'
 	);
 
 	$GLOBALS['wgMessagesDirs']['MGWiki'] = __DIR__ . '/i18n';
