@@ -131,14 +131,11 @@ class MGWiki {
 			if( array_key_exists( 'RegexPageName', $params ) && preg_match( $params['RegexPageName'], $titleEnglish ) ) {
 
 				self::synchroniseMediaWikiGroups( $title, $editor, $form, $params, $store, $semanticData, $compositePropertyTableDiffIterator );
+				break;
 			}
-			
 		}
-		#$result1 = self::onFormPersonne( $store, $semanticData, $compositePropertyTableDiffIterator );
 
-		#$result2 = self::onFormGEPouGAPP( $store, $semanticData, $compositePropertyTableDiffIterator );
-
-		#if( $result1 || $result2 ) return $result1 && $result2;
+		return true;
 	}
 
 	/**
@@ -184,8 +181,18 @@ class MGWiki {
 				$createdUsers = array();
 				foreach( $subSemanticData as $user => $userSemanticData ) {
 
-					$groups = array_merge( $defaultGroups, self::searchFieldsGroups( false, $editor, $userSemanticData, $editOwnUserpage ) );
-					self::addMediaWikiGroups( $user, $groups, $editOwnUserpage );
+					# Create users
+					$userData = self::collectSemanticData( self::fields, $userSemanticData, $complete );
+					if( $complete ) {
+						$userData[self::statutPersonneField] = $statements[self::typeDeGroupeField] == 'GEP' ? 'Interne' : 'Médecin';
+						$username = $userData[self::prenomField].' '.$userData[self::nomField];
+						self::createUser( $username, $userData );
+						$createdUsers[] = $userData;
+
+						# User groups
+						$groups = array_merge( $defaultGroups, self::searchFieldsGroups( false, $editor, $userSemanticData, $editOwnUserpage ) );
+						self::addMediaWikiGroups( $username, $groups, $editOwnUserpage );
+					}
 				}
 			}
 		}
@@ -404,7 +411,7 @@ class MGWiki {
 		$userArticle = WikiPage::factory( $userTitle );
 		$summary = wfMessage( 'mgwiki-create-userpage' )->inContentLanguage()->text();
 		$content = new WikitextContent( wfMessage( 'mgwiki-template-new-userpage',
-			$username, $userData[$wgMGWikiUserProperties['firstname']], $userData[$wgMGWikiUserProperties['lastname']], $userData[$wgMGWikiUserProperties['email']], $userData[$wgMGWikiUserProperties['statutPersonne']]
+			$username, $userData[$wgMGWikiUserProperties['firstname']], $userData[$wgMGWikiUserProperties['lastname']], $userData[$wgMGWikiUserProperties['email']], $userData[$wgMGWikiUserProperties['statutPersonne']], $userData[$wgMGWikiUserProperties['statutAdditionnelPersonne']]
 		)->inContentLanguage()->plain() );
 		$flags = EDIT_NEW;
 		$userArticle->doEditContent( $content, $summary, $flags, false, $wgUser );
