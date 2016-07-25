@@ -5,7 +5,8 @@
 		]
 	},
 	"mgwiki-desc": ""{{desc|name=MGWiki|url=https://mgwiki.univ-lyon1.fr}}",
-	"right-mgwikimanageusers": "{{doc-right|right-mgwikimanageusers}}Right to manage users",
+	"right-mgwikimanagelevel1": "{{doc-right|right-mgwikimanagelevel1}}Right to manage basic users",
+	"right-mgwikimanagelevel2": "{{doc-right|right-mgwikimanagelevel2}}Right to manage advanced users (moderators)",
 	"mgwiki-userpage-without-useraccount": "Warning message on top of a form",
 	"mgwiki-useraccount-without-userpage": "Warning message on top of a form",
 	"mgwiki-create-userpage": "Summary when a userpage is created",

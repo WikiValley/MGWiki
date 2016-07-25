@@ -5,31 +5,6 @@
  * @license GPL-3.0+
  */
 
-if( !function_exists( 'wfLoadExtension' ) ) {
-
-	$GLOBALS['wgExtensionCredits']['other'][] = array(
-		'path' => __FILE__,
-		'name' => 'MGWiki',
-		'version' => '0.1',
-		'author' => array( 'Sébastien Beyou' ),
-		'url' => 'https://mgwiki.univ-lyon1.fr',
-		'descriptionmsg' => 'mgwiki-desc',
-		'license-name' => 'GPL-3.0+'
-	);
-
-	$GLOBALS['wgMessagesDirs']['MGWiki'] = __DIR__ . '/i18n';
-
-	$GLOBALS['wgHooks']['userCan'][] = 'MGWiki::onuserCan';
-	$GLOBALS['wgHooks']['sfHTMLBeforeForm'][] = 'MGWiki::onsfHTMLBeforeForm';
-	$GLOBALS['wgHooks']['PrefsEmailAudit'][] = 'MGWiki::onPrefsEmailAudit';
-	$GLOBALS['wgHooks']['SMW::SQLStore::AfterDataUpdateComplete'][] = 'MGWiki::onSMW_SQLStore_AfterDataUpdateComplete';
-
-	$GLOBALS['wgGroupPermissions']['sysop']['mgwikimanageusers'] = true;
-	
-	# Initial delay, in seconds, after a newly registered user is considered inactive
-	$GLOBALS['wgMGWikiInitialDelayBeforeInactive'] = 14*24*60*60;
-}
-
 class MGWiki {
 
 	const nomField = 'Nom';
@@ -37,6 +12,7 @@ class MGWiki {
 	const emailField = 'E-mail';
 	const typeDeGroupeField = 'Type_de_groupe';
 	const statutPersonneField = 'Statut_personne';
+	const statutAdditionnelPersonneField = 'Statut_additionnel_personne';
 	const fields = array( self::nomField, self::prenomField, self::emailField );
 
 	/**
@@ -66,8 +42,8 @@ class MGWiki {
 		if( $ns ) $titleEnglish .= $ns . ':';
 		$titleEnglish .= $title->getText();
 		foreach( $wgMGWikiForms as $form => $params ) {
-			if( array_key_exists( 'RegexPageName', $params ) && preg_match( $params['RegexPageName'], $titleEnglish ) && array_key_exists( 'RequiredRights', $params ) && is_string( $params['RequiredRights'] ) ) {
-				if( !$user->isAllowed( $params['RequiredRights'] ) ) {
+			if( array_key_exists( 'RegexPageName', $params ) && preg_match( $params['RegexPageName'], $titleEnglish ) && array_key_exists( 'RequiredRight', $params ) && is_string( $params['RequiredRight'] ) ) {
+				if( !$user->isAllowed( $params['RequiredRight'] ) ) {
 					$result = false;
 					return false;
 				}
@@ -123,7 +99,7 @@ class MGWiki {
 	/**
 	 * When a user page is modified by SemanticMediaWiki, create the corresponding MediaWiki user or update the email
 	 *
-	 * Only the user or 'admins' with the right 'mgwikimanageusers' can report the email address in the user preferences.
+	 * Only the user or 'admins' with the right 'mgwikimanagelevel1' can report the email address in the user preferences.
 	 * If $wgNewUserLog is true (default), add an entry in the 'newusers' log when a user is created.
 	 * 
 	 * @param SMWSQLStore3 $store SemanticMediaWiki store
@@ -143,7 +119,7 @@ class MGWiki {
 	/**
 	 * When a user page is modified by SemanticMediaWiki with Form:Personne, create the corresponding MediaWiki user or update the email
 	 *
-	 * Only the user or 'admins' with the right 'mgwikimanageusers' can report the email address in the user preferences.
+	 * Only the user or 'admins' with the right 'mgwikimanagelevel1' can report the email address in the user preferences.
 	 * If $wgNewUserLog is true (default), add an entry in the 'newusers' log when a user is created.
 	 * 
 	 * @param SMWSQLStore3 $store SemanticMediaWiki store
@@ -170,7 +146,7 @@ class MGWiki {
 		$user = User::newFromName( $subject->getDBkey() );
 
 		# Check permissions
-		if( ($wgUser->getId() && $wgUser->getId() != $user->getId()) && !$wgUser->isAllowed( 'mgwikimanageusers' ) ) return;
+		if( ($wgUser->getId() && $wgUser->getId() != $user->getId()) && !$wgUser->isAllowed( 'mgwikimanagelevel1' ) ) return;
 
 		# Get properties after they are saved
 		$properties = $semanticData->getProperties();
@@ -200,7 +176,7 @@ class MGWiki {
 	/**
 	 * When a page for GEP or GAPP is created or modified by SemanticMediaWiki with Form:GEP ou GAPP, create the corresponding MediaWiki users
 	 *
-	 * Only the user or 'admins' with the right 'mgwikimanageusers' can report the email address in the user preferences.
+	 * Only the user or 'admins' with the right 'mgwikimanagelevel1' can report the email address in the user preferences.
 	 * If $wgNewUserLog is true (default), add an entry in the 'newusers' log when a user is created.
 	 * 
 	 * @param SMWSQLStore3 $store SemanticMediaWiki store
@@ -217,7 +193,7 @@ class MGWiki {
 		if( $subject->getNamespace() != NS_MAIN ) return;
 
 		# Check permissions
-		#if( !$wgUser->isAllowed( 'mgwikimanageusers' ) ) return;
+		#if( !$wgUser->isAllowed( 'mgwikimanagelevel1' ) ) return;
 
 		# Get property values
 		$statements = self::collectSemanticData( [ self::typeDeGroupeField ], $semanticData, $complete );

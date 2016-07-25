@@ -14,40 +14,26 @@
 		"MGWikiForms": {
 			"Personne": {
 				"RegexPageName": "/^User:.+$/",
-				"RequiredRights": "mgwikimanagelevel1",
-				"Level1": true,
-				"Level2": false
+				"RequiredRight": "mgwikimanagelevel1"
 			},
 			"Groupe": {
 				"RegexPageName": "/^(GEP|GAPP)/",
-				"RequiredRights": "mgwikimanagelevel1",
-				"Level1": true,
-				"Level2": false
+				"RequiredRight": "mgwikimanagelevel1"
 			},
 			"Groupe de niveau 2": {
 				"RegexPageName": "/^(Tuteurs|Modérateurs)/",
-				"RequiredRights": "mgwikimanagelevel2",
-				"Level1": true,
-				"Level2": false
+				"RequiredRight": "mgwikimanagelevel2"
 			},
 			"Nouveaux utilisateurs": {
 				"RegexPageName": "/^Nouveaux utilisateurs/",
-				"RequiredRights": "mgwikimanagelevel2",
-				"Level1": true,
-				"Level2": false
+				"RequiredRight": "mgwikimanagelevel2"
 			},
 			"Nouveaux tuteurs ou modérateurs": {
 				"RegexPageName": "/^Nouveaux tuteurs ou modérateurs/",
-				"RequiredRights": ["mgwikimanagelevel2"],
-				"Level1": true,
-				"Level2": false
+				"RequiredRight": ["mgwikimanagelevel2"]
 			}
-		},
-		"MGWikiLevel1": ["interne", "médecin", "scientifique"],
-		"MGWikiLevel2": ["tuteur", "modérateur"]
+		}
 	},
-	"ExtensionFunctions": [
-	],
 	"SpecialPages": {
 		"Invitation": "Invitation"
 	},
@@ -56,15 +42,12 @@
 		"médecin": {},
 		"scientifique": {},
 		"tuteur": {
-			"mgwikimanageusers": true,
 			"mgwikimanagelevel1": true
 		},
 		"modérateur": {
-			"mgwikimanageusers": true,
 			"mgwikimanagelevel1": true
 		},
 		"sysop": {
-			"mgwikimanageusers": true,
 			"mgwikimanagelevel1": true,
 			"mgwikimanagelevel2": true
 		}

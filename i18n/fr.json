@@ -5,7 +5,8 @@
 		]
 	},
 	"mgwiki-desc": "Accroches spécifiques à MGWiki",
-	"right-mgwikimanageusers": "Modifier certains paramètres personnels d’autres utilisateurs, comme le courriel",
+	"right-mgwikimanagelevel1": "Gérer les utilisateurs MGWiki de niveau 1 (internes, médecins, scientifiques)",
+	"right-mgwikimanagelevel2": "Gérer les utilisateurs MGWiki de niveau 2 (tuteurs, modérateurs)",
 	"mgwiki-userpage-without-useraccount": "La page utilisateur existe, mais pas le compte utilisateur MediaWiki.",
 	"mgwiki-useraccount-without-userpage": "Le compte utilisateur existe, mais pas la page utilisateur.",
 	"mgwiki-create-userpage": "Initialisation de la page utilisateur",
@@ -13,8 +14,6 @@
 	"confirmemail_body_created_by_mgwiki": "MGWiki <https://mgwiki.univ-lyon1.fr> est un site permettant aux internes\nen médecine et médecins d’échanger sur leurs pratiques. Un tuteur de MGWiki\nvous a créé un compte « $2 » avec cette adresse de courriel.\n\nPour vous connecter et confirmer ce compte, veuillez suivre ce lien dans votre navigateur :\n\n$3\n\nSi ce vous n’avez pas sollicité de tel compte, n’ouvrez pas ce lien ;\nvous pouvez suivre l’autre lien ci-dessous pour annuler la\nconfirmation de votre adresse courriel :\n\n$5\n\nCe code de confirmation expirera le $4.",
 	"authmanager-emailtoken-label": "Jeton de courriel",
 	"authmanager-emailtoken-help": "Jeton de courriel de l’utilisateur",
-	"right-mgwikimanagelevel1": "Gérer les utilisateurs MGWiki de niveau 1 (internes, médecins, scientifiques)",
-	"right-mgwikimanagelevel2": "Gérer les utilisateurs MGWiki de niveau 2 (tuteurs, modérateurs)",
 	"invitation": "Invitation",
 	"mgwiki-bad-email-token": "Le lien de connexion initiale que vous avez suivi semble ne pas être valide (mauvais jeton de courriel).\n\nVeuillez vérifier que le lien n’a pas été tronqué en copiant et collant dans votre navigateur l’ensemble du lien du courriel."
 }
