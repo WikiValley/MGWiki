@@ -9,6 +9,10 @@
 	"descriptionmsg": "mgwiki-desc",
 	"license-name": "GPL-3.0+",
 	"type": "other",
+	"AvailableRights": [
+		"mgwikimanagelevel1",
+		"mgwikimanagelevel2"
+	],
 	"config": {
 		"MGWikiInitialDelayBeforeInactive": 1209600,
 		"MGWikiForms": {
