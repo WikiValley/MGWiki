@@ -17,6 +17,8 @@ class EmailTokenPrimaryAuthenticationProvider
 	protected $sendConfirmationEmail;
 
 	/**
+	 * Construct this authentication provider.
+	 *
 	 * @param array $params
 	 *  - sendConfirmationEmail: (bool) send an email asking the user to confirm their email
 	 *    address to finalize its account creation
@@ -27,6 +29,12 @@ class EmailTokenPrimaryAuthenticationProvider
 		}
 	}
 
+	/**
+	 * Set the internal configuration: check if email is activated.
+	 *
+	 * @param Config $config Global MediaWiki configuration.
+	 * @return void
+	 */
 	public function setConfig( Config $config ) {
 		parent::setConfig( $config );
 
@@ -36,13 +44,17 @@ class EmailTokenPrimaryAuthenticationProvider
 		}
 	}
 
+	/**
+	 * Return the authentication requests for this specific authentication type.
+	 *
+	 * @param string $action Authentication action, one of AuthManager::ACTION_*.
+	 * @param array $options Options (unused here).
+	 * @return AuthenticationRequest[] The email authentication request for login only.
+	 */
 	public function getAuthenticationRequests( $action, array $options ) {
 		switch ( $action ) {
 			case AuthManager::ACTION_LOGIN:
 			case AuthManager::ACTION_LOGIN_CONTINUE:
-				#var_dump('dans emailtokenprimauthprov::getauthreq');
-				#var_dump(new EmailTokenAuthenticationRequest());
-				#exit;
 				return [ new EmailTokenAuthenticationRequest() ];
 
 			default:
@@ -57,7 +69,7 @@ class EmailTokenPrimaryAuthenticationProvider
 		}
 
 		$user = User::newFromConfirmationCode( $req->emailtoken, User::READ_LATEST );
-		if( !($user instanceof User) || !$user->getId() ) {
+		if ( !( $user instanceof User ) || !$user->getId() ) {
 			return AuthenticationResponse::newFail( wfMessage( 'mgwiki-bad-email-token' ) );
 		}
 		$username = $user->getName();
@@ -104,9 +116,12 @@ class EmailTokenPrimaryAuthenticationProvider
 		);
 	}
 
-	public function providerAllowsAuthenticationDataChange( AuthenticationRequest $req, $checkData = true ) {
+	public function providerAllowsAuthenticationDataChange( AuthenticationRequest $req,
+		$checkData = true
+	) {
 		return \StatusValue::newGood( 'ignored' );
 	}
 
-	public function providerChangeAuthenticationData( AuthenticationRequest $req ) {}
+	public function providerChangeAuthenticationData( AuthenticationRequest $req ) {
+	}
 }

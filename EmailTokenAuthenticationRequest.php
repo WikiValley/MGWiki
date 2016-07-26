@@ -7,18 +7,21 @@
 
 namespace MediaWiki\Auth;
 
-use StatusValue;
-use User;
-
 /**
- * This represents the field emailtoken aiming at connecting the user after s/he is redirected through Special:Invitation
+ * This represents the field emailtoken aiming at connecting the user after
+ * s/he is redirected through Special:Invitation.
  *
  * @ingroup Auth
  */
 class EmailTokenAuthenticationRequest extends AuthenticationRequest {
-	/** @var string|null Email address */
+	/** @var string|null Email address token */
 	public $emailtoken;
 
+	/**
+	 * Return the field required for this authentication type.
+	 *
+	 * @return array[] The fields with their properties.
+	 */
 	public function getFieldInfo() {
 		$config = \ConfigFactory::getDefaultInstance()->makeConfig( 'main' );
 		$ret = [

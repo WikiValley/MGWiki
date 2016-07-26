@@ -28,22 +28,22 @@ class MGWiki {
 		global $wgMGWikiForms;
 
 		# Only edit permission is checked
-		if( $action != 'edit' )
+		if ( $action != 'edit' )
 			return true;
 
 		# Check permissions when the user wants to edit someone else’s user page
-		if( $title->getNamespace() == NS_USER && $title->getText() == $user->getName() ) {
+		if ( $title->getNamespace() == NS_USER && $title->getText() == $user->getName() ) {
 			return true;
 		}
 
 		# Check permissions for forms
 		$titleEnglish = '';
 		$ns = MWNamespace::getCanonicalName( $title->getNamespace() );
-		if( $ns ) $titleEnglish .= $ns . ':';
+		if ( $ns ) $titleEnglish .= $ns . ':';
 		$titleEnglish .= $title->getText();
-		foreach( $wgMGWikiForms as $form => $params ) {
-			if( array_key_exists( 'RegexPageName', $params ) && preg_match( $params['RegexPageName'], $titleEnglish ) && array_key_exists( 'RequiredRight', $params ) && is_string( $params['RequiredRight'] ) ) {
-				if( !$user->isAllowed( $params['RequiredRight'] ) ) {
+		foreach ( $wgMGWikiForms as $form => $params ) {
+			if ( array_key_exists( 'RegexPageName', $params ) && preg_match( $params['RegexPageName'], $titleEnglish ) && array_key_exists( 'RequiredRight', $params ) && is_string( $params['RequiredRight'] ) ) {
+				if ( !$user->isAllowed( $params['RequiredRight'] ) ) {
 					$result = false;
 					return false;
 				}
@@ -63,15 +63,15 @@ class MGWiki {
 	public static function onsfHTMLBeforeForm( $targetTitle, &$pre_form_html ) {
 
 		# Only use this hook on user pages
-		if( empty( $targetTitle ) || $targetTitle->getNamespace() != NS_USER ) return;
+		if ( empty( $targetTitle ) || $targetTitle->getNamespace() != NS_USER ) return;
 
 		# Get the user account
 		$user = User::newFromName( $targetTitle->getText() )->getId();
 
-		if( $targetTitle->exists() xor $user ) {
+		if ( $targetTitle->exists() xor $user ) {
 
 			$pre_form_html = '<div class="warningbox">';
-			if( $targetTitle->exists() ) $pre_form_html .= wfMessage( 'mgwiki-userpage-without-useraccount' )->escaped();
+			if ( $targetTitle->exists() ) $pre_form_html .= wfMessage( 'mgwiki-userpage-without-useraccount' )->escaped();
 			else $pre_form_html .= wfMessage( 'mgwiki-useraccount-without-userpage' )->escaped();
 			$pre_form_html .= "</div>\n";
 		}
@@ -83,7 +83,7 @@ class MGWiki {
 
 		# Get the wiki page
 		$title = Title::newFromText( $user->getName(), NS_USER );
-		if( $title->getArticleID() == -1 ) return;
+		if ( $title->getArticleID() == -1 ) return;
 		$subject = SMW\DIWikiPage::newFromTitle( $title );
 
 		# Get the properties on the page
@@ -115,20 +115,20 @@ class MGWiki {
 		$title = $semanticData->getSubject()->getTitle();
 		$titleEnglish = '';
 		$ns = MWNamespace::getCanonicalName( $title->getNamespace() );
-		if( $ns ) $titleEnglish .= $ns . ':';
+		if ( $ns ) $titleEnglish .= $ns . ':';
 		$titleEnglish .= $title->getText();
 
 		# Get the user who made the change
 		# It is executed as a job, so $wgUser is not the real user who made the change
 		$statements = self::collectSemanticData( [ '_LEDT' ], $semanticData, $complete );
-		if( !array_key_exists( '_LEDT', $statements ) || $statements['_LEDT']->getNamespace() != 2 )
+		if ( !array_key_exists( '_LEDT', $statements ) || $statements['_LEDT']->getNamespace() != 2 )
 			return;
 		$editor = User::newFromName( $statements['_LEDT']->getText() );
 		$editor->load();
 
 		# Search the form
-		foreach( $wgMGWikiForms as $form => $params ) {
-			if( array_key_exists( 'RegexPageName', $params ) && preg_match( $params['RegexPageName'], $titleEnglish ) ) {
+		foreach ( $wgMGWikiForms as $form => $params ) {
+			if ( array_key_exists( 'RegexPageName', $params ) && preg_match( $params['RegexPageName'], $titleEnglish ) ) {
 
 				self::synchroniseMediaWikiGroups( $title, $editor, $form, $params, $store, $semanticData, $compositePropertyTableDiffIterator );
 				break;
@@ -160,30 +160,30 @@ class MGWiki {
 		$complete = null;
 
 		# Check if the user edits her/his own userpage
-		if( $title->getNamespace() == NS_USER ) {
+		if ( $title->getNamespace() == NS_USER ) {
 			$user = User::newFromName( $title->getDBkey() );
 			$user->load();
-			if( $editor->isLoggedIn() && $editor->getId() == $user->getId() )
+			if ( $editor->isLoggedIn() && $editor->getId() == $user->getId() )
 				$editOwnUserpage = array_key_exists( 'EditOwnUserpage', $paramsForm ) && $paramsForm['EditOwnUserpage'];
 		}
 
 		# Check permissions
-		if( !$editor->isAllowed( $paramsForm['RequiredRight'] ) && !$editOwnUserpage )
+		if ( !$editor->isAllowed( $paramsForm['RequiredRight'] ) && !$editOwnUserpage )
 			return;
 
 		# Iterate over the fields groups
 		$defaultGroups = self::searchFieldsGroups( $title, $editor, $semanticData, $editOwnUserpage );
 
 		# Iterate over the subobjects
-		if( array_key_exists( 'SubObjects', $paramsForm ) && $paramsForm['SubObjects'] ) {
-			if( $semanticData->hasSubSemanticData() ) {
+		if ( array_key_exists( 'SubObjects', $paramsForm ) && $paramsForm['SubObjects'] ) {
+			if ( $semanticData->hasSubSemanticData() ) {
 				$subSemanticData = $semanticData->getSubSemanticData();
 				$createdUsers = array();
 				foreach( $subSemanticData as $user => $userSemanticData ) {
 
 					# Create users
 					$userData = self::collectSemanticData( self::fields, $userSemanticData, $complete );
-					if( $complete ) {
+					if ( $complete ) {
 						$userData[self::statutPersonneField] = $statements[self::typeDeGroupeField] == 'GEP' ? 'Interne' : 'Médecin';
 						$username = $userData[self::prenomField].' '.$userData[self::nomField];
 						self::createUser( $username, $userData );
@@ -198,18 +198,18 @@ class MGWiki {
 		}
 
 		# Standalone form (Personne)
-		elseif( $title->getNamespace() == NS_USER ) {
+		elseif ( $title->getNamespace() == NS_USER ) {
 			# Search if there is an email property
 			$email = '';
 			$statements = self::collectSemanticData( [ $wgMGWikiUserProperties['email'] ], $semanticData, $complete );
-			if( array_key_exists( $wgMGWikiUserProperties['email'], $statements ) )
+			if ( array_key_exists( $wgMGWikiUserProperties['email'], $statements ) )
 				$email = $statements[$wgMGWikiUserProperties['email']];
 
 			# If the user doesn’t exist, create it
-			if( self::createUser( $title->getText(), [ $wgMGWikiUserProperties['email'] => $email ] ) );
+			if ( self::createUser( $title->getText(), [ $wgMGWikiUserProperties['email'] => $email ] ) );
 
 			# Or just update the email
-			elseif( $email && $user->getEmail() != $email ) {
+			elseif ( $email && $user->getEmail() != $email ) {
 				$user->setEmail( $email );
 				$user->saveSettings();
 			}
@@ -233,19 +233,19 @@ class MGWiki {
 
 			# Check permissions
 			$canEditOwnUserpage = array_key_exists( 'EditOwnUserpage', $paramsProperty ) && $paramsProperty['EditOwnUserpage'];
-			if( !$editor->isAllowed( $paramsProperty['RequiredRight'] ) && !($editOwnUserpage && $canEditOwnUserpage) )
+			if ( !$editor->isAllowed( $paramsProperty['RequiredRight'] ) && !($editOwnUserpage && $canEditOwnUserpage) )
 				continue;
 
 			# Get the group to be added
-			if( array_key_exists( $property, $statements ) )
+			if ( array_key_exists( $property, $statements ) )
 				$groups[$property] = $paramsProperty['MapFromProperty'][$statements[$property]];
-			elseif( $title && array_key_exists( 'MapFromTitle', $paramsProperty ) ) {
+			elseif ( $title && array_key_exists( 'MapFromTitle', $paramsProperty ) ) {
 				foreach( $paramsProperty['MapFromTitle'] as $regex => $group ) {
-					if( preg_match( $regex, $title->getText() ) )
+					if ( preg_match( $regex, $title->getText() ) )
 						$groups[$property] = $group;
 				}
 			}
-			if( !array_key_exists( $property, $groups ) && in_array( '', $paramsProperty['Groups'] ) )
+			if ( !array_key_exists( $property, $groups ) && in_array( '', $paramsProperty['Groups'] ) )
 				$groups[$property] = '';
 		}
 
@@ -256,7 +256,7 @@ class MGWiki {
 
 		global $wgMGWikiFieldsGroups;
 
-		if( is_string( $user ) )
+		if ( is_string( $user ) )
 			$user = User::newFromName( $user );
 
 		foreach( $groups as $property => $valueProperty ) {
@@ -266,33 +266,33 @@ class MGWiki {
 			$effectiveGroups = [];
 			foreach( $wgMGWikiFieldsGroups[$property]['Groups'] as $g ) {
 				$effectiveGroupe[$g] = false;
-				if( $g && in_array( $g, $user->getGroups() ) ) {
+				if ( $g && in_array( $g, $user->getGroups() ) ) {
 					$effectiveGroups[$g] = true;
-					if( $uniqueGroup === null ) $uniqueGroup = $g;
+					if ( $uniqueGroup === null ) $uniqueGroup = $g;
 					else $uniqueGroup = false;
 				}
 			}
-			if( in_array( '', $wgMGWikiFieldsGroups[$property]['Groups'] ) && $uniqueGroup === null ) {
+			if ( in_array( '', $wgMGWikiFieldsGroups[$property]['Groups'] ) && $uniqueGroup === null ) {
 				$effectiveGroups[''] = true;
 				$uniqueGroup = '';
 			}
 
 			# Is it what we want? If so, continue
 			echo ( $uniqueGroup === $valueProperty );
-			if( $uniqueGroup === $valueProperty )
+			if ( $uniqueGroup === $valueProperty )
 				continue;
 
 			# Else remove the user from the groups	
 			$removedGroups = [];
 			foreach( $effectiveGroups as $g => $v ) {
-				if( $g && $v ) {
+				if ( $g && $v ) {
 					$user->removeGroup( $g );
 					$removedGroups[] = $g;
 				}
 			}
 
 			# If a group is wanted, add it
-			if( !$valueProperty )
+			if ( !$valueProperty )
 				continue;
 			$user->addGroup( $valueProperty );
 		}
@@ -323,13 +323,13 @@ class MGWiki {
 		# Iterate over existing properties and search requested properties
 		foreach( $properties as $key => $diProperty ) {
 			$values = $semanticData->getPropertyValues( $diProperty );
-			if( !in_array( $diProperty->getKey(), array_keys( $mapNormalisation ) ) )
+			if ( !in_array( $diProperty->getKey(), array_keys( $mapNormalisation ) ) )
 				continue;
-			if( count( $values ) == 1 && current( $values )->getDIType() == SMWDataItem::TYPE_BLOB ) {
+			if ( count( $values ) == 1 && current( $values )->getDIType() == SMWDataItem::TYPE_BLOB ) {
 				$userData[$mapNormalisation[$diProperty->getKey()]] = current( $values )->getString();
 				$count++;
 			}
-			elseif( count( $values ) == 1 && current( $values )->getDIType() == SMWDataItem::TYPE_WIKIPAGE ) {
+			elseif ( count( $values ) == 1 && current( $values )->getDIType() == SMWDataItem::TYPE_WIKIPAGE ) {
 				$userData[$mapNormalisation[$diProperty->getKey()]] = current( $values )->getTitle();
 				$count++;
 			}
@@ -337,7 +337,7 @@ class MGWiki {
 
 		# Check if we have all mandatory values
 		$complete = false;
-		if( $count == count( $fields ) ) $complete = true;
+		if ( $count == count( $fields ) ) $complete = true;
 
 		return $userData;
 	}
@@ -356,18 +356,18 @@ class MGWiki {
 		global $wgMGWikiUserProperties;
 
 		$user = User::newFromName( $username );
-		if( $user->getId() )
+		if ( $user->getId() )
 			return false;
 
 		foreach( $wgMGWikiUserProperties as $k => $v )
 			$wgMGWikiUserProperties[$k] = str_replace( ' ', '_', $v );
 
 		$properties = [];
-		if( array_key_exists( $wgMGWikiUserProperties['email'], $userData ) && is_string( $userData[$wgMGWikiUserProperties['email']] ) )
+		if ( array_key_exists( $wgMGWikiUserProperties['email'], $userData ) && is_string( $userData[$wgMGWikiUserProperties['email']] ) )
 			$properties['email'] = $userData[$wgMGWikiUserProperties['email']];
 		
 		# Create the user and add log entry
-		if( version_compare( $wgVersion, '1.27.0' ) >= 0 ) {
+		if ( version_compare( $wgVersion, '1.27.0' ) >= 0 ) {
 			//$data = $properties; // Not to send the confirmation email through AuthManager since I want to customise it
 			$data = [];
 			$data['username'] = $username;
@@ -394,9 +394,9 @@ class MGWiki {
 			
 		} else {
 			$user = User::createNew( $username, $properties );
-			if( !$user instanceof User )
+			if ( !$user instanceof User )
 				return false;
-			if( $wgNewUserLog ) {
+			if ( $wgNewUserLog ) {
 				$logEntry = new ManualLogEntry( 'newusers', 'create2' );
 				$logEntry->setPerformer( $wgUser );
 				$logEntry->setTarget( $user->getUserPage() );
