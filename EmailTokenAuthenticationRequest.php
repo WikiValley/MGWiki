@@ -26,7 +26,7 @@ class EmailTokenAuthenticationRequest extends AuthenticationRequest {
 		$config = \ConfigFactory::getDefaultInstance()->makeConfig( 'main' );
 		$ret = [
 			'emailtoken' => [
-				'type' => 'string',
+				'type' => 'hidden',
 				'label' => wfMessage( 'authmanager-emailtoken-label' ),
 				'help' => wfMessage( 'authmanager-emailtoken-help' ),
 				'optional' => true,
