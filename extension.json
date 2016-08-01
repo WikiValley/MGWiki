@@ -40,7 +40,7 @@
 			},
 			"Nouveaux tuteurs ou modérateurs": {
 				"RegexPageName": "/^Nouveaux tuteurs ou modérateurs/",
-				"RequiredRight": ["mgwikimanagelevel2"],
+				"RequiredRight": "mgwikimanagelevel2",
 				"SubObjects": true
 			}
 		},
@@ -63,7 +63,7 @@
 				"RequiredRight": "mgwikimanagelevel2",
 				"Groups": ["", "tuteur", "modérateur"],
 				"MapFromProperty": {
-					"Aucun": "",
+					"": "",
 					"Tuteur": "tuteur",
 					"Modérateur": "modérateur"
 				},
