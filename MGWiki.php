@@ -81,21 +81,29 @@ class MGWiki {
 		global $wgMGWikiUserProperties;
 
 		# Normalise value
-		$emailProperty = str_replace( ' ', '_', $wgMGWikiUserProperties['email'] );
+		$emailProperty = $wgMGWikiUserProperties['email'];
 
 		# Get the wiki page
 		$title = Title::newFromText( $user->getName(), NS_USER );
 		if ( $title->getArticleID() == -1 ) return;
-		$subject = SMW\DIWikiPage::newFromTitle( $title );
+		$article = WikiPage::factory( $title );
+		$summary = wfMessage( 'mgwiki-changed-email' )->inContentLanguage()->text();
 
-		# Get the properties on the page
-		$store = SMW\StoreFactory::getStore();
-		$semanticData = $store->getSemanticData( $subject );
+		# Get the content
+		$oldContent = $article->getContent();
+		if( $oldContent->getModel() != CONTENT_MODEL_WIKITEXT ) {
+			return;
+		}
 
-		# Add the email to the data values and save
-		$emailValue = new SMWDIBlob( $newaddr );
-		$semanticData->addPropertyValue( $emailProperty, $emailValue );
-		$store->updateData( $semanticData );
+		# Update the content
+		$content = new WikitextContent( preg_replace( '/\| *'.preg_quote($emailProperty,'/').' *=[a-zA-Z0-9@._+-]+/', "|$emailProperty = $newaddr\n", $oldContent->getNativeData() ) );
+
+		# And edit
+		$flags = EDIT_MINOR | EDIT_SUPPRESS_RC | EDIT_UPDATE;
+		$status = $article->doEditContent( $content, $summary, $flags, false, $wgUser );
+		if( !$status->isOK() ) {
+			return;
+		}
 	}
 
 	/**
@@ -126,6 +134,9 @@ class MGWiki {
 		if ( !array_key_exists( '_LEDT', $statements ) || $statements['_LEDT']->getNamespace() != 2 )
 			return;
 		$editor = User::newFromName( $statements['_LEDT']->getText() );
+		if( !$editor ) {
+			return false;
+		}
 		$editor->load();
 
 		# Search the form

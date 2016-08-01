@@ -30,5 +30,6 @@
 	"mgwiki-useraccount-without-userpage": "The user account exists but not the userpage.",
 	"mgwiki-create-userpage": "Userpage initialization",
 	"mgwiki-template-new-userpage": "{{Personne\n|Prénom=$2\n|Nom=$3\n|E-mail=$4\n|Statut personne=$5\n|Statut additionnel personne=$6\n|Spécialité ou profession=\n|Année de promotion=\n|Année de thèse=\n|Tuteur référent=\n}}\n{{Personne2\n|Rapports et conflits d'intérêts=\n}}",
-	"mgwiki-bad-email-token": "The initial connection link seems to be broken (bad email token). Please check the link was not truncated by copying and pasting in your browser the whole link from your email."
+	"mgwiki-bad-email-token": "The initial connection link seems to be broken (bad email token). Please check the link was not truncated by copying and pasting in your browser the whole link from your email.",
+	"mgwiki-changed-email": "Change email address"
 }

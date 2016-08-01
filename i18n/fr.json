@@ -30,5 +30,6 @@
 	"mgwiki-useraccount-without-userpage": "Le compte utilisateur existe, mais pas la page utilisateur.",
 	"mgwiki-create-userpage": "Initialisation de la page utilisateur",
 	"mgwiki-template-new-userpage": "{{Personne\n|Prénom=$2\n|Nom=$3\n|E-mail=$4\n|Statut personne=$5\n|Statut additionnel personne=$6\n|Spécialité ou profession=\n|Année de promotion=\n|Année de thèse=\n|Tuteur référent=\n}}\n{{Personne2\n|Rapports et conflits d'intérêts=\n}}",
-	"mgwiki-bad-email-token": "Le lien de connexion initiale que vous avez suivi semble ne pas être valide (mauvais jeton de courriel).\n\nVeuillez vérifier que le lien n’a pas été tronqué en copiant et collant dans votre navigateur l’ensemble du lien du courriel."
+	"mgwiki-bad-email-token": "Le lien de connexion initiale que vous avez suivi semble ne pas être valide (mauvais jeton de courriel).\n\nVeuillez vérifier que le lien n’a pas été tronqué en copiant et collant dans votre navigateur l’ensemble du lien du courriel.",
+	"mgwiki-changed-email": "Changement d’adresse de courriel"
 }
