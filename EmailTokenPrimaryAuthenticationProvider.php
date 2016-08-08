@@ -73,6 +73,8 @@ class EmailTokenPrimaryAuthenticationProvider
 			return AuthenticationResponse::newFail( wfMessage( 'mgwiki-bad-email-token' ) );
 		}
 		$username = $user->getName();
+		$user->setEmail( $user->getEmail() );
+		$user->confirmEmail();
 		return AuthenticationResponse::newPass( $username );
 	}
 
@@ -114,6 +116,11 @@ class EmailTokenPrimaryAuthenticationProvider
 			__METHOD__,
 			$options
 		);
+	}
+
+	public function testUserCanAuthenticate( $username ) {
+		$user = User::newFromName( $username );
+		return $user->isEmailConfirmationPending();
 	}
 
 	public function providerAllowsAuthenticationDataChange( AuthenticationRequest $req,

@@ -152,6 +152,35 @@ class MGWiki {
 	}
 
 	/**
+	 * When the user is on her/his userpage, and if s/he doesn’t have a password (new user), redirect her/him to password initialisation.
+	 *
+	 * @param Article $article Article the user will be redirected to.
+	 * @param string $sectionanchor Anchor in the redirected page (must be "#anchor").
+	 * @param string $extraq Extra query parameters, encoded for a URL (e.g. "a=1&b=c").
+	 * @return void
+	 */
+	public static function onArticleUpdateBeforeRedirect( $article, &$sectionanchor, &$extraq ) {
+		
+		global $wgUser, $wgOut;
+
+		# If not the userpage, not in the scope of this hook
+		if( !$wgUser->getUserPage()->equals( $article->getTitle() ) ) {
+			return;
+		}
+
+		# Check if the user can authenticate herself/himself (=has a password)
+		$authManager = AuthManager::singleton();
+		if( $authManager->userCanAuthenticate( $wgUser->getName() ) ) {
+			return;
+		}
+
+		# Redirect her/him now because the hook doesn’t give the opportunity to change the redirected page
+		$wgOut->redirect( SpecialPage::getTitleFor( 'ChangePassword' )->getFullURL() );
+		$wgOut->output();
+		exit;
+	}
+
+	/**
 	 * Synchronise the requested groups from the semantic form with MediaWiki groups.
 	 *
 	 * @param Title $title Title of the subject page.
