@@ -16,6 +16,7 @@
 					"type": "object",
 					"description": "Configuration for one specific form.",
 					"additionalProperties": false,
+					"required": ["RegexPageName"],
 					"properties": {
 						"RegexPageName": {
 							"type": "string",
@@ -23,15 +24,17 @@
 						},
 						"RequiredRight": {
 							"type": "string",
-							"description": "Required right to edit the target page (apart for our own userpage if EditOwnUserpage is true); this right should be registered in \"AvailableRights\" in extension.json."
+							"description": "Required right to edit the target page (apart for the user edit her/his own userpage if EditOwnUserpage is true); this right should be registered in \"AvailableRights\" in extension.json. No required right if not provided."
 						},
 						"EditOwnUserpage": {
 							"type": "boolean",
-							"description": "Exceptional right to edit our own userpage if we don’t have the required right (and if the target page is in the User: namespace)."
+							"description": "Exceptional right for a user editing her/his own userpage if s/he don’t have the required right.",
+							"default": false
 						},
 						"SubObjects": {
 							"type": "boolean",
-							"description": "Read subobjects in the form to create users accordingly."
+							"description": "Read subobjects in the form to create users accordingly.",
+							"default": false
 						}
 					}
 				}
@@ -44,16 +47,18 @@
 			"patternProperties": {
 				"^[a-zA-Z0-9 ]+$": {
 					"type": "object",
-					"description": "Name of the semantic property to be synchronised with MediaWiki groups",
+					"description": "Name of the semantic property to be synchronised with MediaWiki groups. At least one property between MapFromProperty and MapFromTitle should be provided.",
 					"additionalProperties": false,
+					"required": ["Groups"],
 					"properties": {
 						"RequiredRight": {
 							"type": "string",
-							"description": "Required right to synchronise the the semantic property with MediaWiki groups (apart for our own userpage if EditOwnUserpage is true); without it, and if the user is authorised to edit the page, change this property will have no effect in the MediaWiki groups; this right should be registered in \"AvailableRights\" in extension.json. In addition to this setting, note that for usability matters it would be better to disable the property in SemanticForms itself ({{{field|restricted}}}) to avoid desynchronising data sources."
+							"description": "Required right to synchronise the the semantic property with MediaWiki groups (apart for the user editing her/his own userpage if EditOwnUserpage is true); without it, and if the user is authorised to edit the page, change this property will have no effect in the MediaWiki groups; this right should be registered in \"AvailableRights\" in extension.json. In addition to this setting, note that for usability matters it would be better to disable the property in SemanticForms itself ({{{field|restricted}}}) to avoid desynchronising data sources. No required right if not provided."
 						},
 						"EditOwnUserpage": {
 							"type": "boolean",
-							"description": "Exceptional right for a user to synchronise the semantic property on her/his own userpage with MediaWiki groups; without it, and if the user is authorised to edit the page, change this property will have no effect in the MGWiki extension realm."
+							"description": "Exceptional right for a user to synchronise the semantic property on her/his own userpage with MediaWiki groups; without it, and if the user is authorised to edit the page, change this property will have no effect in the MGWiki extension realm.",
+							"default": false
 						},
 						"Groups": {
 							"type": "array",
@@ -89,6 +94,7 @@
 			"type": "object",
 			"description": "Mapping between internal identifiers and real semantic property names.",
 			"additionalProperties": false,
+			"required": ["email", "firstname", "lastname", "statutPersonne", "statutAdditionnelPersonne"],
 			"patternProperties": {
 				"email": {
 					"type": "string",
