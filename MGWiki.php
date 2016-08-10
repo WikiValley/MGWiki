@@ -303,8 +303,8 @@ class MGWiki {
 						$groups[$property] = $group;
 				}
 			}
-			#if ( !array_key_exists( $property, $groups ) && in_array( '', $paramsProperty['Groups'] ) )
-			#	$groups[$property] = '';
+			if ( !array_key_exists( $property, $groups ) && in_array( '', $paramsProperty['Groups'] ) )
+				$groups[$property] = '';
 			#echo "\$groups ($property) = ";var_dump($groups);
 		}
 
