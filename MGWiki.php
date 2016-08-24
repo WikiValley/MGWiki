@@ -203,9 +203,15 @@ class MGWiki {
 		}
 
 		# Always update the “last-date-edited-by-user-her/himself”
-		$content = new WikitextContent( preg_replace( "/(^|\r?\n) *\| *" . preg_quote( $wgMGWikiUserProperties['timestamp'], '/' ) . " *=.*(\r?\n|$)/",
-		              '$1|' . $wgMGWikiUserProperties['timestamp'] . '=' . wfTimestamp() . '$2',
-		              $content->getNativeData() ) );
+		if( preg_match( "/(^|\r?\n) *\| *" . preg_quote( $wgMGWikiUserProperties['timestamp'], '/' ) . " *=.*(\r?\n|$)/", $content->getNativeData() ) ) {
+			$content = new WikitextContent( preg_replace( "/(^|\r?\n) *\| *" . preg_quote( $wgMGWikiUserProperties['timestamp'], '/' ) . " *=.*(\r?\n|$)/",
+			              '$1|' . $wgMGWikiUserProperties['timestamp'] . '=' . wfTimestamp() . '$2',
+			              $content->getNativeData() ) );
+		} else {
+			$content = new WikitextContent( preg_replace( "/((^|\r?\n) *\| *" . preg_quote( $wgMGWikiUserProperties['email'], '/' ) . " *=.*)(\r?\n|$)/",
+			              "\$1\n|" . $wgMGWikiUserProperties['timestamp'] . '=' . wfTimestamp() . '$3',
+			              $content->getNativeData() ) );
+		}
 	}
 
 	/**
