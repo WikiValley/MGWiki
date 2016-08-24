@@ -4,7 +4,7 @@
 			"Sébastien Beyou"
 		]
 	},
-	"mgwiki-desc": ""{{desc|name=MGWiki|url=https://mgwiki.univ-lyon1.fr}}",
+	"mgwiki-desc": "{{desc|name=MGWiki|url=https://mgwiki.univ-lyon1.fr}}",
 	"invitation": "Title of the [[Special:Invitation]] special page",
 	"right-mgwikimanagelevel1": "{{doc-right|right-mgwikimanagelevel1}}Right to manage basic users",
 	"right-mgwikimanagelevel2": "{{doc-right|right-mgwikimanagelevel2}}Right to manage advanced users (moderators)",

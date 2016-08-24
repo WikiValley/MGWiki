@@ -80,7 +80,8 @@
 			"firstname": "Prénom",
 			"lastname": "Nom",
 			"statutPersonne": "Statut personne",
-			"statutAdditionnelPersonne": "Statut additionnel personne"
+			"statutAdditionnelPersonne": "Statut additionnel personne",
+			"timestamp": "Dernière modification"
 		}
 	},
 	"SpecialPages": {
@@ -136,6 +137,9 @@
 		],
 		"ArticleUpdateBeforeRedirect": [
 			"MGWiki::onArticleUpdateBeforeRedirect"
+		],
+		"PageContentSave": [
+			"MGWiki::onPageContentSave"
 		]
 	},
 	"AuthManagerAutoConfig": {

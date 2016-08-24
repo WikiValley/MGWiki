@@ -181,6 +181,34 @@ class MGWiki {
 	}
 
 	/**
+	 * Update the property on the userpage “last-date-edited-by-user-her/himself”
+	 * 
+	 * @param WikiPage $wikiPage The WikiPage (object) being saved.
+         * @param User $user The User (object) saving the article.
+         * @param Content $content The new article content, as a Content object.
+         * @param string $summary The article summary (comment).
+         * @param integer $isMinor Minor flag.
+         * @param null $isWatch Watch flag (not used, aka always null).
+         * @param null $section Section number (not used, aka always null).
+         * @param integer $flags See WikiPage::doEditContent documentation for flags' definition.
+         * @param Status $status Status (object).
+	 */
+	public static function onPageContentSave( &$wikiPage, &$user, &$content, &$summary, $isMinor, $isWatch, $section, &$flags, &$status ) {
+
+		global $wgMGWikiUserProperties;
+
+		# If not the userpage, not in the scope of this hook
+		if( !$user->getUserPage()->equals( $wikiPage->getTitle() ) ) {
+			return true;
+		}
+
+		# Always update the “last-date-edited-by-user-her/himself”
+		$content = new WikitextContent( preg_replace( "/(^|\r?\n) *\| *" . preg_quote( $wgMGWikiUserProperties['timestamp'], '/' ) . " *=.*(\r?\n|$)/",
+		              '$1|' . $wgMGWikiUserProperties['timestamp'] . '=' . wfTimestamp() . '$2',
+		              $content->getNativeData() ) );
+	}
+
+	/**
 	 * Synchronise the requested groups from the semantic form with MediaWiki groups.
 	 *
 	 * @param Title $title Title of the subject page.
