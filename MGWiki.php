@@ -453,6 +453,7 @@ class MGWiki {
 		global $wgUser, $wgNewUserLog, $wgVersion;
 		global $wgMGWikiUserProperties;
 
+		$username = User::getCanonicalName( $username, 'creatable' );
 		$user = User::newFromName( $username );
 		if ( $user->getId() )
 			return false;
