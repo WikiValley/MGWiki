@@ -35,6 +35,18 @@
 				"InstitutionFromModerator": true,
 				"SubObjects": true
 			},
+			"GEP": {
+				"RegexPageName": "/^GEP/",
+				"RequiredRight": "mgwikimanagelevel1",
+				"InstitutionFromModerator": true,
+				"SubObjects": true
+			},
+			"GAPP": {
+				"RegexPageName": "/^GAPP/",
+				"RequiredRight": "mgwikimanagelevel1",
+				"InstitutionFromModerator": true,
+				"SubObjects": true
+			},
 			"Groupe de niveau 2": {
 				"RegexPageName": "/^(Tuteurs|Modérateurs)/",
 				"RequiredRight": "mgwikimanagelevel2",
