@@ -26,21 +26,25 @@
 			"Nouveaux utilisateurs": {
 				"RegexPageName": "/^Nouveaux utilisateurs/",
 				"RequiredRight": "mgwikimanagelevel1",
+				"InstitutionFromModerator": true,
 				"SubObjects": true
 			},
 			"Groupe": {
 				"RegexPageName": "/^(GEP|GAPP)/",
 				"RequiredRight": "mgwikimanagelevel1",
+				"InstitutionFromModerator": true,
 				"SubObjects": true
 			},
 			"Groupe de niveau 2": {
 				"RegexPageName": "/^(Tuteurs|Modérateurs)/",
 				"RequiredRight": "mgwikimanagelevel2",
+				"InstitutionFromModerator": true,
 				"SubObjects": true
 			},
 			"Nouveaux tuteurs ou modérateurs": {
 				"RegexPageName": "/^Nouveaux tuteurs ou modérateurs/",
 				"RequiredRight": "mgwikimanagelevel2",
+				"InstitutionFromModerator": true,
 				"SubObjects": true
 			}
 		},
@@ -81,7 +85,9 @@
 			"lastname": "Nom",
 			"statutPersonne": "Statut personne",
 			"statutAdditionnelPersonne": "Statut additionnel personne",
-			"timestamp": "Dernière modification"
+			"timestamp": "Dernière modification",
+			"institution": "Institution de rattachement",
+			"moderator": "Tuteur ou modérateur"
 		}
 	},
 	"SpecialPages": {

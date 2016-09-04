@@ -115,7 +115,7 @@ class MGWiki {
 	 * @param SMWSQLStore3 $store SemanticMediaWiki store
 	 * @param SMWSemanticData $semanticData Semantic data
 	 * @param SMW\SQLStore\CompositePropertyTableDiffIterator $compositePropertyTableDiffIterator Differences on property values
-	 * @return true
+	 * @return bool|void
 	 */
 	public static function onSMW_SQLStore_AfterDataUpdateComplete( SMWSQLStore3 $store, SMWSemanticData $semanticData, SMW\SQLStore\CompositePropertyTableDiffIterator $compositePropertyTableDiffIterator ) {
 
@@ -131,7 +131,7 @@ class MGWiki {
 		# Get the user who made the change
 		# It is executed as a job, so $wgUser is not the real user who made the change
 		$statements = self::collectSemanticData( [ '_LEDT' ], $semanticData, $complete );
-		if ( !array_key_exists( '_LEDT', $statements ) || $statements['_LEDT']->getNamespace() != 2 )
+		if ( !array_key_exists( '_LEDT', $statements ) || !$statements['_LEDT'] instanceof Title || $statements['_LEDT']->getNamespace() != 2 )
 			return;
 		$editor = User::newFromName( $statements['_LEDT']->getText() );
 		if( !$editor ) {
@@ -250,6 +250,20 @@ class MGWiki {
 		# Iterate over the fields groups
 		$defaultGroups = self::searchFieldsGroups( $title, $editor, $semanticData, $editOwnUserpage );
 
+		# Get moderator’s institution if defined
+		$institution = [];
+		if( array_key_exists( 'InstitutionFromModerator', $paramsForm ) && $paramsForm['InstitutionFromModerator'] ) {
+			$moderator = self::collectSemanticData( [ $wgMGWikiUserProperties['moderator'] ], $semanticData, $complete );
+			if( count( $moderator ) == 1 ) {
+				$institution = self::collectSemanticData( [ $wgMGWikiUserProperties['institution'] ],
+				                                          $store->getSemanticData( SMW\DIWikiPage::newFromTitle( $moderator[$wgMGWikiUserProperties['moderator']] ) ),
+			        	                                  $complete );
+				if( count( $institution ) != 1 ) {
+					$institution = [];
+				}
+			}
+		}
+
 		# Iterate over the subobjects
 		if ( array_key_exists( 'SubObjects', $paramsForm ) && $paramsForm['SubObjects'] ) {
 			if ( $semanticData->hasSubSemanticData() ) {
@@ -260,6 +274,7 @@ class MGWiki {
 					# Create users
 					$propertiesToBeSearched = array_diff( array_values( $wgMGWikiUserProperties ), array_keys( $wgMGWikiFieldsGroups ) );
 					$userData = self::collectSemanticData( $propertiesToBeSearched, $userSemanticData, $complete );
+					$userData = array_merge( $institution, $userData );
 					if ( array_key_exists( $wgMGWikiUserProperties['firstname'], $userData ) && array_key_exists( $wgMGWikiUserProperties['lastname'], $userData ) ) {
 						# Iterate over the fields groups
 						$userGroups = self::searchFieldsGroups( false, $editor, $userSemanticData, $editOwnUserpage );
@@ -394,7 +409,7 @@ class MGWiki {
 	/**
 	 * Collect the requested data.
 	 *
-	 * @param array $fields Field names
+	 * @param string[] $fields Field names
 	 * @param SMW\SemanticData $semanticData Semantic data
 	 * @param bool $complete Is set to true or false depending if all fields were found in the data
 	 * @return array Requested data
@@ -508,8 +523,10 @@ class MGWiki {
 		$email = array_key_exists( $wgMGWikiUserProperties['email'], $userData ) ? $userData[$wgMGWikiUserProperties['email']] : '';
 		$statutPers = array_key_exists( $wgMGWikiUserProperties['statutPersonne'], $userData ) ? $userData[$wgMGWikiUserProperties['statutPersonne']] : '';
 		$statutAddPers = array_key_exists( $wgMGWikiUserProperties['statutAdditionnelPersonne'], $userData ) ? $userData[$wgMGWikiUserProperties['statutAdditionnelPersonne']] : '';
+		$institution = array_key_exists( $wgMGWikiUserProperties['institution'], $userData ) ? $userData[$wgMGWikiUserProperties['institution']]->getPrefixedText() : '';
 		$content = new WikitextContent( wfMessage( 'mgwiki-template-new-userpage',
-			$username, $userData[$wgMGWikiUserProperties['firstname']], $userData[$wgMGWikiUserProperties['lastname']], $email, $statutPers, $statutAddPers
+			$username, $userData[$wgMGWikiUserProperties['firstname']], $userData[$wgMGWikiUserProperties['lastname']],
+			$email, $statutPers, $statutAddPers, $institution
 		)->inContentLanguage()->plain() );
 		$flags = EDIT_NEW;
 		$userArticle->doEditContent( $content, $summary, $flags, false, $wgUser );

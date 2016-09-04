@@ -26,6 +26,11 @@
 							"type": "string",
 							"description": "Required right to edit the target page (apart for the user edit her/his own userpage if EditOwnUserpage is true); this right should be registered in \"AvailableRights\" in extension.json. No required right if not provided."
 						},
+						"InstitutionFromModerator":
+							"type": "boolean",
+							"description": "Read the property 'institution' defined for the moderator (defined by the property 'moderator') and apply it to created accounts.",
+							"default": false
+						},
 						"EditOwnUserpage": {
 							"type": "boolean",
 							"description": "Exceptional right for a user editing her/his own userpage if s/he don’t have the required right.",
