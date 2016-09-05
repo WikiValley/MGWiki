@@ -215,6 +215,28 @@ class MGWiki {
 	}
 
 	/**
+	 * 
+	 */
+	static function onPostLoginRedirect( &$returnTo, &$returnToQuery, &$type ) {
+
+		global $wgUser;
+		global $wgMGWikiUserProperties;
+
+		$store = &smwfGetStore();
+		$complete = null;
+
+		$update = self::collectSemanticData( [ $wgMGWikiUserProperties['requiredUserUpdate'] ], $store->getSemanticData( SMW\DIWikiPage::newFromTitle( $wgUser->getUserPage() ) ), $complete );
+
+		if( count( $update ) == 1 && $update[$wgMGWikiUserProperties['requiredUserUpdate']] ) {
+			$returnTo = $wgUser->getUserPage()->getPrefixedText();
+			$returnToQuery = [ 'action' => 'formedit' ];
+			$type = 'successredirect';
+		}
+
+		return true;
+	}
+
+	/**
 	 * Synchronise the requested groups from the semantic form with MediaWiki groups.
 	 *
 	 * @param Title $title Title of the subject page.
@@ -446,6 +468,11 @@ class MGWiki {
 			elseif ( count( $values ) == 1 && current( $values )->getDIType() == SMWDataItem::TYPE_WIKIPAGE ) {
 				#echo "property ".$diProperty->getKey()." (".$mapNormalisation[$diProperty->getKey()].") = ".current( $values )->getTitle()."\n";
 				$userData[$mapNormalisation[$diProperty->getKey()]] = current( $values )->getTitle();
+				$count++;
+			}
+			elseif ( count( $values ) == 1 && current( $values )->getDIType() == SMWDataItem::TYPE_BOOLEAN ) {
+				#echo "property ".$diProperty->getKey()." (".$mapNormalisation[$diProperty->getKey()].") = ".(current( $values )->getBoolean()?'true':'false')."\n";
+				$userData[$mapNormalisation[$diProperty->getKey()]] = current( $values )->getBoolean();
 				$count++;
 			}
 		}

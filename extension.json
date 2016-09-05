@@ -99,7 +99,8 @@
 			"statutAdditionnelPersonne": "Statut additionnel personne",
 			"timestamp": "Dernière modification",
 			"institution": "Institution de rattachement",
-			"moderator": "Tuteur ou modérateur"
+			"moderator": "Tuteur ou modérateur",
+			"requiredUserUpdate": "Mise à jour requise"
 		}
 	},
 	"SpecialPages": {
@@ -158,6 +159,9 @@
 		],
 		"PageContentSave": [
 			"MGWiki::onPageContentSave"
+		],
+		"PostLoginRedirect": [
+			"MGWiki::onPostLoginRedirect"
 		]
 	},
 	"AuthManagerAutoConfig": {
