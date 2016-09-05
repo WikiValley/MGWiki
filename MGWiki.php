@@ -238,9 +238,11 @@ class MGWiki {
 		# Check if the user edits her/his own userpage
 		if ( $title->getNamespace() == NS_USER ) {
 			$user = User::newFromName( $title->getDBkey() );
-			$user->load();
-			if ( $editor->isLoggedIn() && $editor->getId() == $user->getId() )
-				$editOwnUserpage = array_key_exists( 'EditOwnUserpage', $paramsForm ) && $paramsForm['EditOwnUserpage'];
+			if( $user instanceof User ) {
+				$user->load();
+				if ( $editor->isLoggedIn() && $editor->getId() == $user->getId() )
+					$editOwnUserpage = array_key_exists( 'EditOwnUserpage', $paramsForm ) && $paramsForm['EditOwnUserpage'];
+			}
 		}
 
 		# Check permissions
