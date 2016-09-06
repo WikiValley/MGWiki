@@ -152,35 +152,6 @@ class MGWiki {
 	}
 
 	/**
-	 * When the user is on her/his userpage, and if s/he doesn’t have a password (new user), redirect her/him to password initialisation.
-	 *
-	 * @param Article $article Article the user will be redirected to.
-	 * @param string $sectionanchor Anchor in the redirected page (must be "#anchor").
-	 * @param string $extraq Extra query parameters, encoded for a URL (e.g. "a=1&b=c").
-	 * @return void
-	 */
-	public static function onArticleUpdateBeforeRedirect( $article, &$sectionanchor, &$extraq ) {
-		
-		global $wgUser, $wgOut;
-
-		# If not the userpage, not in the scope of this hook
-		if( !$wgUser->getUserPage()->equals( $article->getTitle() ) ) {
-			return;
-		}
-
-		# Check if the user can authenticate herself/himself (=has a password)
-		$authManager = AuthManager::singleton();
-		if( $authManager->userCanAuthenticate( $wgUser->getName() ) ) {
-			return;
-		}
-
-		# Redirect her/him now because the hook doesn’t give the opportunity to change the redirected page
-		$wgOut->redirect( SpecialPage::getTitleFor( 'ChangePassword' )->getFullURL() );
-		$wgOut->output();
-		exit;
-	}
-
-	/**
 	 * Update the property on the userpage “last-date-edited-by-user-her/himself”
 	 * 
 	 * @param WikiPage $wikiPage The WikiPage (object) being saved.
@@ -215,7 +186,8 @@ class MGWiki {
 	}
 
 	/**
-	 * 
+	 * Redirect the user just after login if her/his semantic property says
+	 * s/he should update her/his informations.
 	 */
 	static function onPostLoginRedirect( &$returnTo, &$returnToQuery, &$type ) {
 
@@ -234,6 +206,24 @@ class MGWiki {
 		}
 
 		return true;
+	}
+
+	/**
+	 * 
+	 *
+	 * @param SpecialPage $specialPage
+	 * @param string|null $subpage
+	 */
+	static function onSpecialPageAfterExecute( $specialPage, $subpage ) {
+
+		global $wgUser, $wgOut;
+
+		if( $specialPage->getName() != 'ChangeCredentials' || !$specialPage->getRequest()->wasPosted() ) {
+			return true;
+		}
+
+		$wgOut->redirect( $wgUser->getUserPage()->getFullURL( [ 'action' => 'formedit' ] ) );
+		$wgOut->output();
 	}
 
 	/**

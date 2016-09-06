@@ -154,14 +154,14 @@
 		"SMW::SQLStore::AfterDataUpdateComplete": [
 			"MGWiki::onSMW_SQLStore_AfterDataUpdateComplete"
 		],
-		"ArticleUpdateBeforeRedirect": [
-			"MGWiki::onArticleUpdateBeforeRedirect"
-		],
 		"PageContentSave": [
 			"MGWiki::onPageContentSave"
 		],
 		"PostLoginRedirect": [
 			"MGWiki::onPostLoginRedirect"
+		],
+		"SpecialPageAfterExecute": [
+			"MGWiki::onSpecialPageAfterExecute"
 		]
 	},
 	"AuthManagerAutoConfig": {

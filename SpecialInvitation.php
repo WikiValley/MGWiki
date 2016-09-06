@@ -123,10 +123,7 @@ class Invitation extends LoginSignupSpecialPage {
 				$user->saveSettings();
 
 				$this->successfulAction( true );
-				if( class_exists( 'SFForms' ) )
-					$this->getOutput()->redirect( $user->getUserPage()->getFullURL( 'action=formedit' ) );
-				else
-					$this->getOutput()->redirect( $user->getUserPage()->getFullURL() );
+				$this->getOutput()->redirect( SpecialPage::getSafeTitleFor( 'ChangePassword' )->getFullURL() );
 				break;
 			case AuthenticationResponse::FAIL:
 				$this->getOutput()->addWikiMsg( 'mgwiki-bad-email-token' );
