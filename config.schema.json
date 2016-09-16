@@ -31,6 +31,11 @@
 							"description": "Read the property 'institution' defined for the moderator (defined by the property 'moderator') and apply it to created accounts.",
 							"default": false
 						},
+						"InstitutionFromCreator":
+							"type": "boolean",
+							"description": "Read the property 'institution' defined for the account creator and apply it to created accounts.",
+							"default": false
+						},
 						"EditOwnUserpage": {
 							"type": "boolean",
 							"description": "Exceptional right for a user editing her/his own userpage if s/he don’t have the required right.",

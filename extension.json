@@ -26,37 +26,37 @@
 			"Nouveaux utilisateurs": {
 				"RegexPageName": "/^Nouveaux utilisateurs/",
 				"RequiredRight": "mgwikimanagelevel1",
-				"InstitutionFromModerator": true,
+				"InstitutionFromCreator": true,
 				"SubObjects": true
 			},
 			"Groupe": {
 				"RegexPageName": "/^(GEP|GAPP)/",
 				"RequiredRight": "mgwikimanagelevel1",
-				"InstitutionFromModerator": true,
+				"InstitutionFromCreator": true,
 				"SubObjects": true
 			},
 			"GEP": {
 				"RegexPageName": "/^Groupe:GEP/",
 				"RequiredRight": "mgwikimanagelevel1",
-				"InstitutionFromModerator": true,
+				"InstitutionFromCreator": true,
 				"SubObjects": true
 			},
 			"GAPP": {
 				"RegexPageName": "/^Groupe:GAPP/",
 				"RequiredRight": "mgwikimanagelevel1",
-				"InstitutionFromModerator": true,
+				"InstitutionFromCreator": true,
 				"SubObjects": true
 			},
 			"Groupe de niveau 2": {
 				"RegexPageName": "/^(Tuteurs|Modérateurs)/",
 				"RequiredRight": "mgwikimanagelevel2",
-				"InstitutionFromModerator": true,
+				"InstitutionFromCreator": true,
 				"SubObjects": true
 			},
 			"Nouveaux tuteurs ou modérateurs": {
 				"RegexPageName": "/^Nouveaux tuteurs ou modérateurs/",
 				"RequiredRight": "mgwikimanagelevel2",
-				"InstitutionFromModerator": true,
+				"InstitutionFromCreator": true,
 				"SubObjects": true
 			}
 		},
@@ -99,6 +99,7 @@
 			"statutAdditionnelPersonne": "Statut additionnel personne",
 			"timestamp": "Dernière modification",
 			"institution": "Institution de rattachement",
+			"referrer": "Référent",
 			"moderator": "Tuteur ou modérateur",
 			"requiredUserUpdate": "Mise à jour requise"
 		}

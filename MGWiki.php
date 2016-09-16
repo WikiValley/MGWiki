@@ -275,6 +275,19 @@ class MGWiki {
 				if( count( $institution ) != 1 ) {
 					$institution = [];
 				}
+				$institution[$wgMGWikiUserProperties['referrer']] = $moderator[$wgMGWikiUserProperties['moderator']]->getText();
+			}
+		}
+		elseif( array_key_exists( 'InstitutionFromCreator', $paramsForm ) && $paramsForm['InstitutionFromCreator'] ) {
+			$moderator = self::collectSemanticData( [ '_LEDT' ], $semanticData, $complete );
+			if( count( $moderator ) == 1 ) {
+				$institution = self::collectSemanticData( [ $wgMGWikiUserProperties['institution'] ],
+				                                          $store->getSemanticData( SMW\DIWikiPage::newFromTitle( $moderator[$wgMGWikiUserProperties['moderator']] ) ),
+			        	                                  $complete );
+				if( count( $institution ) != 1 ) {
+					$institution = [];
+				}
+				$institution[$wgMGWikiUserProperties['referrer']] = $moderator['_LEDT']->getText();
 			}
 		}
 
@@ -543,9 +556,10 @@ class MGWiki {
 		$statutPers = array_key_exists( $wgMGWikiUserProperties['statutPersonne'], $userData ) ? $userData[$wgMGWikiUserProperties['statutPersonne']] : '';
 		$statutAddPers = array_key_exists( $wgMGWikiUserProperties['statutAdditionnelPersonne'], $userData ) ? $userData[$wgMGWikiUserProperties['statutAdditionnelPersonne']] : '';
 		$institution = array_key_exists( $wgMGWikiUserProperties['institution'], $userData ) ? $userData[$wgMGWikiUserProperties['institution']]->getPrefixedText() : '';
+		$referrer = array_key_exists( $wgMGWikiUserProperties['referrer'], $userData ) ? $userData[$wgMGWikiUserProperties['referrer']] : '';
 		$content = new WikitextContent( wfMessage( 'mgwiki-template-new-userpage',
 			$username, $userData[$wgMGWikiUserProperties['firstname']], $userData[$wgMGWikiUserProperties['lastname']],
-			$email, $statutPers, $statutAddPers, $institution
+			$email, $statutPers, $statutAddPers, $institution, $referrer
 		)->inContentLanguage()->plain() );
 		$flags = EDIT_NEW;
 		$userArticle->doEditContent( $content, $summary, $flags, false, $wgUser );
