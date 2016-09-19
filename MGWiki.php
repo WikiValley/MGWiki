@@ -279,15 +279,15 @@ class MGWiki {
 			}
 		}
 		elseif( array_key_exists( 'InstitutionFromCreator', $paramsForm ) && $paramsForm['InstitutionFromCreator'] ) {
-			$moderator = self::collectSemanticData( [ '_LEDT' ], $semanticData, $complete );
-			if( count( $moderator ) == 1 ) {
+			$creator = self::collectSemanticData( [ '_LEDT' ], $semanticData, $complete );
+			if( count( $creator ) == 1 ) {
 				$institution = self::collectSemanticData( [ $wgMGWikiUserProperties['institution'] ],
-				                                          $store->getSemanticData( SMW\DIWikiPage::newFromTitle( $moderator[$wgMGWikiUserProperties['moderator']] ) ),
+				                                          $store->getSemanticData( SMW\DIWikiPage::newFromTitle( $creator['_LEDT'] ) ),
 			        	                                  $complete );
 				if( count( $institution ) != 1 ) {
 					$institution = [];
 				}
-				$institution[$wgMGWikiUserProperties['referrer']] = $moderator['_LEDT']->getText();
+				$institution[$wgMGWikiUserProperties['referrer']] = $creator['_LEDT']->getText();
 			}
 		}
 
