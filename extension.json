@@ -47,6 +47,18 @@
 				"InstitutionFromCreator": true,
 				"SubObjects": true
 			},
+			"Stage praticien": {
+				"RegexPageName": "/^Groupe:Stage praticien/",
+				"RequiredRight": "mgwikimanagelevel1",
+				"InstitutionFromCreator": true,
+				"SubObjects": true
+			},
+			"DPC": {
+				"RegexPageName": "/^Groupe:DPC/",
+				"RequiredRight": "mgwikimanagelevel1",
+				"InstitutionFromCreator": true,
+				"SubObjects": true
+			},
 			"Groupe de niveau 2": {
 				"RegexPageName": "/^(Tuteurs|Modérateurs)/",
 				"RequiredRight": "mgwikimanagelevel2",
