@@ -311,11 +311,11 @@ class MGWiki {
 						#echo "userGroups = ";var_dump($userGroups);
 
 						# If there is a person status, override add it
-						foreach ( $wgMGWikiFieldsGroups as $k => $v ) {
-							if ( array_key_exists( $k, $groups ) ) {
-								$userData[$k] = array_flip( $v['MapFromProperty'] )[$groups[$k]];
-							}
-						}
+						#foreach ( $wgMGWikiFieldsGroups as $k => $v ) {
+						#	if ( array_key_exists( $k, $groups ) ) {
+						#		$userData[$k] = array_flip( $v['MapFromProperty'] )[$groups[$k]];
+						#	}
+						#}
 						#echo "userData (bis) = ";var_dump($userData);
 
 						$username = $userData[$wgMGWikiUserProperties['firstname']].' '.$userData[$wgMGWikiUserProperties['lastname']];

@@ -77,17 +77,17 @@
 			},
 			"Statut additionnel personne": {
 				"RequiredRight": "mgwikimanagelevel2",
-				"Groups": ["", "tuteur", "modérateur", "formateur", "MSU"],
+				"Groups": ["", "U2", "tuteur", "modérateur", "formateur", "MSU"],
 				"MapFromProperty": {
 					"": "",
-					"Tuteur": "tuteur",
-					"Modérateur": "modérateur",
-					"Formateur": "formateur",
-					"MSU": "MSU"
+					"Tuteur": "U2",
+					"Modérateur": "U2",
+					"Formateur": "U2",
+					"MSU": "U2"
 				},
 				"MapFromTitle": {
-					"/^Tuteurs/": "tuteur",
-					"/^Modérateurs/": "modérateur"
+					"/^Tuteurs/": "U2",
+					"/^Modérateurs/": "U2"
 				}
 			}
 		},
@@ -121,6 +121,9 @@
 			"mgwikimanagelevel1": true
 		},
 		"MSU": {
+			"mgwikimanagelevel1": true
+		},
+		"U2": {
 			"mgwikimanagelevel1": true
 		},
 		"sysop": {
