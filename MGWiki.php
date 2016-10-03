@@ -299,7 +299,7 @@ class MGWiki {
 				foreach ( $subSemanticData as $user => $userSemanticData ) {
 
 					# Create users
-					$propertiesToBeSearched = array_diff( array_values( $wgMGWikiUserProperties ), array_keys( $wgMGWikiFieldsGroups ) );
+					$propertiesToBeSearched = array_values( $wgMGWikiUserProperties );
 					$userData = self::collectSemanticData( $propertiesToBeSearched, $userSemanticData, $complete );
 					$userData = array_merge( $institution, $userData );
 					if ( array_key_exists( $wgMGWikiUserProperties['firstname'], $userData ) && array_key_exists( $wgMGWikiUserProperties['lastname'], $userData ) ) {
