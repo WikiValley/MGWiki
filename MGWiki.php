@@ -241,6 +241,7 @@ class MGWiki {
 	private static function synchroniseMediaWikiGroups( Title $title, User $editor, $form, array $paramsForm, $store, $semanticData, $compositePropertyTableDiffIterator ) {
 
 		global $wgMGWikiFieldsGroups, $wgMGWikiUserProperties, $wgMGWikiGroups;
+		global $wgUser;
 
 		# Default groups to be added
 		$groups = [];
@@ -293,9 +294,20 @@ class MGWiki {
 
 		# Iterate over the subobjects
 		if ( array_key_exists( 'SubObjects', $paramsForm ) && $paramsForm['SubObjects'] ) {
+			$content = '';
 			if ( $semanticData->hasSubSemanticData() ) {
 				$subSemanticData = $semanticData->getSubSemanticData();
-				$createdUsers = array();
+				$createdUsers = [];
+				$templates = [];
+				if ( array_key_exists( 'MergeNewUsers', $paramsForm ) && is_array( $paramsForm['MergeNewUsers'] ) ) {
+					$templates = $paramsForm['MergeNewUsers'];
+					$article = WikiPage::factory( $title );
+					# Get the content
+					$contentObject = $article->getContent();
+					if( $contentObject->getModel() == CONTENT_MODEL_WIKITEXT ) {
+						$content = $contentObject->getNativeData();
+					}
+				}
 				foreach ( $subSemanticData as $user => $userSemanticData ) {
 
 					# Create users
@@ -324,7 +336,43 @@ class MGWiki {
 
 						# User groups
 						self::addMediaWikiGroups( $username, $groups, $editOwnUserpage );
+
+						# Replace templates with lists
+						if( $content ) {
+							foreach( $templates as $template => $list ) {
+								$content = preg_replace(
+									'/\{\{ *' . $wgMGWikiUserProperties[$template] . "[ \|\n].*?" .# '\}\}/s', '', $content );
+									'\| *' . $wgMGWikiUserProperties['firstname'] . ' *= *' . $userData[$wgMGWikiUserProperties['firstname']] . " *[\|\n]" .
+									'\| *' . $wgMGWikiUserProperties['lastname'] . ' *= *' . $userData[$wgMGWikiUserProperties['lastname']] . " *[\|\n]" .
+									'.*?\}\}/s', '', $content );
+								$content = preg_replace(
+									'/\{\{ *' . $wgMGWikiUserProperties[$template] . "[ \|\n].*?" .# '\}\}/s', '', $content );
+									'\| *' . $wgMGWikiUserProperties['lastname'] . ' *= *' . $userData[$wgMGWikiUserProperties['lastname']] . " *[\|\n]" .
+									'\| *' . $wgMGWikiUserProperties['firstname'] . ' *= *' . $userData[$wgMGWikiUserProperties['firstname']] . " *[\|\n]" .
+									'.*?\}\}/s', '', $content );
+								if( !preg_match( '/\| *' . $wgMGWikiUserProperties[$list] . " *=(.*?) *([\|\n])/", $content ) ) {
+									$content = preg_replace( '/\| *' . $wgMGWikiUserProperties['moderator'] . " *=(?:.*?) *\n/", "$0|" . $wgMGWikiUserProperties[$list] . ' = ' . $username . "\n", $content );
+								} else {
+									$content = preg_replace( '/\| *' . $wgMGWikiUserProperties[$list] . " *=(.*?) *([\|\n])/", '|' . $wgMGWikiUserProperties[$list] . ' = $1, ' . $username . '$2', $content );
+								}
+							}
+						}
 					}
+				}
+			}
+
+			# Save
+			if ( $content && count( $template ) ) {
+
+				# Update the content
+				$contentObject = new WikitextContent( $content );
+
+				# And edit
+				$flags = EDIT_MINOR | EDIT_UPDATE;
+				$summary = wfMessage( 'mgwiki-summary-rewrite-grouppage' )->inContentLanguage()->text();
+				$status = $article->doEditContent( $contentObject, $summary, $flags, false, $wgUser );
+				if( !$status->isOK() ) {
+					# Error
 				}
 			}
 		}
@@ -413,9 +461,9 @@ class MGWiki {
 			}
 
 			# Is it what we want? If so, continue
-			echo ( $uniqueGroup === $valueProperty );
-			if ( $uniqueGroup === $valueProperty )
+			if ( $uniqueGroup === $valueProperty ) {
 				continue;
+			}
 
 			# Else remove the user from the groups	
 			$removedGroups = [];

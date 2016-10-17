@@ -33,37 +33,55 @@
 				"RegexPageName": "/^(GEP|GAPP)/",
 				"RequiredRight": "mgwikimanagelevel1",
 				"InstitutionFromCreator": true,
-				"SubObjects": true
+				"SubObjects": true,
+				"MergeNewUsers": {
+					"participantTemplate": "membersList"
+				}
 			},
 			"GEP": {
 				"RegexPageName": "/^Groupe:GEP/",
 				"RequiredRight": "mgwikimanagelevel1",
 				"InstitutionFromCreator": true,
-				"SubObjects": true
+				"SubObjects": true,
+				"MergeNewUsers": {
+					"participantTemplate": "membersList"
+				}
 			},
 			"GAPP": {
 				"RegexPageName": "/^Groupe:GAPP/",
 				"RequiredRight": "mgwikimanagelevel1",
 				"InstitutionFromCreator": true,
-				"SubObjects": true
+				"SubObjects": true,
+				"MergeNewUsers": {
+					"participantTemplate": "membersList"
+				}
 			},
 			"Stage praticien": {
 				"RegexPageName": "/^Groupe:Stage praticien/",
 				"RequiredRight": "mgwikimanagelevel1",
 				"InstitutionFromCreator": true,
-				"SubObjects": true
+				"SubObjects": true,
+				"MergeNewUsers": {
+					"participantTemplate": "membersList"
+				}
 			},
 			"DPC": {
 				"RegexPageName": "/^Groupe:DPC/",
 				"RequiredRight": "mgwikimanagelevel1",
 				"InstitutionFromCreator": true,
-				"SubObjects": true
+				"SubObjects": true,
+				"MergeNewUsers": {
+					"participantTemplate": "membersList"
+				}
 			},
 			"Groupe de niveau 2": {
 				"RegexPageName": "/^(Tuteurs|Modérateurs)/",
 				"RequiredRight": "mgwikimanagelevel2",
 				"InstitutionFromCreator": true,
-				"SubObjects": true
+				"SubObjects": true,
+				"MergeNewUsers": {
+					"participantTemplate": "membersList"
+				}
 			},
 			"Nouveaux tuteurs ou modérateurs": {
 				"RegexPageName": "/^Nouveaux tuteurs ou modérateurs/",
@@ -113,7 +131,9 @@
 			"institution": "Institution de rattachement",
 			"referrer": "Responsable référent",
 			"moderator": "Tuteur ou modérateur",
-			"requiredUserUpdate": "Mise à jour requise"
+			"requiredUserUpdate": "Mise à jour requise",
+			"participantTemplate": "Participant Groupe",
+			"membersList": "Membres"
 		}
 	},
 	"SpecialPages": {

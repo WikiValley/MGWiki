@@ -28,5 +28,6 @@
 	"mgwiki-create-userpage": "Initialisation de la page utilisateur",
 	"mgwiki-template-new-userpage": "{{Personne\n|Titre=\n|Prénom=$2\n|Nom=$3\n|E-mail=$4\n|Date de dernière modification=\n|Statut personne=$5\n|Statut additionnel personne=$6\n|Spécialité ou profession=\n|Institution de rattachement=$7\n|Responsable référent=$8\n|Année de promotion=\n|Année de thèse=\n|Présentation=\n}}\n{{Personne2\n|Rapports et conflits d'intérêts=\n}}",
 	"mgwiki-bad-email-token": "Le lien de connexion initiale que vous avez suivi semble ne pas être valide (mauvais jeton de courriel).\n\nVeuillez vérifier que le lien n’a pas été tronqué en copiant et collant dans votre navigateur l’ensemble du lien du courriel.",
-	"mgwiki-changed-email": "Changement d’adresse de courriel"
+	"mgwiki-changed-email": "Changement d’adresse de courriel",
+	"mgwiki-summary-rewrite-grouppage": "Conversion des nouveaux utilisateurs en membres du groupe"
 }
