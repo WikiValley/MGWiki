@@ -353,7 +353,7 @@ class MGWiki {
 								if( !preg_match( '/\| *' . $wgMGWikiUserProperties[$list] . " *=(.*?) *([\|\n])/", $content ) ) {
 									$content = preg_replace( '/\| *' . $wgMGWikiUserProperties['moderator'] . " *=(?:.*?) *\n/", "$0|" . $wgMGWikiUserProperties[$list] . ' = ' . $username . "\n", $content );
 								} else {
-									$content = preg_replace( '/\| *' . $wgMGWikiUserProperties[$list] . " *=(.*?) *([\|\n])/", '|' . $wgMGWikiUserProperties[$list] . ' = $1, ' . $username . '$2', $content );
+									$content = preg_replace( '/\| *' . $wgMGWikiUserProperties[$list] . " *= *(.*?) *([\|\n])/", '|' . $wgMGWikiUserProperties[$list] . ' = $1, ' . $username . '$2', $content );
 								}
 							}
 						}
