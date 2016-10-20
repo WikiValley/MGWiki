@@ -119,6 +119,14 @@
 					"/^Tuteurs/": "U2",
 					"/^Modérateurs/": "U2"
 				}
+			},
+			"Groupe U2": {
+				"RequiredRight": "mgwikimanagelevel2",
+				"Groups": ["", "U2"],
+				"MapFromProperty": {
+					"": "",
+					"1": "U2"
+				}
 			}
 		},
 		"MGWikiUserProperties": {

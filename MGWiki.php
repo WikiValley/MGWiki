@@ -435,6 +435,11 @@ class MGWiki {
 
 		foreach( $groups as $property => $valueProperty ) {
 
+			# Check permissions
+			if ( !$user->isAllowed( $wgMGWikiFieldsGroups[$property]['RequiredRight'] ) && !( array_key_exists( 'EditOwnUserpage', $wgMGWikiFieldsGroups[$property] ) && $wgMGWikiFieldsGroups[$property]['EditOwnUserpage'] === true && $editOwnUserpage ) ) {
+				continue;
+			}
+
 			# Collect currently subscribed groups
 			$uniqueGroup = null;
 			$effectiveGroups = [];
