@@ -340,16 +340,7 @@ class MGWiki {
 						# Replace templates with lists
 						if( $content ) {
 							foreach( $templates as $template => $list ) {
-								$content = preg_replace(
-									'/\{\{ *' . $wgMGWikiUserProperties[$template] . "[ \|\n].*?" .# '\}\}/s', '', $content );
-									'\| *' . $wgMGWikiUserProperties['firstname'] . ' *= *' . $userData[$wgMGWikiUserProperties['firstname']] . " *[\|\n]" .
-									'\| *' . $wgMGWikiUserProperties['lastname'] . ' *= *' . $userData[$wgMGWikiUserProperties['lastname']] . " *[\|\n]" .
-									".*?\}\}\n?/s", '', $content );
-								$content = preg_replace(
-									'/\{\{ *' . $wgMGWikiUserProperties[$template] . "[ \|\n].*?" .# '\}\}/s', '', $content );
-									'\| *' . $wgMGWikiUserProperties['lastname'] . ' *= *' . $userData[$wgMGWikiUserProperties['lastname']] . " *[\|\n]" .
-									'\| *' . $wgMGWikiUserProperties['firstname'] . ' *= *' . $userData[$wgMGWikiUserProperties['firstname']] . " *[\|\n]" .
-									".*?\}\}\n?/s", '', $content );
+								$content = preg_replace( '/\{\{ *' . $wgMGWikiUserProperties[$template] . "[ \|\n].*?\}\}\n?/s", '', $content );
 								if( !preg_match( '/\| *' . $wgMGWikiUserProperties[$list] . " *=(.*?) *([\|\n])/", $content ) ) {
 									$content = preg_replace( '/\| *' . $wgMGWikiUserProperties['moderator'] . " *=(?:.*?) *\n/", "$0|" . $wgMGWikiUserProperties[$list] . ' = ' . $username . "\n", $content );
 								} else {
