@@ -224,16 +224,6 @@ class MGWiki {
 	static function onSpecialPageAfterExecute( $specialPage, $subpage ) {
 
 		global $wgUser, $wgOut;
-		global $wgMGWikiForms;
-
-		# When a form creating an ephemeral page is validated, redirect the user to the main page since the ephemeral page is being deleted
-		if( $specialPage->getName() == 'FormEdit' && $specialPage->getRequest()->wasPosted() ) {
-			$formName = Title::newFromText( $specialPage->mForm )->getText();
-			if( array_key_exists( $formName, $wgMGWikiForms ) && array_key_exists( 'EphemeralPage', $wgMGWikiForms[$formName] ) && $wgMGWikiForms[$formName]['EphemeralPage'] ) {
-				$wgOut->redirect( Title::newMainPage()->getFullURL() );
-				$wgOut->output();
-			}
-		}
 
 		# After the user has changed her/his password, send her/him to her/his userpage in form-edition to confirm her/his data
 		if( $specialPage->getName() == 'ChangeCredentials' && $specialPage->getRequest()->wasPosted() ) {
