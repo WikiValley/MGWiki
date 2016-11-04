@@ -45,6 +45,11 @@
 							"type": "boolean",
 							"description": "Read subobjects in the form to create users accordingly.",
 							"default": false
+						},
+						"EphemeralPage": {
+							"type": "boolean",
+							"description": "Delete the page created just after treatment and redirect to main page.",
+							"default": false
 						}
 					}
 				}

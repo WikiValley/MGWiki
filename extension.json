@@ -27,7 +27,8 @@
 				"RegexPageName": "/^Nouveaux utilisateurs/",
 				"RequiredRight": "mgwikimanagelevel1",
 				"InstitutionFromCreator": true,
-				"SubObjects": true
+				"SubObjects": true,
+				"EphemeralPage": true
 			},
 			"Groupe": {
 				"RegexPageName": "/^(GEP|GAPP)/",
@@ -87,7 +88,8 @@
 				"RegexPageName": "/^Nouveaux tuteurs ou modérateurs/",
 				"RequiredRight": "mgwikimanagelevel2",
 				"InstitutionFromCreator": true,
-				"SubObjects": true
+				"SubObjects": true,
+				"EphemeralPage": true
 			}
 		},
 		"MGWikiFieldsGroups": {
