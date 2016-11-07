@@ -35,7 +35,7 @@ class MGWiki {
 			return '<strong class="error">' . wfMessage( 'mgwiki-isusersysop-nousername' )->text() . '</strong>';
 		}
 		if( User::isIP( $username ) ) {
-			return '';
+			return '0';
 		}
 		$user = User::newFromName( $username );
 		if( !$user ) {
@@ -44,7 +44,7 @@ class MGWiki {
 		if( in_array( 'sysop', $user->getGroups() ) ) {
 			return '1';
 		}
-		return '';
+		return '0';
 	}
 
 	/**

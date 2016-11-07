@@ -12,8 +12,3 @@ $magicWords = array();
 $magicWords['en'] = array(
 	'isusersysop' => array( 0, 'isusersysop' ),
 );
-
-/** French (français) */
-$magicWords['fr'] = array(
-	'isusersysop' => array( 0, 'isusersysop' ),
-);
