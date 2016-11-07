@@ -12,6 +12,42 @@ use MediaWiki\Auth\AuthenticationResponse;
 class MGWiki {
 
 	/**
+	 * 
+	 */
+	public static function onParserFirstCallInit( $parser ) {
+
+		$parser->setFunctionHook( 'isusersysop', 'MGWiki::pfuncIsUserSysop', Parser::SFH_OBJECT_ARGS );
+	}
+
+	/**
+	 * Parser function returning 1 if the given user is a sysop, else an empty string.
+	 *
+	 * In case of error, returns an HTML red warning, which can be catch by #iferror from ParserFunctions.
+	 *
+	 * @param $parser Parser
+	 * @param $frame PPFrame
+	 * @param $args array
+	 * @return string
+	 */
+	public static function pfuncIsUserSysop( $parser, $frame, $args ) {
+		$username = isset( $args[0] ) ? trim( $frame->expand( $args[0] ) ) : '';
+		if( !$username ) {
+			return '<strong class="error">' . wfMessage( 'mgwiki-isusersysop-nousername' )->text() . '</strong>';
+		}
+		if( User::isIP( $username ) ) {
+			return '';
+		}
+		$user = User::newFromName( $username );
+		if( !$user ) {
+			return '<strong class="error">' . wfMessage( 'mgwiki-isusersysop-badusername' )->text() . '</strong>';
+		}
+		if( in_array( 'sysop', $user->getGroups() ) ) {
+			return '1';
+		}
+		return '';
+	}
+
+	/**
 	 * Check permissions for actions.
 	 *
 	 * @param Title $title Title of the page

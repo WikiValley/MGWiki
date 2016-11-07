@@ -167,7 +167,8 @@
 		]
 	},
 	"ExtensionMessagesFiles": {
-		"MGWikiAlias": "MGWiki.alias.php"
+		"MGWikiAlias": "MGWiki.alias.php",
+		"MGWikiMagic": "MGWiki.magic.php"
 	},
 	"AutoloadClasses": {
 		"MGWiki": "MGWiki.php",
@@ -196,6 +197,9 @@
 		],
 		"SpecialPageAfterExecute": [
 			"MGWiki::onSpecialPageAfterExecute"
+		],
+		"ParserFirstCallInit": [
+			"MGWiki::onParserFirstCallInit"
 		]
 	},
 	"AuthManagerAutoConfig": {

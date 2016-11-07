@@ -30,5 +30,7 @@
 	"mgwiki-bad-email-token": "The initial connection link seems to be broken (bad email token). Please check the link was not truncated by copying and pasting in your browser the whole link from your email.",
 	"mgwiki-changed-email": "Change email address",
 	"mgwiki-summary-rewrite-grouppage": "Convert new users to group members",
-	"mgwiki-ephemeral-page-deleted": "Ephemeral page"
+	"mgwiki-ephemeral-page-deleted": "Ephemeral page",
+	"mgwiki-isusersysop-nousername": "No username given",
+	"mgwiki-isusersysop-badusername": "Bad username given"
 }

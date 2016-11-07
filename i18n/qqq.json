@@ -29,5 +29,7 @@
 	"mgwiki-template-new-userpage": "Wikitext template when a userpage is initialised.\nParameters:\n* $1 - username\n* $2 - first name\n* $3 - family name\n* $4 - email\n* $5 - status (interne/médecin/scientifique)\n* $6 additional status (tuteur/modérateur)\n* $7 Institution\n* $8 Referrer",
 	"mgwiki-bad-email-token": "Warning message when a user has a bad token when trying to connect with",
 	"mgwiki-summary-rewrite-grouppage": "Summary when group page is edited to convert new users to group members",
-	"mgwiki-ephemeral-page-deleted": "Log message when an ephemeral page is deleted"
+	"mgwiki-ephemeral-page-deleted": "Log message when an ephemeral page is deleted",
+	"mgwiki-isusersysop-nousername": "Error message for #isusersysop",
+	"mgwiki-isusersysop-badusername": "Error message for #isusersysop"
 }

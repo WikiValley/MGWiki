@@ -30,5 +30,7 @@
 	"mgwiki-bad-email-token": "Le lien de connexion initiale que vous avez suivi semble ne pas être valide (mauvais jeton de courriel).\n\nVeuillez vérifier que le lien n’a pas été tronqué en copiant et collant dans votre navigateur l’ensemble du lien du courriel.",
 	"mgwiki-changed-email": "Changement d’adresse de courriel",
 	"mgwiki-summary-rewrite-grouppage": "Conversion des nouveaux utilisateurs en membres du groupe",
-	"mgwiki-ephemeral-page-deleted": "Page éphémère"
+	"mgwiki-ephemeral-page-deleted": "Page éphémère",
+	"mgwiki-isusersysop-nousername": "Pas de nom d’utilisateur indiqué",
+	"mgwiki-isusersysop-badusername": "Mauvais nom d’utilisateur"
 }
