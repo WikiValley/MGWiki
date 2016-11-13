@@ -340,10 +340,10 @@ class MGWiki {
 		# Iterate over the subobjects
 		if ( array_key_exists( 'SubObjects', $paramsForm ) && $paramsForm['SubObjects'] ) {
 			$content = '';
+			$templates = [];
 			if ( $semanticData->hasSubSemanticData() ) {
 				$subSemanticData = $semanticData->getSubSemanticData();
 				$createdUsers = [];
-				$templates = [];
 				if ( array_key_exists( 'MergeNewUsers', $paramsForm ) && is_array( $paramsForm['MergeNewUsers'] ) ) {
 					$templates = $paramsForm['MergeNewUsers'];
 					$article = WikiPage::factory( $title );
