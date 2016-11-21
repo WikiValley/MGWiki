@@ -172,6 +172,7 @@
 	},
 	"AutoloadClasses": {
 		"MGWiki": "MGWiki.php",
+		"MGWikiParserFunctions": "MGWikiParserFunctions.php",
 		"Invitation": "SpecialInvitation.php",
 		"MediaWiki\\Auth\\EmailTokenAuthenticationRequest": "EmailTokenAuthenticationRequest.php",
 		"MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider": "EmailTokenPrimaryAuthenticationProvider.php"
@@ -199,7 +200,7 @@
 			"MGWiki::onSpecialPageAfterExecute"
 		],
 		"ParserFirstCallInit": [
-			"MGWiki::onParserFirstCallInit"
+			"MGWikiParserFunctions::onParserFirstCallInit"
 		]
 	},
 	"AuthManagerAutoConfig": {

@@ -32,5 +32,6 @@
 	"mgwiki-summary-rewrite-grouppage": "Conversion des nouveaux utilisateurs en membres du groupe",
 	"mgwiki-ephemeral-page-deleted": "Page éphémère",
 	"mgwiki-isusersysop-nousername": "Pas de nom d’utilisateur indiqué",
-	"mgwiki-isusersysop-badusername": "Mauvais nom d’utilisateur"
+	"mgwiki-isusersysop-badusername": "Mauvais nom d’utilisateur",
+	"mgwiki-parserfunction-internalerror": "Erreur interne au code PHP"
 }
