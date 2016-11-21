@@ -173,6 +173,7 @@
 	"AutoloadClasses": {
 		"MGWiki": "MGWiki.php",
 		"MGWikiParserFunctions": "MGWikiParserFunctions.php",
+		"MGWikiMarguerite": "MGWikiMarguerite.php",
 		"Invitation": "SpecialInvitation.php",
 		"MediaWiki\\Auth\\EmailTokenAuthenticationRequest": "EmailTokenAuthenticationRequest.php",
 		"MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider": "EmailTokenPrimaryAuthenticationProvider.php"
@@ -201,6 +202,9 @@
 		],
 		"ParserFirstCallInit": [
 			"MGWikiParserFunctions::onParserFirstCallInit"
+		],
+		"BeforePageDisplay": [
+			"MGWikiMarguerite::onBeforePageDisplay"
 		]
 	},
 	"AuthManagerAutoConfig": {
@@ -214,6 +218,33 @@
 				],
 				"sort": 0
 			}
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "resources",
+		"remoteExtPath": "ProofreadPage/resources"
+	},
+	"ResourceModules": {
+		"ext.mgwiki": {
+			"scripts": [
+				"ext.mgwiki.js"
+			],
+			"dependencies": [
+				"ext.mgwiki.edit"
+			]
+		},
+		"ext.mgwiki.edit": {
+			"scripts": [
+				"ext.mgwiki.edit.js"
+			],
+			"dependencies": [
+				"mediawiki.api",
+				"mediawiki.Title"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
+			]
 		}
 	},
 	"manifest_version": 1

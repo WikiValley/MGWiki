@@ -16,11 +16,13 @@ class MGWikiParserFunctions {
 	 * Hook function for MediaWiki’s hook "ParserFirstCallInit".
 	 *
 	 * @param Parser $parser Parser object where will be registered the new parser functions.
-	 * @return void
+	 * @return true
 	 */
 	public static function onParserFirstCallInit( &$parser ) {
 
 		$parser->setFunctionHook( 'isusersysop', 'MGWikiParserFunctions::pfuncIsUserSysop', Parser::SFH_OBJECT_ARGS );
+
+		return true;
 	}
 
 	/**
