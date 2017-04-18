@@ -222,7 +222,7 @@
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "resources",
-		"remoteExtPath": "ProofreadPage/resources"
+		"remoteExtPath": "MGWiki/resources"
 	},
 	"ResourceModules": {
 		"ext.mgwiki": {
