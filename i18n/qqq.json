@@ -32,5 +32,6 @@
 	"mgwiki-ephemeral-page-deleted": "Log message when an ephemeral page is deleted",
 	"mgwiki-isusersysop-nousername": "Error message for #isusersysop",
 	"mgwiki-isusersysop-badusername": "Error message for #isusersysop",
-	"mgwiki-parserfunction-internalerror": "Error message for parser functions"
+	"mgwiki-parserfunction-internalerror": "Error message for parser functions",
+	"mgwiki-wrong-secret-key": "Error message in API"
 }

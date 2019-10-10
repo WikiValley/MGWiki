@@ -143,7 +143,8 @@
 			"moderator": "Tuteur ou modérateur",
 			"requiredUserUpdate": "Mise à jour requise",
 			"participantTemplate": "Participant Groupe",
-			"membersList": "Membres"
+			"membersList": "Membres",
+			"codeAdepul": "Code ADEPUL"
 		}
 	},
 	"SpecialPages": {
@@ -175,6 +176,7 @@
 		"MGWikiParserFunctions": "MGWikiParserFunctions.php",
 		"MGWikiMarguerite": "MGWikiMarguerite.php",
 		"Invitation": "SpecialInvitation.php",
+		"ApiAddGroupADEPUL": "ApiAddGroupADEPUL.php",
 		"MediaWiki\\Auth\\EmailTokenAuthenticationRequest": "EmailTokenAuthenticationRequest.php",
 		"MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider": "EmailTokenPrimaryAuthenticationProvider.php"
 	},
@@ -246,6 +248,9 @@
 				"mobile"
 			]
 		}
+	},
+	"APIModules": {
+		"nouveau-groupe-adepul": "ApiAddGroupADEPUL"
 	},
 	"manifest_version": 1
 }
