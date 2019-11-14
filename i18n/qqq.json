@@ -33,5 +33,7 @@
 	"mgwiki-isusersysop-nousername": "Error message for #isusersysop",
 	"mgwiki-isusersysop-badusername": "Error message for #isusersysop",
 	"mgwiki-parserfunction-internalerror": "Error message for parser functions",
-	"mgwiki-wrong-secret-key": "Error message in API"
+	"mgwiki-wrong-secret-key": "Error message in API",
+	"mgwiki-bad-adepul-group": "Error message in API",
+	"mgwiki-add-member-grouppage": "Summary"
 }

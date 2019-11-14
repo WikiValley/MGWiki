@@ -14,7 +14,9 @@
 		"mgwikimanagelevel2"
 	],
 	"config": {
+		"MGWikiSecretKeyADEPUL": null,
 		"MGWikiInitialDelayBeforeInactive": 1209600,
+		"MGWikiDefaultCreatorNewAccounts": "Alexandre BRULET",
 		"MGWikiForms": {
 			"Personne": {
 				"RegexPageName": "/^User:.+$/",
@@ -144,7 +146,8 @@
 			"requiredUserUpdate": "Mise à jour requise",
 			"participantTemplate": "Participant Groupe",
 			"membersList": "Membres",
-			"codeAdepul": "Code ADEPUL"
+			"codeAdepul": "Code ADEPUL",
+			"codeActionAdepul": "Code action"
 		}
 	},
 	"SpecialPages": {
@@ -176,7 +179,8 @@
 		"MGWikiParserFunctions": "MGWikiParserFunctions.php",
 		"MGWikiMarguerite": "MGWikiMarguerite.php",
 		"Invitation": "SpecialInvitation.php",
-		"ApiAddGroupADEPUL": "ApiAddGroupADEPUL.php",
+		"ApiNewADEPULGroup": "ApiNewADEPULGroup.php",
+		"ApiADEPULGroupMember": "ApiADEPULGroupMember.php",
 		"MediaWiki\\Auth\\EmailTokenAuthenticationRequest": "EmailTokenAuthenticationRequest.php",
 		"MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider": "EmailTokenPrimaryAuthenticationProvider.php"
 	},
@@ -250,7 +254,8 @@
 		}
 	},
 	"APIModules": {
-		"nouveau-groupe-adepul": "ApiAddGroupADEPUL"
+		"nouveau-groupe-adepul": "ApiNewADEPULGroup",
+		"membre-groupe-adepul": "ApiADEPULGroupMember"
 	},
 	"manifest_version": 1
 }
