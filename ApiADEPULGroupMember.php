@@ -52,7 +52,7 @@ class ApiADEPULGroupMember extends ApiBase {
 		if( $groupContent === null || $groupContent->getModel() !== CONTENT_MODEL_WIKITEXT ) {
 			$this->dieWithError( 'mgwiki-bad-group' );
 		}
-		$groupWikitext = $groupContent->getText();
+		$groupWikitext = $groupContent->getNativeData(); // ->getText() when MW >= 1.32
 		if( !preg_match( '/\{\{Groupe[\n |](?:[^}]+\})+\}/', $groupWikitext, $groupTemplate, PREG_OFFSET_CAPTURE ) ) {
 			$this->dieWithError( 'mgwiki-bad-adepul-group' );
 		}
