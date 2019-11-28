@@ -663,7 +663,7 @@ class MGWiki {
 
 		// Create property instance
 		$property = new SMWDIProperty( $codeAdepul );
-		$property->setPropertyTypeId( SMW\DataValues\StringValue::TYPE_ID );
+		$property->setPropertyTypeId( '_str' ); // use SMW\DataValues\StringValue::TYPE_ID when SMW 3.0.0+
 		$dataItem = new SMWDIBlob( $code_adepul );
 		$dataValue = SMW\DataValueFactory::getInstance()->newDataValueByItem(
 			$dataItem,
@@ -760,7 +760,7 @@ class MGWiki {
 
 		// Create property instance
 		$property = new SMWDIProperty( $codeAction );
-		$property->setPropertyTypeId( SMW\DataValues\StringValue::TYPE_ID );
+		$property->setPropertyTypeId( '_str' ); // use SMW\DataValues\StringValue::TYPE_ID when SMW 3.0.0+
 		$dataItem = new SMWDIBlob( $code_action );
 		$dataValue = SMW\DataValueFactory::getInstance()->newDataValueByItem(
 			$dataItem,
