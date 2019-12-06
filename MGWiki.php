@@ -327,7 +327,7 @@ class MGWiki {
 					$userData = array_merge( $institution, $userData );
 					if ( array_key_exists( $wgMGWikiUserProperties['firstname'], $userData ) && array_key_exists( $wgMGWikiUserProperties['lastname'], $userData ) ) {
 						# Iterate over the fields groups
-						$userGroups = self::searchFieldsGroups( false, $editor, $userSemanticData, $editOwnUserpage );
+						$userGroups = self::searchFieldsGroups( null, $editor, $userSemanticData, $editOwnUserpage );
 						$groups = array_merge( $defaultGroups, $userGroups );
 						#echo "userData = ";var_dump($userData);
 						#echo "defaultGroups = ";var_dump($defaultGroups);
@@ -401,7 +401,7 @@ class MGWiki {
 		}
 	}
 
-	private static function searchFieldsGroups( $title, $editor, $semanticData, $editOwnUserpage ) {
+	private static function searchFieldsGroups( Title $title, $editor, $semanticData, $editOwnUserpage ) {
 
 		global $wgMGWikiFieldsGroups;
 
@@ -420,9 +420,14 @@ class MGWiki {
 				continue;
 
 			# Get the group to be added
-			if ( array_key_exists( $property, $statements ) )
-				$groups[$property] = $paramsProperty['MapFromProperty'][$statements[$property]];
-			elseif ( $title && array_key_exists( 'MapFromTitle', $paramsProperty ) ) {
+			if ( array_key_exists( $property, $statements ) ) {
+				$value = $statements[$property];
+				// If the property is not explicitely defined (and has the type Page)
+				if( $value instanceof Title ) {
+					$value = $value->getText();
+				}
+				$groups[$property] = $paramsProperty['MapFromProperty'][$value];
+			} elseif ( $title && array_key_exists( 'MapFromTitle', $paramsProperty ) ) {
 				#echo "Title = ".$title->getText()." MapFromTitle ($property) =";var_dump($paramsProperty['MapFromTitle']);
 				foreach( $paramsProperty['MapFromTitle'] as $regex => $group ) {
 					if ( preg_match( $regex, $title->getText() ) )
@@ -550,7 +555,7 @@ class MGWiki {
 	 * @param array $groups Groups
 	 * @return bool The user was created
 	 */
-	public static function createUser( $username, $userData = [], array $groups = [] ) {
+	public static function createUser( string $username, $userData = [], array $groups = [] ) {
 
 		global $wgUser, $wgNewUserLog, $wgVersion;
 		global $wgMGWikiUserProperties;
