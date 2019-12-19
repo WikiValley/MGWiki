@@ -261,13 +261,14 @@ class MGWiki {
 
 		# Check if the user edits her/his own userpage
 		if ( $title->getNamespace() === NS_USER ) {
+			if( strpos( $title->getDBkey(), '/' ) === false ) {
+				return;
+			}
 			$user = User::newFromName( $title->getDBkey() );
-			if( $user !== false && $user instanceof User ) {
+			if( $user instanceof User ) {
 				$user->load();
 				if ( $editor->isLoggedIn() && $editor->getId() == $user->getId() )
 					$editOwnUserpage = array_key_exists( 'EditOwnUserpage', $paramsForm ) && $paramsForm['EditOwnUserpage'];
-			} else {
-				return;
 			}
 		}
 
