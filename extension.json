@@ -19,7 +19,7 @@
 		"MGWikiDefaultCreatorNewAccounts": "Alexandre BRULET",
 		"MGWikiForms": {
 			"Personne": {
-				"RegexPageName": "/^User:.+$/",
+				"RegexPageName": "/^User:[^/]+$/",
 				"RequiredRight": "mgwikimanagelevel1",
 				"EditOwnUserpage": true,
 				"SubObjects": false,
