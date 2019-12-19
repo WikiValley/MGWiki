@@ -304,9 +304,9 @@ class MGWiki {
 		}
 
 		# Iterate over the subobjects
+		$content = '';
+		$templates = [];
 		if ( array_key_exists( 'SubObjects', $paramsForm ) && $paramsForm['SubObjects'] ) {
-			$content = '';
-			$templates = [];
 			if ( $semanticData->hasSubSemanticData() ) {
 				$subSemanticData = $semanticData->getSubSemanticData();
 				$createdUsers = [];
@@ -364,7 +364,7 @@ class MGWiki {
 			}
 
 			# Save
-			if ( $content && count( $template ) ) {
+			if ( $content && count( $templates ) ) {
 
 				# Update the content
 				$contentObject = new WikitextContent( $content );
