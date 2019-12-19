@@ -100,7 +100,7 @@
 				"EditOwnUserpage": true,
 				"Groups": ["interne", "médecin", "scientifique"],
 				"MapFromProperty": {
-					"Visisteur": "visiteur",
+					"Visiteur": "visiteur",
 					"Interne": "interne",
 					"Médecin": "médecin",
 					"Scientifique": "scientifique"
