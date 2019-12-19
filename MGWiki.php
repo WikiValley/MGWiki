@@ -7,6 +7,8 @@
  * @package MediaWiki-extension-MGWiki
  */
 
+declare(strict_types=1);
+
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
