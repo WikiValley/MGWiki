@@ -261,7 +261,7 @@ class MGWiki {
 
 		# Check if the user edits her/his own userpage
 		if ( $title->getNamespace() === NS_USER ) {
-			if( strpos( $title->getDBkey(), '/' ) === false ) {
+			if( strpos( $title->getDBkey(), '/' ) !== false ) {
 				return;
 			}
 			$user = User::newFromName( $title->getDBkey() );
