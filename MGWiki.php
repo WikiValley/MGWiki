@@ -406,7 +406,7 @@ class MGWiki {
 		}
 	}
 
-	private static function searchFieldsGroups( Title $title, $editor, $semanticData, $editOwnUserpage ) {
+	private static function searchFieldsGroups( $title, $editor, $semanticData, $editOwnUserpage ) {
 
 		global $wgMGWikiFieldsGroups;
 
