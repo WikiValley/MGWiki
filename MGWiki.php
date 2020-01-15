@@ -431,6 +431,9 @@ class MGWiki {
 				if( $value instanceof Title ) {
 					$value = $value->getText();
 				}
+				if( ! is_string( $value ) ) { // Mainly boolean
+					$value = (string) $value;
+				}
 				$groups[$property] = $paramsProperty['MapFromProperty'][$value];
 			} elseif ( $title && array_key_exists( 'MapFromTitle', $paramsProperty ) ) {
 				#echo "Title = ".$title->getText()." MapFromTitle ($property) =";var_dump($paramsProperty['MapFromTitle']);
