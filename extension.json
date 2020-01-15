@@ -139,7 +139,7 @@
 			}
 		},
 		"MGWikiUserProperties": {
-			"email": "E-mail",
+			"email": "Courriel",
 			"firstname": "Prénom",
 			"lastname": "Nom",
 			"statutPersonne": "Statut personne",
