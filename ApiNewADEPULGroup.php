@@ -67,7 +67,7 @@ class ApiNewADEPULGroup extends ApiBase {
 |Code action=$code_action
 }}
 {{Groupe2}}";
-		$groupTitle = Title::newFromText( $title, NS_MAIN );
+		$groupTitle = Title::newFromText( $title, 730 );
 		$groupArticle = WikiPage::factory( $groupTitle );
 		$content = new WikitextContent( $wikitext );
 		$summary = wfMessage( 'mgwiki-create-grouppage' )->inContentLanguage()->text();
