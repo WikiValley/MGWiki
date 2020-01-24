@@ -31,6 +31,14 @@ class MGWiki {
 		if ( $action != 'edit' ) {
 			return true;
 		}
+		
+	        # Deny creation of a user page without existing account
+	        if ($title->getNamespace() == (2 OR 3)){
+	          $userfromTitle = User::newFromName( $title->getText() )->getId();
+	          if (!$userfromTitle){
+		    return false;
+	          }
+	        }
 
 		# Check permissions for forms
 		$titleEnglish = '';
