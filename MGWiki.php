@@ -43,7 +43,7 @@ class MGWiki {
 				if ( $title->getNamespace() == NS_USER && $title->getText() == $user->getName() && array_key_exists( 'EditOwnUserpage', $params ) && $params['EditOwnUserpage'] === true ) {
 					return true;
 				}
-				if ( array_key_exists( 'RequiredRight', $params ) && is_string( $params['RequiredRight'] && !$user->isAllowed( $params['RequiredRight'] ) ) ) {
+				if ( array_key_exists( 'RequiredRight', $params ) && is_string( $params['RequiredRight'] ) && !$user->isAllowed( $params['RequiredRight'] ) ) {
 					# Unauthorised user, and all further permissions hooks must be skipped since this result is authoritative
 					$result = false;
 					return false;
@@ -115,7 +115,7 @@ class MGWiki {
 	 *
 	 * Only the user or 'admins' with the right 'mgwikimanagelevel1' can report the email address in the user preferences.
 	 * If $wgNewUserLog is true (default), add an entry in the 'newusers' log when a user is created.
-	 * 
+	 *
 	 * @param SMWSQLStore3 $store SemanticMediaWiki store
 	 * @param SMWSemanticData $semanticData Semantic data
 	 * @param SMW\SQLStore\CompositePropertyTableDiffIterator $compositePropertyTableDiffIterator Differences on property values
@@ -164,7 +164,7 @@ class MGWiki {
 
 	/**
 	 * Update the property on the userpage “last-date-edited-by-user-her/himself”
-	 * 
+	 *
 	 * @param WikiPage $wikiPage The WikiPage (object) being saved.
          * @param User $user The User (object) saving the article.
          * @param Content $content The new article content, as a Content object.
@@ -220,7 +220,7 @@ class MGWiki {
 	}
 
 	/**
-	 * 
+	 *
 	 *
 	 * @param SpecialPage $specialPage
 	 * @param string|null $subpage
@@ -485,7 +485,7 @@ class MGWiki {
 				continue;
 			}
 
-			# Else remove the user from the groups	
+			# Else remove the user from the groups
 			$removedGroups = [];
 			foreach( $effectiveGroups as $g => $v ) {
 				if ( $g && $v ) {
@@ -576,7 +576,7 @@ class MGWiki {
 		$properties = [];
 		if ( array_key_exists( $wgMGWikiUserProperties['email'], $userData ) && is_string( $userData[$wgMGWikiUserProperties['email']] ) )
 			$properties['email'] = $userData[$wgMGWikiUserProperties['email']];
-		
+
 		# Create the user and add log entry
 		if ( false && version_compare( $wgVersion, '1.27.0' ) >= 0 ) {
 			//$data = $properties; // Not to send the confirmation email through AuthManager since I want to customise it
@@ -601,7 +601,7 @@ class MGWiki {
 						'AuthManager does not support such simplified account creation'
 					);
 			}
-			
+
 		} else {
 			$user = User::createNew( $username, $properties );
 			if ( !$user instanceof User )
