@@ -43,7 +43,7 @@ class MGWiki {
 				if ( $title->getNamespace() == NS_USER && $title->getText() == $user->getName() && array_key_exists( 'EditOwnUserpage', $params ) && $params['EditOwnUserpage'] === true ) {
 					return true;
 				}
-				if ( array_key_exists( 'RequiredRight', $params ) && is_string( $params['RequiredRight'] && !$user->isAllowed( $params['RequiredRight'] ) ) ) {
+				if ( array_key_exists( 'RequiredRight', $params ) && is_string( $params['RequiredRight'] ) && !$user->isAllowed( $params['RequiredRight'] ) ) {
 					# Unauthorised user, and all further permissions hooks must be skipped since this result is authoritative
 					$result = false;
 					return false;
