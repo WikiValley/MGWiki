@@ -810,7 +810,7 @@ class MGWiki {
 			throw new Exception(); // TODO improve
 		} elseif( $queryResult->getCount() === 1 ) {
 			$groupValue = $queryResult->getResults()[0];
-			$group = Title::newFromText( $groupValue->getDBkey() );
+			$group = Title::newFromText( $groupValue->getDBkey(), $groupValue->getNamespace() );
 			return $group;
 		}
 
