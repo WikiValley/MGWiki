@@ -642,9 +642,10 @@ class MGWiki {
 		$statutAddPers = array_key_exists( $wgMGWikiUserProperties['statutAdditionnelPersonne'], $userData ) ? $userData[$wgMGWikiUserProperties['statutAdditionnelPersonne']] : '';
 		$institution = array_key_exists( $wgMGWikiUserProperties['institution'], $userData ) ? $userData[$wgMGWikiUserProperties['institution']]->getPrefixedText() : '';
 		$referrer = array_key_exists( $wgMGWikiUserProperties['referrer'], $userData ) ? $userData[$wgMGWikiUserProperties['referrer']] : '';
+		$codeAdepul = array_key_exists( $wgMGWikiUserProperties['codeAdepul'], $userData ) ? $userData[$wgMGWikiUserProperties['codeAdepul']] : '';
 		$content = wfMessage( 'mgwiki-template-new-userpage',
 			$username, $userData[$wgMGWikiUserProperties['firstname']], $userData[$wgMGWikiUserProperties['lastname']],
-			$email, $statutPers, $statutAddPers, $institution, $referrer
+			$email, $statutPers, $statutAddPers, $institution, $referrer, $codeAdepul
 		)->inContentLanguage()->plain();
 
 		return $content;
