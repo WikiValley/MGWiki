@@ -153,7 +153,8 @@
 			"membersList": "Membres",
 			"codeAdepul": "Code ADEPUL",
 			"codeActionAdepul": "Code action"
-		}
+		},
+		"MGWikiFillADEPULCode": false
 	},
 	"SpecialPages": {
 		"Invitation": "Invitation"

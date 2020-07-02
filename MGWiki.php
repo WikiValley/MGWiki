@@ -620,15 +620,7 @@ class MGWiki {
 		$userTitle = Title::newFromText( $username, NS_USER );
 		$userArticle = WikiPage::factory( $userTitle );
 		$summary = wfMessage( 'mgwiki-create-userpage' )->inContentLanguage()->text();
-		$email = array_key_exists( $wgMGWikiUserProperties['email'], $userData ) ? $userData[$wgMGWikiUserProperties['email']] : '';
-		$statutPers = array_key_exists( $wgMGWikiUserProperties['statutPersonne'], $userData ) ? $userData[$wgMGWikiUserProperties['statutPersonne']] : '';
-		$statutAddPers = array_key_exists( $wgMGWikiUserProperties['statutAdditionnelPersonne'], $userData ) ? $userData[$wgMGWikiUserProperties['statutAdditionnelPersonne']] : '';
-		$institution = array_key_exists( $wgMGWikiUserProperties['institution'], $userData ) ? $userData[$wgMGWikiUserProperties['institution']]->getPrefixedText() : '';
-		$referrer = array_key_exists( $wgMGWikiUserProperties['referrer'], $userData ) ? $userData[$wgMGWikiUserProperties['referrer']] : '';
-		$content = new WikitextContent( wfMessage( 'mgwiki-template-new-userpage',
-			$username, $userData[$wgMGWikiUserProperties['firstname']], $userData[$wgMGWikiUserProperties['lastname']],
-			$email, $statutPers, $statutAddPers, $institution, $referrer
-		)->inContentLanguage()->plain() );
+		$content = new WikitextContent( self::userTemplate( $username, $userData ) );
 		$flags = EDIT_NEW;
 		$userArticle->doEditContent( $content, $summary, $flags, false, $wgUser );
 
@@ -636,6 +628,40 @@ class MGWiki {
 		$user->sendConfirmationMail( 'created_by_mgwiki' );
 
 		return true;
+	}
+
+	public static function userTemplate( $username, $userData ) {
+
+		global $wgMGWikiUserProperties;
+		$email = array_key_exists( $wgMGWikiUserProperties['email'], $userData ) ? $userData[$wgMGWikiUserProperties['email']] : '';
+		$statutPers = array_key_exists( $wgMGWikiUserProperties['statutPersonne'], $userData ) ? $userData[$wgMGWikiUserProperties['statutPersonne']] : '';
+		$statutAddPers = array_key_exists( $wgMGWikiUserProperties['statutAdditionnelPersonne'], $userData ) ? $userData[$wgMGWikiUserProperties['statutAdditionnelPersonne']] : '';
+		$institution = array_key_exists( $wgMGWikiUserProperties['institution'], $userData ) ? $userData[$wgMGWikiUserProperties['institution']]->getPrefixedText() : '';
+		$referrer = array_key_exists( $wgMGWikiUserProperties['referrer'], $userData ) ? $userData[$wgMGWikiUserProperties['referrer']] : '';
+		$content = wfMessage( 'mgwiki-template-new-userpage',
+			$username, $userData[$wgMGWikiUserProperties['firstname']], $userData[$wgMGWikiUserProperties['lastname']],
+			$email, $statutPers, $statutAddPers, $institution, $referrer
+		)->inContentLanguage()->plain();
+
+		return $content;
+	}
+
+	/**
+	 * Add a given parameter with a value on a template wikitext.
+	 *
+	 * @param string $template Template wikitext.
+	 * @param string $key Parameter key.
+	 * @param string $value Parameter value.
+	 * @return string|null Template wikitext with the given parameter or null if the parameter exists with another value.
+	 */
+	public static function addParameterTemplate( $template, $key, $value ) {
+		$keyRegex = preg_replace( '/[ _]/', '[ _]', $key );
+		if( preg_match( '/\|[ \n]*' . $keyRegex . ' *= *([^|}]*)/', $template, $matches ) ) {
+			$matches[1] = trim( $matches[1] );
+			if( $matches[1] && $matches[1] !== $value ) return null;
+			return preg_replace( '/\|[ \n]*(' . $keyRegex . ') *= *([^|}]*)/', '|' . $key . ' = ' . $value . "\n", $template );
+		}
+		return preg_replace( '/\n?\}\}$/', "\n|" . $key . ' = ' . $value . "\n}}", $template );
 	}
 
 	/**
@@ -646,7 +672,7 @@ class MGWiki {
 	 */
 	public static function getUserFromOfficialADEPUL( $code_adepul ) {
 		global $wgMGWikiUserEndpointADEPUL, $wgMGWikiSecretKeyADEPUL;
-		$infoADEPUL = file_get_contents( $wgMGWikiUserEndpointADEPUL . '?t_idf=' . $code_adepul . '&cle=' . $wgMGWikiSecretKeyADEPUL );
+		$infoADEPUL = Http::get( $wgMGWikiUserEndpointADEPUL . '?t_idf=' . $code_adepul . '&cle=' . $wgMGWikiSecretKeyADEPUL );
 		if( !$infoADEPUL ) {
 			return null;
 		}
@@ -669,7 +695,7 @@ class MGWiki {
 	 */
 	public static function getUserByADEPUL( $code_adepul, $creator = null ) {
 		global $wgUser;
-		global $wgMGWikiUserProperties, $wgMGWikiDefaultCreatorNewAccounts;
+		global $wgMGWikiUserProperties, $wgMGWikiDefaultCreatorNewAccounts, $wgMGWikiFillADEPULCode;
 
 		$codeAdepulTitle = Title::newFromText( 'Property:' . $wgMGWikiUserProperties['codeAdepul'] );
 		$codeAdepul = $codeAdepulTitle->getDBkey();
@@ -723,12 +749,12 @@ class MGWiki {
 				if( $creator !== $wgMGWikiDefaultCreatorNewAccounts ) {
 					$wgUser = User::newFromName( $wgMGWikiDefaultCreatorNewAccounts );
 				} else {
-					throw new Exception(); // TODO improve
+					throw new Exception( 'Creator account "' . $creator . '" not found' );
 				}
 			}
 			$adhAdepul = self::getUserFromOfficialADEPUL( $code_adepul );
             if( !$adhAdepul ) {
-                throw new Exception(); // TODO improve
+                throw new Exception( 'ADEPUL code "' . $code_adepul . '" unknown on MGWiki and on ADEPUL' );
             }
 			$prenom = $adhAdepul->prenom;
 			$nom = $adhAdepul->nom;
@@ -742,12 +768,38 @@ class MGWiki {
 			$userData[$wgMGWikiUserProperties['institution']] = Title::newFromText( 'ADEPUL', NS_PROJECT );
 			$userData[$wgMGWikiUserProperties['codeAdepul']] = $code_adepul;
 			$userData[$wgMGWikiUserProperties['email']] = $mail;
+			$user = User::newFromName( $username );
+			if( $user->getId() !== 0 ) {
+				if( ! $wgMGWikiFillADEPULCode ) {
+					throw new Exception( 'ADEPUL code not found but corresponding user found on MGWiki' );
+				}
+				$userTitle = Title::newFromText( $username, NS_USER );
+				$userArticle = WikiPage::factory( $userTitle );
+				$summary = wfMessage( 'mgwiki-create-userpage' )->inContentLanguage()->text();
+				if( ! $userArticle->exists() ) {
+					$content = new WikitextContent( self::userTemplate( $username, $userData ) );
+				} elseif( ! preg_match( '/\{\{Personne[ \n]*(?:\||\}\})/', $userArticle->getContent()->getText() ) ) {
+					$content = new WikitextContent( self::userTemplate( $username, $userData ) . $userArticle->getContent()->getText() );
+				} else {
+					$content = new WikitextContent( preg_replace(
+						'/\{\{Personne[^}]+\}\}/',
+						function( $matches ) use( $code_adepul, $wgMGWikiUserProperties ) {
+							$template = MGWiki::addParameterTemplate( $matches[0], $wgMGWikiUserProperties['codeAdepul'], $code_adepul );
+							if( $template === null ) throw new Exception( 'Conflicting ADEPUL code with existing and expected values' );
+							return $template;
+						},
+						$userArticle->getContent()->getText()
+					) );
+				}
+				$flags = EDIT_NEW;
+				$userArticle->doEditContent( $content, $summary, $flags, false, $wgUser );
+			}
 			MGWiki::createUser( $username, $userData );
 			$wgUser = $backupWgUser;
 			$user = User::newFromName( $username );
 			return $user;
 		} elseif( $queryResult->getCount() > 1 ) {
-			throw new Exception(); // TODO improve
+			throw new Exception( 'There are multiple users on MGWiki with the ADEPUL code "' . $code_adepul . '"' );
 		} elseif( $queryResult->getCount() === 1 ) {
 			$userValue = $queryResult->getResults()[0];
 			$username = $userValue->getDBkey();

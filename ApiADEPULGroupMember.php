@@ -84,10 +84,10 @@ class ApiADEPULGroupMember extends ApiBase {
 					$listMembers[] = $memberUser;
 				}
 			} catch( Exception $e ) {
-				$errorsMembers[] = $membre;
+				$errorsMembers[] = [ $membre, $e->getMessage() ];
 			}
 		}
-		if( count( $listMembers ) === 0 ) {
+		if( count( $listMembers ) === 0 && count( $errorsMembers ) === 0 ) {
 			$apiResult->addValue( null, "result", "success" );
 			return;
 		}
@@ -104,6 +104,9 @@ class ApiADEPULGroupMember extends ApiBase {
 		$groupArticle->doEditContent( $newGroupContent, $summary, 0, false, $formateurUser );
 
 		$apiResult->addValue( null, "result", "success" );
+		if( count( $errorsMembers ) ) {
+			$apiResult->addValue( null, "errors", $errorsMembers );
+		}
 	}
 
 	public function mustBePosted() {
