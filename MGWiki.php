@@ -166,14 +166,14 @@ class MGWiki {
 	 * Update the property on the userpage “last-date-edited-by-user-her/himself”
 	 * 
 	 * @param WikiPage $wikiPage The WikiPage (object) being saved.
-         * @param User $user The User (object) saving the article.
-         * @param Content $content The new article content, as a Content object.
-         * @param string $summary The article summary (comment).
-         * @param integer $isMinor Minor flag.
-         * @param null $isWatch Watch flag (not used, aka always null).
-         * @param null $section Section number (not used, aka always null).
-         * @param integer $flags See WikiPage::doEditContent documentation for flags' definition.
-         * @param Status $status Status (object).
+	 * @param User $user The User (object) saving the article.
+	 * @param Content $content The new article content, as a Content object.
+	 * @param string $summary The article summary (comment).
+	 * @param integer $isMinor Minor flag.
+	 * @param null $isWatch Watch flag (not used, aka always null).
+	 * @param null $section Section number (not used, aka always null).
+	 * @param integer $flags See WikiPage::doEditContent documentation for flags' definition.
+	 * @param Status $status Status (object).
 	 */
 	public static function onPageContentSave( &$wikiPage, &$user, &$content, &$summary, $isMinor, $isWatch, $section, &$flags, &$status ) {
 
@@ -187,12 +187,12 @@ class MGWiki {
 		# Always update the “last-date-edited-by-user-her/himself”
 		if( preg_match( "/(^|\r?\n) *\| *" . preg_quote( $wgMGWikiUserProperties['timestamp'], '/' ) . " *=.*(\r?\n|$)/", $content->getNativeData() ) ) {
 			$content = new WikitextContent( preg_replace( "/(^|\r?\n) *\| *" . preg_quote( $wgMGWikiUserProperties['timestamp'], '/' ) . " *=.*(\r?\n|$)/",
-			              '$1|' . $wgMGWikiUserProperties['timestamp'] . '=' . wfTimestamp() . '$2',
-			              $content->getNativeData() ) );
+				'$1|' . $wgMGWikiUserProperties['timestamp'] . '=' . wfTimestamp() . '$2',
+				$content->getNativeData() ) );
 		} else {
 			$content = new WikitextContent( preg_replace( "/((^|\r?\n) *\| *" . preg_quote( $wgMGWikiUserProperties['email'], '/' ) . " *=.*)(\r?\n|$)/",
-			              "\$1\n|" . $wgMGWikiUserProperties['timestamp'] . '=' . wfTimestamp() . '$3',
-			              $content->getNativeData() ) );
+				"\$1\n|" . $wgMGWikiUserProperties['timestamp'] . '=' . wfTimestamp() . '$3',
+				$content->getNativeData() ) );
 		}
 	}
 
@@ -286,9 +286,11 @@ class MGWiki {
 		if( array_key_exists( 'InstitutionFromModerator', $paramsForm ) && $paramsForm['InstitutionFromModerator'] ) {
 			$moderator = self::collectSemanticData( [ $wgMGWikiUserProperties['moderator'] ], $semanticData, $complete );
 			if( count( $moderator ) == 1 ) {
-				$institution = self::collectSemanticData( [ $wgMGWikiUserProperties['institution'] ],
-				                                          $store->getSemanticData( SMW\DIWikiPage::newFromTitle( $moderator[$wgMGWikiUserProperties['moderator']] ) ),
-			        	                                  $complete );
+				$institution = self::collectSemanticData(
+					[ $wgMGWikiUserProperties['institution'] ],
+					$store->getSemanticData( SMW\DIWikiPage::newFromTitle( $moderator[$wgMGWikiUserProperties['moderator']] ) ),
+					$complete
+				);
 				if( count( $institution ) != 1 ) {
 					$institution = [];
 				}
@@ -298,9 +300,11 @@ class MGWiki {
 		elseif( array_key_exists( 'InstitutionFromCreator', $paramsForm ) && $paramsForm['InstitutionFromCreator'] ) {
 			$creator = self::collectSemanticData( [ '_LEDT' ], $semanticData, $complete );
 			if( count( $creator ) == 1 ) {
-				$institution = self::collectSemanticData( [ $wgMGWikiUserProperties['institution'] ],
-				                                          $store->getSemanticData( SMW\DIWikiPage::newFromTitle( $creator['_LEDT'] ) ),
-			        	                                  $complete );
+				$institution = self::collectSemanticData(
+					[ $wgMGWikiUserProperties['institution'] ],
+					$store->getSemanticData( SMW\DIWikiPage::newFromTitle( $creator['_LEDT'] ) ),
+					$complete
+				);
 				if( count( $institution ) != 1 ) {
 					$institution = [];
 				}
@@ -753,9 +757,9 @@ class MGWiki {
 				}
 			}
 			$adhAdepul = self::getUserFromOfficialADEPUL( $code_adepul );
-            if( !$adhAdepul ) {
-                throw new Exception( 'ADEPUL code "' . $code_adepul . '" unknown on MGWiki and on ADEPUL' );
-            }
+			if( !$adhAdepul ) {
+				throw new Exception( 'ADEPUL code "' . $code_adepul . '" unknown on MGWiki and on ADEPUL' );
+			}
 			$prenom = $adhAdepul->prenom;
 			$nom = $adhAdepul->nom;
 			$mail = $adhAdepul->mail;
