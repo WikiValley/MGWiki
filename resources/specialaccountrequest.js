@@ -25,8 +25,7 @@
       $('.mgw-tr-formateur').attr("required","true");
       $('.mgw-tr-year').hide();
       $('.mgw-tr-year').removeAttr("required");
-      $('#mgw-p-comment-intro a').hide();
-      $('#mgw-textarea-comment').attr("required");
+      $('#mgw-textarea-comment').attr("required",true);
     }
     if ($('input[type=radio][name=institution]:checked').attr('value') == 'autre') {
       $('.mgw-hidden').show();
@@ -37,7 +36,6 @@
       $('.mgw-tr-formateur').removeAttr("required");
       $('.mgw-tr-year').hide();
       $('.mgw-tr-year').removeAttr("required");
-      $('#mgw-p-comment-intro a').show();
       $('#mgw-textarea-comment').attr("required", true);
     }
   }
@@ -47,6 +45,6 @@
   }
 
   $( function () {
-    // code à faire d'emblée (...)
+    if ($('input[type=radio]:checked')){mw.accountRequest();}
   });
 }( mediaWiki, jQuery ) );

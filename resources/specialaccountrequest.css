@@ -1,20 +1,16 @@
 /* special account request styles */
+/*
 #institution-label{
   vertical-align: top;
-}
+}*/
 .mgw-accountrequest-intro{
   display:none;
 }
 .mgw-hidden{
   display:none;
 }
-
-/*
-.mgw-tr-formateur{
-  display: none;
+#captcha{
+  border: 1px solid red;
+  border-radius: 10px;
+  background:#f1e8e8;
 }
-
-.mgw-tr-year{
-  display: none;
-}
-*/
