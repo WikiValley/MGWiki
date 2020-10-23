@@ -67,21 +67,29 @@ class SpecialAccountRequest extends \SpecialPage {
 				$mailer = new \UserMailer();
 				$mail_to = new \MailAddress($wgEmergencyContact);
 				$mail_from = new \MailAddress($post_email);
-				$body ='
-Demande de création de compte MGWiki
+				$body ='Merci beaucoup de votre intérêt pour MGWiki.
 
+------ Votre message : -------
 Date: ' . date('Y-m-d H:i:s') . '
 Institution: ' . $_POST['institution'] . '
-Nom: ' . ucfirst(strtolower($post_prenom)) . ' ' . strtoupper($post_nom) . '
-Formateur/Formation: ' . $post_formateur . '
-Année: ' . $post_year . '
-Commentaires: ' . $post_comment . '
-Email: ' .  $post_email ;
+Nom: ' . htmlspecialchars_decode(ucfirst(strtolower($post_prenom))) . ' ' . htmlspecialchars_decode(strtoupper($post_nom)) .'
+Email: ' .  htmlspecialchars_decode($post_email);
+ 				if ($_POST['institution']=='lyon1'){$body .= '
+Tuteur: ' . htmlspecialchars_decode($post_formateur) . '
+Année de promotion: ' . htmlspecialchars_decode($post_year);}
+				if ($_POST['institution']=='adepul'){$body .= '
+Formation: ' . htmlspecialchars_decode($post_formateur);}
+				$body .= '
+ Commentaires:
+' . htmlspecialchars_decode($post_comment) . '
+------------------------------
 
-				$mailer->send( array($mail_to), $mail_from, 'Demande de création de compte', $body );
+Nous essayons de donner suite à votre demande dans les meilleurs délais.';
+
+				$mailer->send( array($mail_to,$mail_from), $mail_to, 'MGWiki: demande de création de compte', $body, array('replyTo'=>$mail_from) );
 				setcookie($cookieLabel,"sent", time()+3600);
 				$this->mess =	'
-					<p id="mgw-accountrequest-ok" class="mgw-accountrequest">Votre demande a bien été envoyée à l\'administrateur du site.<p>
+					<p id="mgw-accountrequest-ok" class="mgw-accountrequest">Votre demande a bien été envoyée.<br>Une copie a été adressée à l\'adresse mail que vous avez renseigné.<p>
 					<button type="button" onclick="mw.mgwHome()" > retour à la page d\'accueil</button>';
 				$this->done = true;
 			}

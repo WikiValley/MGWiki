@@ -29,6 +29,7 @@ $captcha = array(
   "Quelle couleur fait jaune plus rouge ?"=>"orange",
   "Quelle couleur fait bleu plus jaune ?"=>"vert",
   "Quelle couleur faut-il mélanger à rouge pour faire du violet ?"=>"bleu",
-  "Ecrivez ' rien ' ."=>"rien"
+  "Ecrivez ' rien ' ."=>"rien",
+  "Quel est le premier mot de cette phrase ?"=>"quel"
 );
 $key = array_rand($captcha);

@@ -16,6 +16,7 @@
 		]
 	},
 	"AutoloadClasses": {
+		"MGWikiDev": "includes/MGWikiDev.php",
 		"SpecialAccountRequest": "includes/SpecialAccountRequest.php"
 	},
 	"SpecialPages": {
@@ -26,10 +27,17 @@
 		"remoteExtPath": "MGWikiDev/resources"
 	},
 	"ResourceModules": {
+		"ext.mgwiki-dev": {
+			"packageFiles": [ "mgwiki-dev.js" ],
+			"styles": [ "mgwiki-dev.css" ]
+		},
 		"ext.mgwiki-dev-specialaccountrequest": {
 			"packageFiles": [ "specialaccountrequest.js" ],
 			"styles": [ "specialaccountrequest.css" ]
 		}
+	},
+	"Hooks": {
+		"BeforePageDisplay": "MGWikiDev::onBeforePageDisplay"
 	},
 	"ExtensionMessagesFiles": {
 		"MGWikiDevAlias": "includes/MGWikiDev.alias.php"
