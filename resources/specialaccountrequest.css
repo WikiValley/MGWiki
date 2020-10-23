@@ -1,0 +1,20 @@
+/* special account request styles */
+#institution-label{
+  vertical-align: top;
+}
+.mgw-accountrequest-intro{
+  display:none;
+}
+.mgw-hidden{
+  display:none;
+}
+
+/*
+.mgw-tr-formateur{
+  display: none;
+}
+
+.mgw-tr-year{
+  display: none;
+}
+*/

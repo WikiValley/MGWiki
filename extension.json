@@ -1,266 +1,46 @@
 {
 	"@note": "When updating this file please also update MGWiki.php with the same changes.",
-	"name": "MGWiki",
+	"name": "MGWikiDev",
 	"version": "0.1",
 	"author": [
-		"Sébastien Beyou"
+		"Sébastien Beyou",
+		"Alexandre BRULET"
 	],
 	"url": "https://mgwiki.univ-lyon1.fr",
-	"descriptionmsg": "mgwiki-desc",
+	"descriptionmsg": "mgwiki-dev-desc",
 	"license-name": "GPL-3.0+",
 	"type": "other",
-	"AvailableRights": [
-		"mgwikimanagelevel1",
-		"mgwikimanagelevel2"
-	],
-	"config": {
-		"MGWikiSecretKeyADEPUL": null,
-		"MGWikiInitialDelayBeforeInactive": 1209600,
-		"MGWikiDefaultCreatorNewAccounts": "Alexandre BRULET",
-		"MGWikiForms": {
-			"Personne": {
-				"RegexPageName": "/^User:[^\\/]+$/",
-				"RequiredRight": "mgwikimanagelevel1",
-				"EditOwnUserpage": true,
-				"SubObjects": false,
-				"Fields": ["Statut personne", "Statut additionnel personne"]
-			},
-			"Nouveaux utilisateurs": {
-				"RegexPageName": "/^Nouveaux utilisateurs/",
-				"RequiredRight": "mgwikimanagelevel1",
-				"InstitutionFromCreator": true,
-				"SubObjects": true,
-				"EphemeralPage": true
-			},
-			"Groupe": {
-				"RegexPageName": "/^(GEP|GAPP)/",
-				"RequiredRight": "mgwikimanagelevel1",
-				"InstitutionFromCreator": true,
-				"SubObjects": true,
-				"MergeNewUsers": {
-					"participantTemplate": "membersList"
-				}
-			},
-			"GEP": {
-				"RegexPageName": "/^Groupe:GEP/",
-				"RequiredRight": "mgwikimanagelevel1",
-				"InstitutionFromCreator": true,
-				"SubObjects": true,
-				"MergeNewUsers": {
-					"participantTemplate": "membersList"
-				}
-			},
-			"GAPP": {
-				"RegexPageName": "/^Groupe:GAPP/",
-				"RequiredRight": "mgwikimanagelevel1",
-				"InstitutionFromCreator": true,
-				"SubObjects": true,
-				"MergeNewUsers": {
-					"participantTemplate": "membersList"
-				}
-			},
-			"Stage praticien": {
-				"RegexPageName": "/^Groupe:Stage praticien/",
-				"RequiredRight": "mgwikimanagelevel1",
-				"InstitutionFromCreator": true,
-				"SubObjects": true,
-				"MergeNewUsers": {
-					"participantTemplate": "membersList"
-				}
-			},
-			"DPC": {
-				"RegexPageName": "/^Groupe:DPC/",
-				"RequiredRight": "mgwikimanagelevel1",
-				"InstitutionFromCreator": true,
-				"SubObjects": true,
-				"MergeNewUsers": {
-					"participantTemplate": "membersList"
-				}
-			},
-			"Groupe de niveau 2": {
-				"RegexPageName": "/^(Tuteurs|Modérateurs)/",
-				"RequiredRight": "mgwikimanagelevel2",
-				"InstitutionFromCreator": true,
-				"SubObjects": true,
-				"MergeNewUsers": {
-					"participantTemplate": "membersList"
-				}
-			},
-			"Nouveaux tuteurs ou modérateurs": {
-				"RegexPageName": "/^Nouveaux tuteurs ou modérateurs/",
-				"RequiredRight": "mgwikimanagelevel2",
-				"InstitutionFromCreator": true,
-				"SubObjects": true,
-				"EphemeralPage": true
-			}
-		},
-		"MGWikiFieldsGroups": {
-			"Statut personne": {
-				"RequiredRight": "mgwikimanagelevel1",
-				"EditOwnUserpage": true,
-				"Groups": ["interne", "médecin", "scientifique"],
-				"MapFromProperty": {
-					"Visiteur": "visiteur",
-					"Interne": "interne",
-					"Médecin": "médecin",
-					"Scientifique": "scientifique"
-				},
-				"MapFromTitle": {
-					"/^GEP/": "interne",
-					"/^GAPP/": "médecin"
-				}
-			},
-			"Statut additionnel personne": {
-				"RequiredRight": "mgwikimanagelevel2",
-				"Groups": ["", "U2"],
-				"MapFromProperty": {
-					"": "",
-					"Tuteur": "U2",
-					"Modérateur": "U2",
-					"Formateur": "U2",
-					"MSU": "U2"
-				},
-				"MapFromTitle": {
-					"/^Tuteurs/": "U2",
-					"/^Modérateurs/": "U2"
-				}
-			},
-			"Groupe U2": {
-				"RequiredRight": "mgwikimanagelevel2",
-				"Groups": ["", "U2"],
-				"MapFromProperty": {
-					"": "",
-					"No": "",
-					"Non": "",
-					"1": "U2",
-					"Yes": "U2",
-					"Oui": "U2"
-				}
-			}
-		},
-		"MGWikiUserProperties": {
-			"email": "Courriel",
-			"firstname": "Prénom",
-			"lastname": "Nom",
-			"statutPersonne": "Statut personne",
-			"statutAdditionnelPersonne": "Statut additionnel personne",
-			"timestamp": "Dernière modification",
-			"institution": "Institution de rattachement",
-			"referrer": "Responsable référent",
-			"moderator": "Tuteur ou modérateur",
-			"requiredUserUpdate": "Mise à jour requise",
-			"participantTemplate": "Participant Groupe",
-			"membersList": "Membres",
-			"codeAdepul": "Code ADEPUL",
-			"codeActionAdepul": "Code action"
-		}
-	},
-	"SpecialPages": {
-		"Invitation": "Invitation"
-	},
-	"GroupPermissions": {
-		"interne": {},
-		"médecin": {},
-		"scientifique": {},
-		"U2": {
-			"mgwikimanagelevel1": true
-		},
-		"sysop": {
-			"mgwikimanagelevel1": true,
-			"mgwikimanagelevel2": true
-		}
-	},
 	"MessagesDirs": {
-		"MGWiki": [
+		"MGWikiDev": [
 			"i18n"
 		]
 	},
-	"ExtensionMessagesFiles": {
-		"MGWikiAlias": "MGWiki.alias.php",
-		"MGWikiMagic": "MGWiki.magic.php"
-	},
 	"AutoloadClasses": {
-		"MGWiki": "MGWiki.php",
-		"MGWikiParserFunctions": "MGWikiParserFunctions.php",
-		"MGWikiMarguerite": "MGWikiMarguerite.php",
-		"Invitation": "SpecialInvitation.php",
-		"ApiNewADEPULGroup": "ApiNewADEPULGroup.php",
-		"ApiADEPULGroupMember": "ApiADEPULGroupMember.php",
-		"MediaWiki\\Auth\\EmailTokenAuthenticationRequest": "EmailTokenAuthenticationRequest.php",
-		"MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider": "EmailTokenPrimaryAuthenticationProvider.php"
+		"MGWikiDev": "includes/MGWikiDev.php",
+		"SpecialAccountRequest": "includes/SpecialAccountRequest.php"
 	},
-	"Hooks": {
-		"userCan": [
-			"MGWiki::onuserCan"
-		],
-		"sfHTMLBeforeForm": [
-			"MGWiki::onsfHTMLBeforeForm"
-		],
-		"PrefsEmailAudit": [
-			"MGWiki::onPrefsEmailAudit"
-		],
-		"SMW::SQLStore::AfterDataUpdateComplete": [
-			"MGWiki::onSMW_SQLStore_AfterDataUpdateComplete"
-		],
-		"PageContentSave": [
-			"MGWiki::onPageContentSave"
-		],
-		"PostLoginRedirect": [
-			"MGWiki::onPostLoginRedirect"
-		],
-		"SpecialPageAfterExecute": [
-			"MGWiki::onSpecialPageAfterExecute"
-		],
-		"ParserFirstCallInit": [
-			"MGWikiParserFunctions::onParserFirstCallInit"
-		],
-		"BeforePageDisplay": [
-			"MGWikiMarguerite::onBeforePageDisplay"
-		]
-	},
-	"AuthManagerAutoConfig": {
-		"primaryauth": {
-			"MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider": {
-				"class": "MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider",
-				"args": [
-					{
-						"authoritative": false
-					}
-				],
-				"sort": 0
-			}
-		}
+	"SpecialPages": {
+		"SpecialAccountRequest": "SpecialAccountRequest"
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "resources",
-		"remoteExtPath": "MGWiki/resources"
+		"remoteExtPath": "MGWikiDev/resources"
 	},
 	"ResourceModules": {
-		"ext.mgwiki": {
-			"scripts": [
-				"ext.mgwiki.js"
-			],
-			"dependencies": [
-				"ext.mgwiki.edit"
-			]
+		"ext.mgwiki-dev": {
+			"packageFiles": [ "mgwiki-dev.js" ],
+			"styles": [ "mgwiki-dev.css" ]
 		},
-		"ext.mgwiki.edit": {
-			"scripts": [
-				"ext.mgwiki.edit.js"
-			],
-			"dependencies": [
-				"mediawiki.api",
-				"mediawiki.Title"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
-			]
+		"ext.mgwiki-dev-specialaccountrequest": {
+			"packageFiles": [ "specialaccountrequest.js" ],
+			"styles": [ "specialaccountrequest.css" ]
 		}
 	},
-	"APIModules": {
-		"nouveau-groupe-adepul": "ApiNewADEPULGroup",
-		"membre-groupe-adepul": "ApiADEPULGroupMember"
+	"Hooks": {
+		"BeforePageDisplay": "MGWikiDev::onBeforePageDisplay"
+	},
+	"ExtensionMessagesFiles": {
+		"MGWikiDevAlias": "includes/MGWikiDev.alias.php"
 	},
 	"manifest_version": 1
 }

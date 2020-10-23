@@ -11,10 +11,10 @@ $specialPageAliases = array();
 
 /** English (English) */
 $specialPageAliases['en'] = array(
-	'Invitation' => array( 'Invitation' ),
+	'SpecialAccountRequest' => array( 'Account Request' ),
 );
 
 /** French (français) */
-$specialPageAliases['ff'] = array(
-	'Invitation' => array( 'Invitation' ),
+$specialPageAliases['fr'] = array(
+	'SpecialAccountRequest' => array( 'Demande de création de compte' ),
 );

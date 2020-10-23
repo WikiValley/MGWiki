@@ -1,39 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Sébastien Beyou"
+			"Sébastien Beyou",
+			"Alexandre Brulet"
 		]
 	},
-	"mgwiki-desc": "{{desc|name=MGWiki|url=https://mgwiki.univ-lyon1.fr}}",
-	"invitation": "Title of the [[Special:Invitation]] special page",
-	"right-mgwikimanagelevel1": "{{doc-right|right-mgwikimanagelevel1}}Right to manage basic users",
-	"right-mgwikimanagelevel2": "{{doc-right|right-mgwikimanagelevel2}}Right to manage advanced users (moderators)",
-	"group-interne": "{{doc-group|interne}}",
-	"group-médecin": "{{doc-group|médecin}}",
-	"group-scientifique": "{{doc-group|scientifique}}",
-	"group-U2": "{{doc-group|U2}}",
-	"group-interne-member": "{{doc-group|interne|member}}",
-	"group-médecin-member": "{{doc-group|médecin|member}}",
-	"group-scientifique-member": "{{doc-group|scientifique|member}}",
-	"group-U2-member": "{{doc-group|U2|member}}",
-	"grouppage-interne": "{{doc-group|interne|page}}",
-	"grouppage-médecin": "{{doc-group|médecin|page}}",
-	"grouppage-scientifique": "{{doc-group|scientifique|page}}",
-	"grouppage-U2": "{{doc-group|U2|page}}",
-	"authmanager-emailtoken-label": "Jeton de courriel",
-	"authmanager-emailtoken-help": "Jeton de courriel de l’utilisateur",
-	"confirmemail_body_created_by_mgwiki": "Body of the email sent to user when their account is created by a MGWiki moderator.\n\nParameters:\n* $1 - the IP address of the user that created or confirmed the email address\n* $2 - the name of the user\n* $3 - a URL to [[Special:ConfirmEmail]]\n* $4 - a time and date (duplicated by $6 and $7)\n* $5 - a URL to [[Special:InvalidateEmail]]\n* $6 - (Optional) a date\n* $7 - (Optional) a time\n{{Related|Confirmemail body}}",
-	"mgwiki-userpage-without-useraccount": "Warning message on top of a form",
-	"mgwiki-useraccount-without-userpage": "Warning message on top of a form",
-	"mgwiki-create-userpage": "Summary when a userpage is created",
-	"mgwiki-template-new-userpage": "Wikitext template when a userpage is initialised.\nParameters:\n* $1 - username\n* $2 - first name\n* $3 - family name\n* $4 - email\n* $5 - status (interne/médecin/scientifique)\n* $6 additional status (tuteur/modérateur)\n* $7 Institution\n* $8 Referrer",
-	"mgwiki-bad-email-token": "Warning message when a user has a bad token when trying to connect with",
-	"mgwiki-summary-rewrite-grouppage": "Summary when group page is edited to convert new users to group members",
-	"mgwiki-ephemeral-page-deleted": "Log message when an ephemeral page is deleted",
-	"mgwiki-isusersysop-nousername": "Error message for #isusersysop",
-	"mgwiki-isusersysop-badusername": "Error message for #isusersysop",
-	"mgwiki-parserfunction-internalerror": "Error message for parser functions",
-	"mgwiki-wrong-secret-key": "Error message in API",
-	"mgwiki-bad-adepul-group": "Error message in API",
-	"mgwiki-add-member-grouppage": "Summary"
+	"mgwiki-dev-desc": "{{desc|name=MGWikiDev|url=https://mgwiki.univ-lyon1.fr}}",
+	"specialaccountrequest": "Account request",
+	"specialaccountrequest-title": "Account request",
+	"specialaccountrequest-intro-lyon": "{{specialaccountrequest-intro-lyon}}",
+	"specialaccountrequest-intro-adepul": "{{specialaccountrequest-intro-adepul}}",
+	"specialaccountrequest-intro-autre": "{{specialaccountrequest-intro-autre}}"
 }

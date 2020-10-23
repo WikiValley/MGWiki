@@ -1,41 +1,14 @@
 {
 	"@metadata": {
 		"authors": [
-			"Sébastien Beyou"
+			"Sébastien Beyou",
+			"Alexandre Brulet"
 		]
 	},
-	"mgwiki-desc": "Specific hooks for MGWiki",
-	"invitation": "Invitation",
-	"right-mgwikimanagelevel1": "Manage MGWiki level-1 users (interns, physicians, scientists)",
-	"right-mgwikimanagelevel2": "Manage MGWiki level-2 users (moderators)",
-	"group-interne": "Interns",
-	"group-médecin": "Physicians",
-	"group-scientifique": "Scientists",
-	"group-U2": "U2",
-	"group-interne-member": "{{GENDER:$1|intern}}",
-	"group-médecin-member": "{{GENDER:$1|physician}}",
-	"group-scientifique-member": "{{GENDER:$1|scientist}}",
-	"group-U2-member": "{{GENDER:$1|U2|U2}}",
-	"grouppage-interne": "{{ns:project}}:Internes",
-	"grouppage-médecin": "{{ns:project}}:Médecins",
-	"grouppage-scientifique": "{{ns:project}}:Scientifiques",
-	"grouppage-U2": "{{ns:project}}:U2",
-	"authmanager-emailtoken-label": "Email token",
-	"authmanager-emailtoken-help": "Email token of the user",
-	"confirmemail_body_created_by_mgwiki": "MGWiki <{{SERVER}}> is a website for medecine students\nand physicians aiming at exchanging their practices and knownledges. A moderator\nfrom MGWiki created this account \"$2\" for you with this email address.\n\nTo log in and confirm this account, open this link in your browser:\n\n{{SERVER}}/Special:Invitation/{{#titleparts:$3||-1}}\n\nThis confirmation code will expire at $4.",
-	"mgwiki-userpage-without-useraccount": "The userpage exists but not the MediaWiki user account.",
-	"mgwiki-useraccount-without-userpage": "The user account exists but not the userpage.",
-	"mgwiki-create-userpage": "Userpage initialization",
-	"mgwiki-create-grouppage": "Group page initialization",
-	"mgwiki-template-new-userpage": "{{Personne\n|Titre=\n|Prénom=$2\n|Nom=$3\n|E-mail=$4\n|Date de dernière modification=\n|Statut personne=$5\n|Statut additionnel personne=$6\n|Spécialité ou profession=\n|Institution de rattachement=$7\n|Responsable référent=$8\n|Année de promotion=\n|Année de thèse=\n|Présentation=\n}}\n{{Personne2\n|Rapports et conflits d'intérêts=\n}}",
-	"mgwiki-bad-email-token": "The initial connection link seems to be broken (bad email token). Please check the link was not truncated by copying and pasting in your browser the whole link from your email.",
-	"mgwiki-changed-email": "Change email address",
-	"mgwiki-summary-rewrite-grouppage": "Convert new users to group members",
-	"mgwiki-ephemeral-page-deleted": "Ephemeral page",
-	"mgwiki-isusersysop-nousername": "No username given",
-	"mgwiki-isusersysop-badusername": "Bad username given",
-	"mgwiki-parserfunction-internalerror": "PHP code internal error",
-	"mgwiki-wrong-secret-key": "Wrong secret key",
-	"mgwiki-bad-adepul-group": "Badly recognised ADEPUL group",
-	"mgwiki-add-member-grouppage": "Add a new member in the group"
+	"mgwiki-dev-desc": "{{desc|name=MGWikiDev|url=https://mgwiki.univ-lyon1.fr}}",
+	"specialaccountrequest": "Account request",
+	"specialaccountrequest-title": "Account request",
+	"specialaccountrequest-intro-lyon": "{{specialaccountrequest-intro-lyon}}",
+	"specialaccountrequest-intro-adepul": "{{specialaccountrequest-intro-adepul}}",
+	"specialaccountrequest-intro-autre": "{{specialaccountrequest-intro-autre}}"
 }
