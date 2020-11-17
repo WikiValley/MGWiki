@@ -2,11 +2,6 @@
 /**
  * MGW customization
  */
-
- mw.mgwImgTooltip();
- $("#mgw-toggle-createUserSubPage-icon").html(' ▼ ');
- $("#mgw-toggle-createUserSubPage").attr("onclick","mw.mgwToggleCreateUserSubPage()");
- 
 ( function ( mw, $ ) {
 	//logo aide:
 	//override image link tooltip
@@ -39,4 +34,10 @@
       $div.attr('class','mgw-toggle-show');
     }
   }
+
+  $( function () {
+   mw.mgwImgTooltip();
+   $("#mgw-toggle-createUserSubPage-icon").html(' ▼ ');
+   $("#mgw-toggle-createUserSubPage").attr("onclick","mw.mgwToggleCreateUserSubPage()");
+  });
 }( mediaWiki, jQuery ) );

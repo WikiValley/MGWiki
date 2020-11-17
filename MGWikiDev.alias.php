@@ -9,6 +9,7 @@
 
 $specialPageAliases = array();
 
+
 /** English (English) */
 $specialPageAliases['en'] = array(
 	'SpecialAccountRequest' => array( 'Account Request' ),

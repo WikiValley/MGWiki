@@ -1,8 +1,11 @@
 {
-	"description": "Customisations for MGWiki",
+	"name": "MGWikiDev",
+	"type": "mediawiki-extension",
+	"description": "Customisations for MGWiki - development extension",
 	"keywords": [
 		"Semantic MediaWiki",
-		"MediaWiki"
+		"MediaWiki",
+		"MGWiki"
 	],
 	"homepage": "https://mgwiki.univ-lyon1.fr",
 	"license": "GPL-3.0+",
@@ -11,29 +14,20 @@
 			"name": "Sébastien Beyou",
 			"homepage": "https://www.seb35.fr",
 			"role": "Original author"
+		},
+		{
+			"name": "Alexandre Bulet",
+			"role": "Co-author"
 		}
 	],
 	"support": {
-		"issues": "https://github.com/WikiValley/MGWiki/issues",
-		"source": "https://github.com/WikiValley/MGWiki"
+		"issues": "https://github.com/Looxloox/MGWiki-dev/issues",
+		"source": "https://github.com/Looxloox/MGWiki-dev"
 	},
 	"require": {
 		"php": ">=7.0.0"
 	},
 	"require-dev": {
-		"jakub-onderka/php-parallel-lint": "0.9.2",
 		"mediawiki/mediawiki-codesniffer": "0.7.2"
-	},
-	"suggest": {
-		"mediawiki/semantic-forms": "Easy creation of forms to add semantic data"
-	},
-	"scripts": {
-		"test": [
-			"parallel-lint . --exclude vendor",
-			"phpcs -p -s"
-		],
-		"fix": [
-			"phpcbf"
-		]
 	}
 }

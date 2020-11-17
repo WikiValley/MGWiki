@@ -6,9 +6,6 @@
 		]
 	},
 	"mgwiki-dev-desc": "{{desc|name=MGWikiDev|url=https://mgwiki.univ-lyon1.fr}}",
-	"specialaccountrequest": "Account request",
-	"specialaccountrequest-title": "Account request",
-	"specialaccountrequest-intro-lyon": "{{specialaccountrequest-intro-lyon}}",
-	"specialaccountrequest-intro-adepul": "{{specialaccountrequest-intro-adepul}}",
-	"specialaccountrequest-intro-autre": "{{specialaccountrequest-intro-autre}}"
+	"specialpages-group-mgwiki": "MGWiki",
+	"specialaccountrequest": "Demande de création de compte"
 }

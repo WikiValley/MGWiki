@@ -1,8 +1,7 @@
-# Backup files
-*.swp
-*~
+# syntax: https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 
-# Composer & npm
-/node_modules
-/vendor
-/composer.lock
+# Private files
+**/Private
+
+# temporary log files
+*-report.txt

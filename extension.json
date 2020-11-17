@@ -3,7 +3,6 @@
 	"name": "MGWikiDev",
 	"version": "0.1",
 	"author": [
-		"Sébastien Beyou",
 		"Alexandre BRULET"
 	],
 	"url": "https://mgwiki.univ-lyon1.fr",
@@ -15,24 +14,45 @@
 			"i18n"
 		]
 	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\MGWikiDev\\": "includes/",
+		"MediaWiki\\Extension\\MGWikiDev\\Utilities\\": "includes/Utilities/",
+		"MediaWiki\\Extension\\MGWikiDev\\Api\\": "includes/Api/"
+	},
 	"AutoloadClasses": {
-		"SpecialAccountRequest": "includes/SpecialAccountRequest.php"
+		"MGWikiHooks": "Hooks.php"
 	},
 	"SpecialPages": {
-		"SpecialAccountRequest": "SpecialAccountRequest"
+		"SpecialAccountRequest": "MediaWiki\\Extension\\MGWikiDev\\SpecialAccountRequest"
+	},
+	"Hooks": {
+		"BeforePageDisplay": "MGWikiHooks::onBeforePageDisplay",
+		"ApiAllow": "MGWikiHooks::onApiAllow",
+		"ParserFirstCallInit": "MGWikiHooks::onParserFirstCallInit"
+	},
+	"APIModules": {
+		"getjson" : "MediaWiki\\Extension\\MGWikiDev\\Api\\ApiGetJson"
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "resources",
 		"remoteExtPath": "MGWikiDev/resources"
 	},
 	"ResourceModules": {
-		"ext.mgwiki-dev-specialaccountrequest": {
-			"packageFiles": [ "specialaccountrequest.js" ],
-			"styles": [ "specialaccountrequest.css" ]
+		"ext.mgwiki-dev": {
+			"packageFiles": [ "ext.mgwiki-dev.js" ],
+			"styles": [ "ext.mgwiki-dev.css" ]
+		},
+		"ext.mgwiki-jsonform": {
+			"packageFiles": [ "jsonform.js" ],
+			"styles": [ "jsonform.css" ]
+		},
+		"ext.mgwiki-specialaccountrequest": {
+			"packageFiles": [ "specialaccountrequest.js" ]
 		}
 	},
 	"ExtensionMessagesFiles": {
-		"MGWikiDevAlias": "includes/MGWikiDev.alias.php"
+		"MGWikiDevAlias": "MGWikiDev.alias.php",
+		"MGWikiDevMagic": "MGWikiDev.i18n.php"
 	},
 	"manifest_version": 1
 }
