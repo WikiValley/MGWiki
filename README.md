@@ -19,9 +19,12 @@ Modules inclus:
     - MediaWiki:MGWiki-messages.json : messages d'interface
   - includes/Utilities/JsonToForm : classe pour la création de formulaires depuis une description au format .json
 * Autres:
-  - maintenance/CheckHooks.php: 
+  - maintenance/CheckHooks.php:
     - vérification de l'existence des Hooks utilisés par l'extension
     - insertion de Hooks customizés si nécessaire (onApiAllow)
+  - skinning:
+    - resources/ext.mgwiki-dev.js & css
+    - images/php
 
 Todo:
 * includes/SpecialAccount.php: use WebResponse::setCookie() instead of setcookie() when upgrading Mediawiki >= 1.35
