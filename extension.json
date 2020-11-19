@@ -39,7 +39,7 @@
 	},
 	"ResourceModules": {
 		"ext.mgwiki-dev": {
-			"packageFiles": [ "ext.mgwiki-dev.js" ],
+			"packageFiles": [ "ext.mgwiki-dev.js", "jquery.tancolor.js" ],
 			"styles": [ "ext.mgwiki-dev.css" ]
 		},
 		"ext.mgwiki-jsonform": {

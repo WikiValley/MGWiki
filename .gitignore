@@ -1,7 +1,7 @@
 # syntax: https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 
 # Private files
-**/Private
+Captcha.json
 
 # temporary log files
 *-report.txt
