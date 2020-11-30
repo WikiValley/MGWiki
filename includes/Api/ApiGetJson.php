@@ -4,11 +4,10 @@
  */
 namespace MediaWiki\Extension\MGWikiDev\Api;
 
-use ApiBase;
 use ApiCrossWiki;
 use MediaWiki\Extension\MGWikiDev\Utilities\GetJsonPage;
 
-class ApiGetJson extends ApiBase {
+class ApiGetJson extends \ApiBase {
 
 	public function execute( ) {
 		global $IP;

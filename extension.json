@@ -17,18 +17,22 @@
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\MGWikiDev\\": "includes/",
 		"MediaWiki\\Extension\\MGWikiDev\\Utilities\\": "includes/Utilities/",
-		"MediaWiki\\Extension\\MGWikiDev\\Api\\": "includes/Api/"
+		"MediaWiki\\Extension\\MGWikiDev\\Api\\": "includes/Api/",
+		"MediaWiki\\Extension\\MGWikiDev\\Foreign\\": "includes/Foreign/"
 	},
 	"AutoloadClasses": {
-		"MGWikiHooks": "Hooks.php"
+		"MGWikiDevHooks": "Hooks.php"
 	},
 	"SpecialPages": {
-		"SpecialAccountRequest": "MediaWiki\\Extension\\MGWikiDev\\SpecialAccountRequest"
+		"SpecialAccountRequest": "MediaWiki\\Extension\\MGWikiDev\\SpecialAccountRequest",
+		"SpecialCheckAccounts": "MediaWiki\\Extension\\MGWikiDev\\SpecialCheckAccounts"
+
 	},
 	"Hooks": {
-		"BeforePageDisplay": "MGWikiHooks::onBeforePageDisplay",
-		"ApiAllow": "MGWikiHooks::onApiAllow",
-		"ParserFirstCallInit": "MGWikiHooks::onParserFirstCallInit"
+		"BeforePageDisplay": "MGWikiDevHooks::onBeforePageDisplay",
+		"ApiAllow": "MGWikiDevHooks::onApiAllow",
+		"ParserFirstCallInit": "MGWikiDevHooks::onParserFirstCallInit",
+    "LoadExtensionSchemaUpdates": "MGWikiDevHooks::onLoadExtensionSchemaUpdates"
 	},
 	"APIModules": {
 		"getjson" : "MediaWiki\\Extension\\MGWikiDev\\Api\\ApiGetJson"
@@ -48,6 +52,10 @@
 		},
 		"ext.mgwiki-specialaccountrequest": {
 			"packageFiles": [ "specialaccountrequest.js" ]
+		},
+		"ext.mgwiki-specialcheckaccounts": {
+			"packageFiles": [ "specialcheckaccounts.js" ],
+			"styles": [ "specialcheckaccounts.css" ]
 		}
 	},
 	"ExtensionMessagesFiles": {

@@ -7,5 +7,6 @@
 	},
 	"mgwiki-dev-desc": "{{desc|name=MGWikiDev|url=https://mgwiki.univ-lyon1.fr}}",
 	"specialpages-group-mgwiki": "MGWiki",
-	"specialaccountrequest": "Demande de création de compte"
+	"specialaccountrequest": "Demande de création de compte",
+	"specialcheckaccounts": "Administration des utilisateurs"
 }

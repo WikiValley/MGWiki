@@ -2,7 +2,9 @@
 
 namespace MediaWiki\Extension\MGWikiDev\Utilities;
 
-use MediaWiki\Extension\MGWikiDev\Utilities\PhpFunctions;
+use MediaWiki\Extension\MGWikiDev\Utilities\PhpFunctions as PhpF;
+use Title;
+use WikiPage;
 
 /**
   * Class to handle json data from a wiki page
@@ -13,10 +15,17 @@ class GetJsonPage
   private $jsonData;  // array
   private $service;   // string
 
-  use PhpFunctions;
+  /**
+ 	 * @param string $service : one of the first-level keys of (array) $wgMGWikiJsonPages as defined in LocalSettings.php
+   */
+  public function __construct( $service )
+  {
+    $this->jsonData = self::retrieveData( $service );
+  }
 
   /**
- 	 * pour usage statique, sans constructeur
+ 	 * récupérer les données en usage statique, sans constructeur
+	 * @param string $service
    */
   public static function getData( $service )
   {
@@ -24,11 +33,12 @@ class GetJsonPage
   }
 
   /**
- 	 * @param string $service : one of the first-level keys of (array) $wgMGWikiJsonPages as defined in LocalSettings.php
+ 	 * récupérer l'url de la page
+	 * @param string $service
    */
-  public function __construct( $service )
+  public static function getLink( $service )
   {
-    $this->jsonData = self::retrieveData( $service );
+    return self::getFullURL( $service );
   }
 
   public function getFullData()
@@ -50,10 +60,10 @@ class GetJsonPage
     }
     if ( sizeof( $parents ) > 0 ) {
       foreach ($parents as $index => $parent) {
-          $ret = self::recursiveArrayKey( $parent, $ret );
+          $ret = PhpF::recursiveArrayKey( $parent, $ret );
       }
     }
-    $ret = self::recursiveArrayKey( $key, $ret );
+    $ret = PhpF::recursiveArrayKey( $key, $ret );
 		return $ret;
   }
 
@@ -72,15 +82,15 @@ class GetJsonPage
       foreach ($parents as $index => $parent) {
         $temp = $this->getSubData($parent);
         if ( isset( $ret ) ) {
-          $ret = array_merge( $ret, self::recursiveArrayKeyMerge( $key, $temp ) );
+          $ret = array_merge( $ret, PhpF::recursiveArrayKeyMerge( $key, $temp ) );
         }
         else {
-          $ret = self::recursiveArrayKeyMerge( $key, $temp );
+          $ret = PhpF::recursiveArrayKeyMerge( $key, $temp );
         }
       }
     }
     else {
-      $ret = self::recursiveArrayKeyMerge( $key, $this->jsonData );
+      $ret = PhpF::recursiveArrayKeyMerge( $key, $this->jsonData );
     }
 		return $ret;
   }
@@ -90,12 +100,24 @@ class GetJsonPage
 		global $wgMGWikiJsonPages;
     if (!isset($wgMGWikiJsonPages[$service])) throw new \Exception("La cible '" . $service . "' n'existe pas.", 1);
 
-		$title = \Title::newFromText( $wgMGWikiJsonPages[$service]['title'], $wgMGWikiJsonPages[$service]['namespace'] );
+		$title = Title::newFromText( $wgMGWikiJsonPages[$service]['title'], $wgMGWikiJsonPages[$service]['namespace'] );
  		if ( $title->getArticleID() == -1 ) {
       throw new \Exception("La page ".$wgMGWikiJsonPages['title']." (NS: {$wgMGWikiJsonPages['namespace']}) n'existe pas.", 1);
     }
-		$page = \WikiPage::factory( $title );
+		$page = WikiPage::factory( $title );
 
     return json_decode( $page->getContent()->getNativeData(), true );
+  }
+
+  private function getFullURL( $service )
+  {
+		global $wgMGWikiJsonPages;
+    if (!isset($wgMGWikiJsonPages[$service])) throw new \Exception("La cible '" . $service . "' n'existe pas.", 1);
+
+		$title = Title::newFromText( $wgMGWikiJsonPages[$service]['title'], $wgMGWikiJsonPages[$service]['namespace'] );
+ 		if ( $title->getArticleID() == -1 ) {
+      throw new \Exception("La page ".$wgMGWikiJsonPages['title']." (NS: {$wgMGWikiJsonPages['namespace']}) n'existe pas.", 1);
+    }
+    return $title->getFullURL();
   }
 }

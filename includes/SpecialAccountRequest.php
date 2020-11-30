@@ -1,6 +1,7 @@
 <?php
 namespace MediaWiki\Extension\MGWikiDev;
 
+use SpecialPage;
 use MediaWiki\Extension\MGWikiDev\Utilities\GetJsonPage;
 use MediaWiki\Extension\MGWikiDev\Utilities\JsonToForm;
 
@@ -8,7 +9,7 @@ use MediaWiki\Extension\MGWikiDev\Utilities\JsonToForm;
  * Page spéciale demande de création de compte
  * Accessible du public (whitelisted)
  */
-class SpecialAccountRequest extends \SpecialPage {
+class SpecialAccountRequest extends SpecialPage {
 
 	private $messages;		// array
 	private $JsonForm;    // obj
@@ -141,7 +142,8 @@ class SpecialAccountRequest extends \SpecialPage {
 			return $this->messages[ $mess ];
 		}
 		else {
-			return '<' . $mess . '>';
+      $link = GetJsonPage::getLink('messages');
+			return '<a href="'.$link.'">&lt;' . $mess . '&gt;</a>';
 		}
 	}
 

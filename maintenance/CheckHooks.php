@@ -4,8 +4,9 @@
  * Les Hooks spécifiques à MGWiki sont automatiquement insérés (si l'accroche du code n'a pas changé).
  * (doit être exécuté avec les droits d'écriture)
  */
+if ( !isset($includeTools) ) include ('Tools.php');
 
-$customHooks = [
+if ( !isset($customHooks) ) $customHooks = [
   "ApiAllow" => [
     "fileIdentifier" => 'class ApiMain extends ApiBase',                  // chaîne de caractères unique permettant d'identifier le fichier (ici: includes/api/ApiMain.php)
     "stringIdentifier" => '!$user->isAllowed( \'read\' )',                // chaîne de caractères unique permettant d'identifier le lieu d'insertion (ici : l.1419)
@@ -25,7 +26,11 @@ CheckHooks - ' . date('Y-m-d H:i:s') . '
 --------------------------------' . $endL );
 
   foreach ($info['Hooks'] as $key => $value) {
-    $grep = shell_exec( 'cd ' . getPath('base') . ' && grep -r -n -E "Hooks::run(WithoutAbort)?\( \'' . $key . '\'"' );
+    $shell = ' && stdbuf -oL grep -r -n -E "Hooks::run(WithoutAbort)?\( \'' . $key . '\'" | head -n1';
+    $grep = shell_exec( 'cd ' . getPath('base') . '/includes' . $shell );
+    if ( is_null( $grep ) ) { $grep = shell_exec( 'cd ' . getPath('base') . '/maintenance' . $shell ); }
+    if ( is_null( $grep ) ) { $grep = shell_exec( 'cd ' . getPath('base') . '/skins' . $shell ); }
+    if ( is_null( $grep ) ) { $grep = shell_exec( 'cd ' . getPath('base') . '/extensions' . $shell ); }
     if ( is_null( $grep ) ) {
      if ( array_key_exists( $key, $customHooks ) ) {
        $add = addHook( $customHooks[$key] );
@@ -42,23 +47,12 @@ CheckHooks - ' . date('Y-m-d H:i:s') . '
       echo $key . ' : OK' . $endL ;
     }
   }
-
+  echo $endL . '
+  ==================================
+  => voir: maintenance-report.txt <=
+  ==================================
+  ';
   fclose($report);
-}
-
-# $target = 'base' || 'extension' || ''
-function getPath( $target )
-{
-  $curPath = explode( '/', getcwd() );
-  switch ( $target ) {
-    case 'base':      $target = 'extensions';   break;
-    case 'extension': $target = 'maintenance';  break;
-  }
-  $path = ''; $i = 1;
-  while ( isset( $curPath[$i] ) && ( $curPath[$i] != $target ) ) {
-    $path .= '/' . $curPath[$i]; $i ++;
-  }
-  return $path;
 }
 
 # insère le hook customisé dans MediaWiki-core

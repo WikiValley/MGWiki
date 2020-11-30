@@ -5,13 +5,13 @@ namespace MediaWiki\Extension\MGWikiDev\Utilities;
 /**
   * Fonctions diverses
   */
-trait PhpFunctions
+class PhpFunctions
 {
   /**
     * recherche récursivement une clé
     * @return mixed (première valeur retrouvée ou null)
     */
-  protected function recursiveArrayKey ( $needle, $array )
+  public function recursiveArrayKey ( $needle, $array )
   {
     $recursive = self::recursiveIterator( $array );
     foreach ( $recursive as $key => $value ) {
@@ -26,7 +26,7 @@ trait PhpFunctions
     * recherche récursivement une clé, fusionne le résultat si plusieurs occurences
     * @return mixed (valeur, array ou array_merge)
     */
-  protected function recursiveArrayKeyMerge ( $needle, $array )
+  public function recursiveArrayKeyMerge ( $needle, $array )
   {
     $recursive = self::recursiveIterator( $array );
     $ret = [];
@@ -62,12 +62,30 @@ trait PhpFunctions
     }
   }
 
-  protected function recursiveIterator( $array ) {
+  private function recursiveIterator( $array ) {
     $iterator  = new \RecursiveArrayIterator( $array );
     $recursive = new \RecursiveIteratorIterator(
         $iterator,
         \RecursiveIteratorIterator::SELF_FIRST
     );
     return $recursive;
+  }
+
+  /**
+    * recherche les doublons dans un tableau
+    * @return mixed array ou null
+    */
+  public function array_doublons( $array ) {
+    if ( !is_array( $array ) ) return false;
+    $r_valeur = Array();
+    $array_unique = array_unique($array);
+
+    if ( count( $array ) - count( $array_unique ) ) {
+      for ( $i=0; $i< count( $array ); $i++ ) {
+        if ( !array_key_exists( $i, $array_unique ) )
+          $r_valeur[] = $array[$i];
+      }
+    }
+    return $r_valeur;
   }
 }
