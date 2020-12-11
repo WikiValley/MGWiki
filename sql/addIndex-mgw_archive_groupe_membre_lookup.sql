@@ -1,0 +1,1 @@
+CREATE INDEX /*i*/mgw_archive_groupe_membre_lookup ON /*_*/mgw_archive_groupe_membre (groupe_membre_groupe_id, groupe_membre_user_id, groupe_membre_isadmin);

@@ -8,7 +8,7 @@ use CommentStoreComment;
 use WikitextContent;
 
 /**
-  * Fonctions sur les pages
+  * Ensemble de fonctions statiques sur les pages
   */
 class PagesFunctions
 {
@@ -17,9 +17,9 @@ class PagesFunctions
     * @param int $namespace : constante de l'espace de nom de la page (ex.: 'NS_MAIN')
     * @param bool $check = false (return null if title does not exist)
     *
-    * @return mixed Title ou null
+    * @return Title|null
     */
-  public function getTitleFromText ( $pagename, $namespace, $check = false ) {
+  public function getTitleFromText ( $pagename, $namespace = NS_MAIN, $check = false ) {
     $title = Title::newFromText( $pagename, $namespace );
     if ( $check && $title->getArticleID() <= 0 ) {
       return null;
@@ -30,7 +30,7 @@ class PagesFunctions
     * @param Title $title
     * @param bool $check = false (return null if page does not exist)
     *
-    * @return mixed WikiPage ou null
+    * @return WikiPage|null
     */
   public function getPageFromTitle ( Title $title, $check = false ) {
     if ( $check ) {
@@ -40,13 +40,22 @@ class PagesFunctions
   }
 
   /**
+    * @param int $id
+    *
+    * @return WikiPage|null
+    */
+  public function getPageFromId ( $id ) {
+    return WikiPage::newFromID( $id );
+  }
+
+  /**
     * @param string $pagename : titre de la page
     * @param int $namespace : constante de l'espace de nom de la page (ex.: 'NS_MAIN')
     * @param bool $check = false (return null if title or page does not exist)
     *
-    * @return mixed WikiPage ou null
+    * @return WikiPage|null
     */
-  public function getPageFromTitleText ( $pagename, $namespace, $check = false ) {
+  public function getPageFromTitleText ( $pagename, $namespace = NS_MAIN, $check = false ) {
     $title = self::getTitleFromText( $pagename, $namespace, $check );
     if ( is_null( $title ) ) {
       return null;
@@ -58,7 +67,7 @@ class PagesFunctions
     * @param string $pagename : titre de la page
     * @param int $namespace : constante de l'espace de nom de la page (ex.: 'NS_MAIN')
     *
-    * @return mixed string ou null
+    * @return string|null
     */
 	public function getPageContentFromTitleText ( $pagename, $namespace ) {
     $page = self::getPageFromTitleText( $pagename, $namespace, true );
@@ -73,13 +82,24 @@ class PagesFunctions
     * renvoie le texte du titre de la page redirigée
     *
     * @param WikiPage $page : titre de la page
-    * @return mixed string ou false
+    * @param string $output 'title'|'string'
+    * @return Title|string|false
     */
-	public function getPageRedirect ( $page ) {
+	public function getPageRedirect ( $page, $output = 'string' ) {
 		$return = [];
 		$content = $page->getContent()->getNativeData();
     $screen = preg_match( '/^\#REDIRECTION \[\[(.*)\]\]/', $content, $matches );
-    if ( $screen > 0 ) return $matches[1];
+    if ( $screen > 0 ) {
+      switch ( $output ) {
+        case 'title':
+          return Title::newFromText( $matches[1] );
+          break;
+
+        default:
+          return $matches[1];
+          break;
+      }
+    }
 		return null;
 	}
 
@@ -90,25 +110,27 @@ class PagesFunctions
     * @param string $template : nom du modèle
     * @param array $fields : champs recherchés
     *
-    * @return mixed array( field => data, ... ) ou null
+    * @return array( "field" => data, ... )|null
     */
 	public function getPageTemplateInfos ( $page, $template, $fields ) {
 		$return = [];
 		$content = $page->getContent()->getNativeData();
-		$content = str_replace( '}}','',$content );
+		//$content = str_replace( '}}','',$content );
 		$content = explode('{{', $content );
 		foreach ( $content as $key => $string ) {
-			$screen = preg_match( '/^' . $template . '/', $string);
+			$screen = preg_match( '/^' . $template . '[\s\|]/', $string);
 			if ( $screen > 0 ) {
 				$data = explode( '|', $string );
 				foreach ( $fields as $kkey => $field ) {
 					foreach ( $data as $kkkey => $dat ) {
-						$screen = preg_match('/^'.$field.'/', $dat, $matches );
-						if ( $screen > 0 ) {
-							$dat = trim(str_replace( $field.'=', '', $dat ));
-							$return[$field] = $dat;
-						}
+						$screen = preg_match('/^'.$field.'[ ]*=(.+)[\s\|]/', $dat, $matches );
+            if ( isset( $matches[1] ) ) {
+							$return[$field] = $matches[1];
+            }
 					}
+          if ( !isset($return[$field]) ) {
+            $return[$field] = null;
+          }
 				}
 			}
 		}

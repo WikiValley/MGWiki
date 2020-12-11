@@ -62,3 +62,8 @@
  visibility: visible;
  opacity: 1;
 }
+
+.mgw-delete-link{
+  color:red;
+	cursor:pointer;
+}

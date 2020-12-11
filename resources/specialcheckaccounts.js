@@ -1,5 +1,119 @@
 ( function ( mw, $ ) {
 
+  mw.mgwShowUsers = function() {
+    $('#mgw-select-action').val('show');
+    $('#mgw-select-action').click();
+  }
+
+  mw.mgwEmailduplicates = function() {
+    $('#mgw-select-action').val('emailduplicates');
+    $('#mgw-select-action').click();
+  }
+
+  mw.mgwSelectUsers = function(){
+    mw.mgwChecksConcat();
+    $('#mgw-select-action').val('select');
+    $('#mgw-select-action').click();
+  }
+
+  mw.mgwSanitize = function(){
+    mw.mgwChecksConcat();
+    $('#mgw-select-action').val('sanitize');
+    $('#mgw-select-action').click();
+  }
+
+  mw.mgwEmpty = function(){
+    mw.mgwChecksConcat();
+    let del = '';
+    let m = 0;
+    let add = '';
+    let t = 0;
+    $('.mgw-user-delete:checked').each( function(){
+      m += 1;
+      let id = $(this).val();
+      del += $('.mgw-username[userid='+id+']').text() + ', ';
+    });
+    if ( m < 1 ) {
+      alert( 'Vous devez sélectionner au moins un utilisateur à vider (cases "delete").');
+      return;
+    }
+    $('.mgw-user-add:checked').each( function(){
+      t += 1;
+      let id = $(this).val();
+      add += $('.mgw-username[userid='+id+']').text() + ' ';
+    });
+    if ( t > 0 ) {
+      alert( 'Vous ne devez pas sélectionner d\'utilisateur dans les cases "add".');
+      return;
+    }
+    let message = 'ATTENTION vous êtes sur le point de supprimer les variable \
+      user_email, user_groups et user_real_name aux utilisateurs suivants :\n\n' + del;
+    if ( confirm( message ) ) {
+      $('#mgw-select-action').val('empty');
+      $('#mgw-select-action').click();
+    }
+  }
+
+  mw.mgwHarmonize = function(){
+    mw.mgwChecksConcat();
+    $('#mgw-select-action').val('harmonize');
+    $('#mgw-select-action').click();
+  }
+
+  mw.mgwHarmonizeReplace = function(){
+    if ( $('#mgw-action-harmonize-replace:checked') ) {
+      $('#mgw-select-harmonize-replace').val('oui');
+    } else {
+      $('#mgw-select-harmonize-replace').val('non');
+    }
+  }
+
+  mw.mgwDeleteReplace = function(){
+    if ( $('#mgw-action-delete-replace:checked') ) {
+      $('#mgw-select-delete-replace').val('oui');
+    } else {
+      $('#mgw-select-delete-replace').val('non');
+    }
+  }
+
+  mw.mgwDelete = function( ){
+    mw.mgwChecksConcat();
+    let merged = '';
+    let m = 0;
+    let targeted = '';
+    let t = 0;
+    $('.mgw-user-delete:checked').each( function(){
+      m += 1;
+      let id = $(this).val();
+      merged += $('.mgw-username[userid='+id+']').text() + ', ';
+    });
+    if ( m < 1 ) {
+      alert( 'Vous devez sélectionner au moins un utilisateur à supprimer (cases "out").');
+      return;
+    }
+    $('.mgw-user-add:checked').each( function(){
+      t += 1;
+      let id = $(this).val();
+      targeted += $('.mgw-username[userid='+id+']').text() + ' ';
+    });
+    if ( t != 1 ) {
+      alert( 'Vous devez sélectionner un (et un seul) utilisateur à supprimer (cases "in").');
+      return;
+    }
+    let message = 'ATTENTION vous êtes sur le point de supprimer :\n\n' + merged
+      + '\n\n vers : \n\n' + targeted + '\n\nCette opération est irréversible.';
+    if ( confirm( message ) ) {
+      $('#mgw-select-action').val('delete');
+      $('#mgw-select-action').click();
+    }
+  }
+
+  mw.mgwDBupdate = function(){
+    mw.mgwChecksConcat();
+    $('#mgw-select-action').val('db_update');
+    $('#mgw-select-action').click();
+  }
+
   mw.mgwFiltresShow = function() {
     $('.mgw-view').attr('checked', true );
   }
@@ -38,71 +152,6 @@
     }
   }
 
-  mw.mgwSelectUsers = function(){
-    mw.mgwChecksConcat();
-    $('#mgw-action-select').click();
-  }
-
-  mw.mgwSanitize = function(){
-    mw.mgwChecksConcat();
-    $('#mgw-action-sanitize').click();
-  }
-
-  mw.mgwRename = function(){
-    mw.mgwChecksConcat();
-    $('#mgw-action-rename').click();
-  }
-
-  mw.mgwUserMerge = function( opt ){
-    mw.mgwChecksConcat();
-    let merged = '';
-    let m = 0;
-    let targeted = '';
-    let t = 0;
-    $('.mgw-user-delete:checked').each( function(){
-      m += 1;
-      let id = $(this).val();
-      merged += $('.mgw-username[userid='+id+']').text() + ', ';
-    });
-    if ( m < 1 ) {
-      alert( 'Vous devez sélectionner au moins un utilisateur à '+opt+' (cases "out").');
-      return;
-    }
-    $('.mgw-user-add:checked').each( function(){
-      t += 1;
-      let id = $(this).val();
-      targeted += $('.mgw-username[userid='+id+']').text() + ' ';
-    });
-    if ( t != 1 ) {
-      alert( 'Vous devez sélectionner un (et un seul) utilisateur à '+opt+' (cases "in").');
-      return;
-    }
-    let message = 'ATTENTION vous êtes sur le point de '+ opt +' :\n\n' + merged
-      + '\n\n vers : \n\n' + targeted + '\n\nCette opération est irréversible.';
-    if ( confirm( message ) ) {
-      if ( opt == 'supprimer') {
-        $('#mgw-action-merge').val('delete');
-      }
-      $('#mgw-action-merge').click();
-    }
-  }
-
-  mw.mgwMerge = function(){
-    mw.mgwUserMerge('fusionner')
-  }
-
-  mw.mgwDelete = function(){
-    mw.mgwUserMerge('supprimer')
-  }
-
-  mw.mgwPopulate = function(){
-    mw.mgwChecksConcat();
-    $('#mgw-action-populate').click();
-  }
-
-  mw.mgwValidUsers = function(){
-    $('#mgw-action-validusers').click();
-  }
 
 // cumuler toutes les id cochée en 1 valeur "multiple" puis submit
   mw.mgwChecksConcat = function(){

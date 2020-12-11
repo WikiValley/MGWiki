@@ -2,7 +2,7 @@
 namespace MediaWiki\Extension\MGWikiDev;
 
 use SpecialPage;
-use MediaWiki\Extension\MGWikiDev\Utilities\GetJsonPage;
+use MediaWiki\Extension\MGWikiDev\Utilities\GetMessage as Msg;
 use MediaWiki\Extension\MGWikiDev\Utilities\JsonToForm;
 
 /**
@@ -11,7 +11,6 @@ use MediaWiki\Extension\MGWikiDev\Utilities\JsonToForm;
  */
 class SpecialAccountRequest extends SpecialPage {
 
-	private $messages;		// array
 	private $JsonForm;    // obj
 	private $cookieData;  // array
 	private $isPosted;    // bool
@@ -22,16 +21,12 @@ class SpecialAccountRequest extends SpecialPage {
 	public function __construct() {
 		parent::__construct( 'SpecialAccountRequest' );
 
-		# messages d'interface
-		$this->messages = GetJsonPage::getData('messages');
-
 		# gestion du formulaire
 		$postData = $this->getRequest()->getPostValues(); // récupération des variables POST si elles existent
 		$this->isPosted = ( sizeof($postData) > 0 );
 		$this->JsonForm = new JsonToForm(
 			'specialaccountrequest',
-			 $postData,
-			 $this->messages
+			 $postData
 		);
 
 		# récupération des cookies
@@ -53,7 +48,7 @@ class SpecialAccountRequest extends SpecialPage {
 			# demande déjà finalisée
 	    if ( $this->cookieData['done'] )
 			{
-				$messHTML = $this->messageHTML( 'done', $this->getMsg('specialaccountrequest-mess-alreadydone') );
+				$messHTML = $this->messageHTML( 'done', Msg::get('specialaccountrequest-mess-alreadydone') );
 				$done = true;
 			}
 			# envoi du mail si réponse valide
@@ -62,13 +57,13 @@ class SpecialAccountRequest extends SpecialPage {
 				$this->JsonForm->sendEmail();
 					//Todo: use WebResponse::setCookie() when upgrade Mediawiki > 1.35
 				setcookie( $this->cookieData['label'], "Account request sent.", time()+3600 );
-				$messHTML = $this->messageHTML( 'done', $this->getMsg('specialaccountrequest-mess-confirm') );
+				$messHTML = $this->messageHTML( 'done', Msg::get('specialaccountrequest-mess-confirm') );
 				$done = true;
 			}
 
 			# captcha invalide, nombre d'essais dépassés
 			elseif ( $this->cookieData['attempt'] > 4 ){
-				$messHTML = $this->messageHTML( 'done', $this->getMsg('specialaccountrequest-mess-attemptslimit') );
+				$messHTML = $this->messageHTML( 'done', Msg::get('specialaccountrequest-mess-attemptslimit') );
 				$done = true;
 			}
 
@@ -76,7 +71,7 @@ class SpecialAccountRequest extends SpecialPage {
 			else
 			{
 				$this->cookieData['attempt'] += 1;
-				$messHTML = $this->messageHTML( 'captchaError', $this->getMsg('specialaccountrequest-mess-captchaerror') );
+				$messHTML = $this->messageHTML( 'captchaError', Msg::get('specialaccountrequest-mess-captchaerror') );
 				setcookie('mgw_accountRequestAttempt', $this->cookieData['attempt'], time()+60*60);
 			}
 		}
@@ -85,7 +80,7 @@ class SpecialAccountRequest extends SpecialPage {
 		$out = $this->getOutput();
 		$out->addModules('ext.mgwiki-jsonform');
 		$out->addModules('ext.mgwiki-specialaccountrequest');
-		$out->setPageTitle( $this->getMsg('specialaccountrequest-title') );
+		$out->setPageTitle( Msg::get('specialaccountrequest-title') );
 
 		if (!$done){
 			$form = $this->JsonForm->makeForm( $messHTML );
@@ -111,7 +106,7 @@ class SpecialAccountRequest extends SpecialPage {
 
 			case 'done':
 				return '<p id="mgw-specialaccountrequest-ok" >' . $mess . '</p>
-								<button type="button" onclick="mw.mgwHome()" >' . $this->getMsg('specialaccountrequest-mess-returnbutton') . '</button>';
+								<button type="button" onclick="mw.mgwHome()" >' . Msg::get('specialaccountrequest-mess-returnbutton') . '</button>';
 				break;
 
 			case 'captchaError':
@@ -134,16 +129,6 @@ class SpecialAccountRequest extends SpecialPage {
 			$this->cookieData['done'] = isset($_COOKIE[$this->cookieData['label']]);
 			$this->cookieData['attempt'] = isset($_COOKIE['mgw_accountRequestAttempt']) ? $_COOKIE['mgw_accountRequestAttempt'] : 0;
 			if ( isset( $this->cookieData[ 'attempt'] ) && !is_int( $this->cookieData[ 'attempt' ] ) ) { $this->cookieData[ 'attempt' ] = 5; }
-		}
-	}
-
-	private function getMsg ( $mess ) {
-		if ( isset( $this->messages[ $mess ] ) ) {
-			return $this->messages[ $mess ];
-		}
-		else {
-      $link = GetJsonPage::getLink('messages');
-			return '<a href="'.$link.'">&lt;' . $mess . '&gt;</a>';
 		}
 	}
 

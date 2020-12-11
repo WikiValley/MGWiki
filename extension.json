@@ -17,6 +17,7 @@
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\MGWikiDev\\": "includes/",
 		"MediaWiki\\Extension\\MGWikiDev\\Utilities\\": "includes/Utilities/",
+		"MediaWiki\\Extension\\MGWikiDev\\Classes\\": "includes/Classes/",
 		"MediaWiki\\Extension\\MGWikiDev\\Api\\": "includes/Api/",
 		"MediaWiki\\Extension\\MGWikiDev\\Foreign\\": "includes/Foreign/"
 	},
@@ -25,15 +26,19 @@
 	},
 	"SpecialPages": {
 		"SpecialAccountRequest": "MediaWiki\\Extension\\MGWikiDev\\SpecialAccountRequest",
-		"SpecialCheckAccounts": "MediaWiki\\Extension\\MGWikiDev\\SpecialCheckAccounts"
-
+		"SpecialCheckAccounts": "MediaWiki\\Extension\\MGWikiDev\\SpecialCheckAccounts",
+		"SpecialCheckGroups": "MediaWiki\\Extension\\MGWikiDev\\SpecialCheckGroups",
+		"SpecialMgwikiTest": "MediaWiki\\Extension\\MGWikiDev\\SpecialMgwikiTest",
+		"SpecialAdminGroupTypes": "MediaWiki\\Extension\\MGWikiDev\\SpecialAdminGroupTypes"
 	},
 	"Hooks": {
 		"BeforePageDisplay": "MGWikiDevHooks::onBeforePageDisplay",
 		"ApiAllow": "MGWikiDevHooks::onApiAllow",
 		"ParserFirstCallInit": "MGWikiDevHooks::onParserFirstCallInit",
-    "LoadExtensionSchemaUpdates": "MGWikiDevHooks::onLoadExtensionSchemaUpdates"
+    "LoadExtensionSchemaUpdates": "MGWikiDevHooks::onLoadExtensionSchemaUpdates",
+		"AuthChangeFormFields": "MGWikiDevHooks::onAuthChangeFormFields"
 	},
+	"callback": "MGWikiDevHooks::onExtensionLoad",
 	"APIModules": {
 		"getjson" : "MediaWiki\\Extension\\MGWikiDev\\Api\\ApiGetJson"
 	},
@@ -53,9 +58,25 @@
 		"ext.mgwiki-specialaccountrequest": {
 			"packageFiles": [ "specialaccountrequest.js" ]
 		},
+		"ext.mgwiki-specialadmin": {
+			"packageFiles": [ "ext.mgwiki-specialadmin.js" ],
+			"styles": [ "ext.mgwiki-specialadmin.css" ]
+		},
 		"ext.mgwiki-specialcheckaccounts": {
 			"packageFiles": [ "specialcheckaccounts.js" ],
 			"styles": [ "specialcheckaccounts.css" ]
+		},
+		"ext.mgwiki-specialcheckgroups": {
+			"packageFiles": [ "specialcheckgroups.js" ],
+			"styles": [ "specialcheckgroups.css" ]
+		},
+		"ext.mgwiki-specialadmingrouptypes": {
+			"dependencies": [
+				"oojs-ui-core",
+				"oojs-ui-windows"
+			],
+			"packageFiles": [ "specialadmingrouptypes.js" ],
+			"styles": [ "specialadmingrouptypes.css" ]
 		}
 	},
 	"ExtensionMessagesFiles": {

@@ -1,0 +1,1 @@
+CREATE INDEX /*i*/mgw_utilisateur_lookup ON /*_*/mgw_utilisateur (utilisateur_user_id, utilisateur_nom, utilisateur_prenom, utilisateur_level);

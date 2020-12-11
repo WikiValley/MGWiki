@@ -14,21 +14,50 @@
 }
 
 .mgw-specialcheckaccount-user{
-  background:#f6f6f6;
   border-radius:10px;
   margin:15px;
   width:85%;
   line-height:1.3;
 }
 
-.mgw-specialcheckaccount-user td:nth-child(1){
-  width:30px;
+.mgw-specialcheckaccount-mgw-out{
+  background:#f6f6f6;
 }
-.mgw-specialcheckaccount-user td:nth-child(2){
-  width:100px;
+
+.mgw-specialcheckaccount-mgw-in{
+  background:#fadfaa;
 }
-.mgw-specialcheckaccount-user td:nth-child(3){
+
+.mgw-td-first{
+  width:20px;
+  font-size:small;
 }
-.mgw-specialcheckaccount-user td:nth-child(4){
-  width:30px;
+
+.mgw-td-label{
+  width:80px;
+}
+
+.mgw-td-button{
+  width:80px;
+  text-align:center;
+  padding-top:10px;
+  padding-bottom:10px;
+}
+
+.mgw-td-legend{
+  font-size:small;
+  font-style:italic;
+  padding-left:20px;
+}
+
+.mgw-td-1stlabel-top{
+  width:250px;
+}
+
+.mgw-td-page{
+  width:250px;
+  margin-left:20px;
+}
+.mgw-td-last{
+  width:20px;
 }

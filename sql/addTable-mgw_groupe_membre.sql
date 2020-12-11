@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS /*_*/mgw_groupe_membre (	groupe_membre_id int unsigned auto_increment not null,  groupe_membre_groupe_id int unsigned not null,  groupe_membre_user_id int not null,  groupe_membre_isadmin smallint default 0,  groupe_membre_update_time varbinary(14) not null,  groupe_membre_updater_id int not null,  PRIMARY KEY (groupe_membre_id)) /*$wgDBTableOptions*/;

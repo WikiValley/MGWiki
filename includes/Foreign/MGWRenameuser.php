@@ -7,13 +7,13 @@
 
 namespace MediaWiki\Extension\MGWikiDev\Foreign;
 
-use MediaWiki\Extension\MGWikiDev\Utilities\GetJsonPage;
 use Title;
 use User;
 use MovePage;
 use RenameuserSQL;
 use MediaWiki\MediaWikiServices;
 use Html;
+use MediaWiki\Extension\MGWikiDev\Classes\MGWStatus as Status;
 
 class MGWRenameuser {
 
@@ -24,6 +24,7 @@ class MGWRenameuser {
    * @param bool $movepages
    * @param bool $suppressRedirect
    * @param string $reason
+	 * @param User $user
 	 *
 	 * @throws PermissionsError
 	 * @throws ReadOnlyError
@@ -31,12 +32,15 @@ class MGWRenameuser {
    *
    * @return array [ 'done' => bool, 'message' => bool, ]
 	 */
-	public function execute( $oldname, $newname, $movepages, $suppressRedirect, $reason ) {
+	public function execute( $oldname, $newname, $movepages, $suppressRedirect, $reason, $user = null ) {
 		global $wgContLang, $wgCapitalLinks, $wgUser;
 
     // ! on AUTORISE les utilisateurs à renommer leur propre compte
-		$user = &$wgUser;
-		if ( !( $user->isAllowed( 'renameuser' ) || $user->getName() == $oldname ) ) {
+		if ( is_null( $user ) ) {
+			$user = $wgUser;
+		}
+
+		if ( !( $user->isAllowed( 'renameuser' ) || $user->getName() != $oldname ) ) {
 			throw new PermissionsError( 'renameuser' );
 		}
 		if ( $user->isBlocked() ) {
@@ -52,11 +56,11 @@ class MGWRenameuser {
 
 		if ( $oun == '' ) {
       $message = str_replace( '<nowiki>$1</nowiki>', $oldname, wfMessage( 'renameusererrorinvalid' )->text() );
-      return [ 'done' => false, 'message' => $message ];
+      return Status::newFailed( $message );
 		}
 		if ( $nun == '' ) {
       $message = str_replace( '<nowiki>$1</nowiki>', $newname, wfMessage( 'renameusererrorinvalid' )->text() );
-      return [ 'done' => false, 'message' => $message ];
+      return Status::newFailed( $message );
 		}
 
 		// Suppress username validation of old username
@@ -66,11 +70,11 @@ class MGWRenameuser {
 		// It won't be an object if for instance "|" is supplied as a value
 		if ( !is_object( $olduser ) ) {
       $message = str_replace( '<nowiki>$1</nowiki>', $oldname, wfMessage( 'renameusererrorinvalid' )->text() );
-      return [ 'done' => false, 'message' => $message ];
+      return Status::newFailed( $message );
 		}
 		if ( !is_object( $newuser ) || !User::isCreatableName( $newuser->getName() ) ) {
       $message = str_replace( '<nowiki>$1</nowiki>', $newname, wfMessage( 'renameusererrorinvalid' )->text() );
-      return [ 'done' => false, 'message' => $message ];
+      return Status::newFailed( $message );
 		}
 
 		// Check for the existence of lowercase oldusername in database.
@@ -97,7 +101,7 @@ class MGWRenameuser {
 
 		if ( $uid === 0 ) {
       $message = str_replace( '<nowiki>$1</nowiki>', $oldname, wfMessage( 'renameusererrordoesnotexist' )->text() );
-      return [ 'done' => false, 'message' => $message ];
+      return Status::newFailed( $message );
 		}
 
 		if ( $newuser->idForName() !== 0 ) {
@@ -105,7 +109,7 @@ class MGWRenameuser {
 				['<nowiki>$1</nowiki>', '{{GENDER:$1|utilisateur|utilisatrice}}'],
 				[ $oldname,'utilisateur.ice' ],
 				wfMessage( 'renameusererrorexists' )->text() );
-      return [ 'done' => false, 'message' => $message ];
+      return Status::newFailed( $message );
 		}
 
 		// Do the heavy lifting...
@@ -200,6 +204,6 @@ class MGWRenameuser {
 			wfMessage( 'renameusersuccess' )->text() );
 		if ( $output ) $message .= $output . 'ATTENTION: la prise en compte des modifications peut prendre du temps.';
 
-		return [ 'done' => true, 'message' => $message ];
+		return Status::newDone( $message );
 	}
 }

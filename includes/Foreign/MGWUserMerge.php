@@ -2,75 +2,63 @@
 /**
  * Adaptation de SpecialUserMerge.php
  * ! DEPENDANCE : extension UserMerge
+ * ! NE PAS FUSIONNER SANS DELETE (ancien compte toujours valide)
+ * ! DELETE SEUL NE FONCTIONNE PAS
+ * => utiliser seulement la fusion avec l'option delete
+ *
+ * ! la trace de l'utilisateur peut persister dans le contenu des pages
+ *
  * https://www.mediawiki.org/wiki/Extension:UserMerge
  */
 
 namespace MediaWiki\Extension\MGWikiDev\Foreign;
 
 use User;
-use Status;
 use MediaWiki\MediaWikiServices;
 use MergeUser;  // extension UserMerge
 use UserMergeLogger; // extension UserMerge
+use MediaWiki\Extension\MGWikiDev\Classes\MGWStatus as Status;
 
 class MGWUserMerge {
 
 	/**
-	 * @param string $oldname
-   * @param string|null $newname
+	 * @param int $old_id
+   * @param int|null $new_id # !! null NE FONCTIONNE PAS
    * @param bool $delete
 	 * @param callable $msg Function that returns a Message object
 	 * @return Status
 	 */
-	public function execute( $oldname, $newname, $delete, /* callable */ $msg ) {
+	public function execute( $old_id, $new_id, $delete, /* callable */ $msg ) {
 		global $wgUser;
 
 		// Validate old user
-		$oldUser = User::newFromName( $oldname );
-		if ( !$oldUser || $oldUser->getId() === 0 ) {
-			return [
-				'done' => false,
-				'message' => wfMessage('usermerge-badolduser')->text()
-			];
+		$oldUser = User::newFromId( $old_id );
+		if ( !$oldUser ) {
+			return Status::newFailed( wfMessage('usermerge-badoldid')->text() );
 		}
-		if ( $wgUser->getId() === $oldUser->getId() ) {
-			return [
-				'done' => false,
-				'message' => wfMessage('usermerge-noselfdelete', $wgUser->getName() )->parse()
-			];
+		if ( $wgUser->getId() === $old_id ) {
+			return Status::newFailed( wfMessage('usermerge-noselfdelete', $wgUser->getName() )->parse() );
 		}
 		$protectedGroups = MediaWikiServices::getInstance()->getMainConfig()->get( 'UserMergeProtectedGroups' );
 		if ( count( array_intersect( $oldUser->getGroups(), $protectedGroups ) ) ) {
-			return [
-				'done' => false,
-				'message' => wfMessage( 'usermerge-protectedgroup', $oldUser->getName() )->parse()
-			];
+			return Status::newFailed( wfMessage( 'usermerge-protectedgroup', $oldUser->getName() )->parse() );
 		}
 
 		// validate new user
-		if ( $newname !== null ) {
-			$newUser = User::newFromName( $newname );
-			if ( !$newUser || $newUser->getId() === 0 ) {
-				return [
-					'done' => false,
-					'message' => wfMessage('usermerge-badnewuser')->text()
-				];
+		if ( $new_id !== null ) {
+			$newUser = User::newFromId( $new_id );
+			if ( !$newUser ) {
+				return Status::newFailed( wfMessage('usermerge-badnewuserid')->text() );
 			}
 		}
-
-		// check if the users are different
-		$newUser = User::newFromName( $newname );
 		// Handle "Anonymous" as a special case for user deletion
-		if ( $newname === null ) {
-			$newUser = User::newFromName( '(compte erronné)' );
+		if ( $new_id === null ) {
+			$newUser = User::newFromName( 'Anonymous' );
 			$newUser->mId = 0;
 		}
-		$oldUser = User::newFromName( $oldname );
-		if ( $newname !== null && $newUser->getName() === $oldUser->getName() ) {
-			return [
-				'done' => false,
-				'message' => wfMessage('usermerge-same-old-and-new-user')->text()
-			];
+
+		if ( $new_id !== null && $newUser->getName() === $oldUser->getName() ) {
+			return Status::newFailed( wfMessage('usermerge-same-old-and-new-user')->text() );
 		}
 
 		// Validation passed, let's merge the user now.
@@ -79,20 +67,14 @@ class MGWUserMerge {
 		$um->merge( $wgUser, __METHOD__ );
 
 		$message .= wfMessage( 'usermerge-success' )->rawParams(
-			$oldUser->getName(), $oldUser->getId(),
-			$newUser->getName(), $newUser->getId() )->parse();
+			$oldUser->getName(), $old_id,
+			$newUser->getName(), $new_id )->parse();
 
 		if ( $delete ) {
 			$failed = $um->delete( $wgUser, $msg );
-			$message .= wfMessage( 'usermerge-userdeleted')->rawParams( $oldUser->getName(), $oldUser->getId() )->escaped() ;
-			if ( $failed ) return [
-				'done' => false,
-				'message' => wfMessage('usermerge-page-unmoved')->text()
-			];
+			$message .= wfMessage( 'usermerge-userdeleted')->rawParams( $oldUser->getName(), $old_id )->escaped() ;
+			if ( $failed ) return Status::newFailed( wfMessage('usermerge-page-unmoved')->text() );
 		}
-		return [
-			'done' => true,
-			'message' => $message
-		];
+		return Status::newDone( $message );
 	}
 }

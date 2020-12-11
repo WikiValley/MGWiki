@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS /*_*/mgw_institution_groupe (  institution_groupe_id int unsigned not null auto_increment,  institution_groupe_type_id int unsigned not null,  institution_groupe_institution_id int unsigned not null,  PRIMARY KEY (institution_groupe_id)) /*$wgDBTableOptions*/;

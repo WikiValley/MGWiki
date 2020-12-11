@@ -8,5 +8,9 @@
 	"mgwiki-dev-desc": "{{desc|name=MGWikiDev|url=https://mgwiki.univ-lyon1.fr}}",
 	"specialpages-group-mgwiki": "MGWiki",
 	"specialaccountrequest": "Demande de création de compte",
-	"specialcheckaccounts": "Administration des utilisateurs"
+	"specialcheckaccounts": "Maintenance : utilisateurs",
+	"specialcheckgroups": "Maintenance : groupes",
+	"specialadmingrouptypes": "Maintenance: types de groupes",
+	"specialmgwikilogin": "Login",
+	"specialmgwikilogin-unknownuser": "utilisateur inconnu"
 }

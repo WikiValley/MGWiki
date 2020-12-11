@@ -8,7 +8,13 @@
 	"mgwiki-dev-desc": "{{desc|name=MGWikiDev|url=https://mgwiki.univ-lyon1.fr}}",
 	"specialpages-group-mgwiki": "MGWiki",
 	"specialaccountrequest": "Demande de création de compte",
-	"specialcheckaccounts": "Administration des utilisateurs",
+	"specialcheckaccounts": "Maintenance : utilisateurs",
+	"specialcheckgroups": "Maintenance : groupes",
+	"specialadmingrouptypes": "Maintenance: types de groupes",
 	"apihelp-getjson-summary": "Permet de récupérer des données json",
-	"apihelp-getjson-param-service": "'messages' -> messages d'interface pour MGWiki <br>'specialAccountRequest' -> choix d'institutions pour la page Special:Demande_de_création_de_compte"
+	"apihelp-getjson-param-service": "'messages' -> messages d'interface pour MGWiki <br>'specialAccountRequest' -> choix d'institutions pour la page Special:Demande_de_création_de_compte",
+	"usermerge-badoldid": "user_id de l'ancien utilisateur inexistant",
+	"usermerge-badnewuserid": "user_id du nouvel utilisateur inexistant",
+	"specialmgwikilogin": "Login",
+	"specialmgwikilogin-unknownuser": "utilisateur inconnu"
 }

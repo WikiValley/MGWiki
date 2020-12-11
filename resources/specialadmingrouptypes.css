@@ -1,0 +1,39 @@
+.mgw-display-group-types{
+  border: 1px solid black;
+  height:400px;
+  overflow: auto;
+}
+
+.mgw-admin-group-types{
+  border-radius:10px;
+  margin:15px;
+  width:95%;
+  line-height:1.3;
+  background:#f6f6f6;
+}
+
+
+.mgw-admin-group-types.mgw-actif{
+  background:#fff8e1;
+}
+
+.mgw-level{
+  width:150px;
+  padding-left:10px;
+}
+
+.mgw-title{
+  padding-left:10px;
+}
+
+.mgw-edit-button{
+  text-align:right;
+  padding-right:10px;
+}
+
+.mgw-maj{
+  font-size:x-small;
+  font-style:italic;
+  text-align:right;
+  padding-right:10px;
+}

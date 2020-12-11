@@ -64,12 +64,27 @@
     }
   }
 
+	// faire disparare les messages de succès après 10 secondes
+	mw.mgwAlertMessage = function () {
+		setTimeout(() => {  $('.mgw-alert[status=done]').hide(); }, 2000);
+	}
+
   $( function () {
+	 mw.mgwAlertMessage();
 	 mw.mgwBorderColor();
    mw.mgwImgTooltip();
 	 mw.mgwLink();
 	 $('.mgw-tooltiptext').css('display','');
    $("#mgw-toggle-createUserSubPage-icon").html(' ▼ ');
    $("#mgw-toggle-createUserSubPage").attr("onclick","mw.mgwToggleCreateUserSubPage()");
+	 $("#wpName1, #wpPassword1").attr("placeholder","");
+	 $( ".mgw-delete-link" ).click( function() {
+		 let link = $(this).attr('href');
+		 let elmt = $(this).attr('elmt');
+		 if ( confirm( 'Vous êtes sur le point de supprimer: ' + elmt +
+		 		'\nConfirmez-vous ?' ) ) {
+					document.location.href= link;
+				}
+		});
   });
 }( mediaWiki, jQuery ) );

@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\MGWikiDev\Utilities;
 
 use MediaWiki\Extension\MGWikiDev\Utilities\Captcha;
 use MediaWiki\Extension\MGWikiDev\Utilities\GetJsonPage;
+use MediaWiki\Extension\MGWikiDev\Utilities\GetMessage as Msg;
 
 /**
   * Class to set forms directly from a .json wiki page.
@@ -55,11 +56,6 @@ class JsonToForm
   private $postData;
 
 	/**
-	 * @var array
-	 */
-  private $messages;
-
-	/**
 	 * @var array [ ['type' => 'html'/'wiki', 'value' => (string) ] ]
 	 */
   private $output;
@@ -67,9 +63,8 @@ class JsonToForm
 	/**
    * @param string $jsonService: doit correspondre à une clé de $wgMGWikiJsonPages (LocalSettings.php)
    * @return array $this->output
-   * @param array $messages
 	 */
-  public function __construct( $jsonService, &$postData, &$messages )
+  public function __construct( $jsonService, &$postData )
   {
     global $wgMGWikiJsonPages;
 
@@ -86,8 +81,6 @@ class JsonToForm
     self::hydratePostData($postData);
 
     $this->Captcha = new Captcha();
-
-    $this->messages = $messages;
   }
 
   private function hydratePostData( &$postData )
@@ -280,7 +273,7 @@ class JsonToForm
     $captchaKey = $this->Captcha->getRandomKey();
     $this->htmlOut( '
        <fieldset id="' . $this->prefix . '-captcha" class="mgw-captcha' . $class . '"' . $style . ' ><i>' . $captchaKey . '</i><br>
-          <legend>' . $this->getMsg( $this->formName . '-label-captcha' ) . '</legend>
+          <legend>' . Msg::get( $this->formName . '-label-captcha' ) . '</legend>
          <input type="text" name="captchaResponse" id="captchaResponse" type="text" />
          <input type="text" name="captchaKey" value="' . $captchaKey . '" id="captchaKey" type="text" hidden/>
        </fieldset>' );
@@ -316,7 +309,7 @@ class JsonToForm
     $mailer->send(
       array($mail_to, $mail_from), 							//to
       $mail_to,                    							//from
-      $this->getMsg( $this->formName . '-email-subject' ),	//subject
+      Msg::get( $this->formName . '-email-subject' ),	//subject
       $body,																		//body
       array(																		//options
         'replyTo' => $mail_from,
@@ -348,7 +341,7 @@ class JsonToForm
 	{
 		$body = '
 			<body>
-				<p>' . $this->getMsg( $this->formName . '-email-intro') . '</p>
+				<p>' . Msg::get( $this->formName . '-email-intro') . '</p>
 				<p>Votre message :</p>
 				<table>
 					<tr><td><i>Date: </i></td><td>' . date('Y-m-d H:i:s') . '</td></tr>' ;
@@ -377,7 +370,7 @@ class JsonToForm
 
 		$body .= '</table>
     				<br>
-    				<p>' . $this->getMsg( $this->formName . '-email-end' ) . '</p>
+    				<p>' . Msg::get( $this->formName . '-email-end' ) . '</p>
     			</body>';
 
 		return $body;
@@ -410,13 +403,4 @@ class JsonToForm
     }
     return md5( $string );
   }
-
-	private function getMsg ( $mess ) {
-		if ( isset( $this->messages[ $mess ] ) ) {
-			return $this->messages[ $mess ];
-		}
-		else {
-			return '<' . $mess . '>';
-		}
-	}
 }

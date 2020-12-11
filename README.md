@@ -25,8 +25,11 @@ Modules inclus:
   - skinning:
     - resources/ext.mgwiki-dev.js & css
     - images/php
+  - login avec email proposé ( Hooks::onAuthChangeFormFields )
 
 Todo:
+* /var/www/html/wiki/includes/preferences/DefaultPreferencesFactory.php : modif automatique
+* /var/www/html/wiki/includes/specials/SpecialChangeEmail.php : modif automatique
 * includes/SpecialAccount.php: use WebResponse::setCookie() instead of setcookie() when upgrading Mediawiki >= 1.35
 
 Core changes:

@@ -1,0 +1,1 @@
+CREATE INDEX /*i*/mgw_archive_groupe_type_lookup ON /*_*/mgw_archive_groupe_type (groupe_type_nom, groupe_type_page_id, groupe_type_user_level, groupe_type_admin_level);

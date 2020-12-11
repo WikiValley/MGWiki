@@ -23,6 +23,21 @@ class PhpFunctions
   }
 
   /**
+    * recherche récursivement une paire 'clé' => 'valeur'
+    * @return bool
+    */
+  public function recursiveArrayKeyValue ( $key, $value, $array )
+  {
+    $recursive = self::recursiveIterator( $array );
+    foreach ( $recursive as $kkey => $vvalue ) {
+      if ( $key === $kkey && $value === $vvalue ) {
+          return true;
+      }
+    }
+    return false;
+  }
+
+  /**
     * recherche récursivement une clé, fusionne le résultat si plusieurs occurences
     * @return mixed (valeur, array ou array_merge)
     */
@@ -87,5 +102,63 @@ class PhpFunctions
       }
     }
     return $r_valeur;
+  }
+
+  /**
+   * sets $var to false if null, empty or undefined
+   * @param mixed &$var
+   */
+   public function false ( &$var ) {
+     if ( !isset( $var ) || is_null( $var ) || empty( $var ) ) {
+       $var = false;
+     }
+   }
+
+ /**
+  * sets $var to null if empty, false or undefined
+  * @param mixed &$var
+  */
+  public function null ( &$var ) {
+    if ( !isset( $var ) || empty( $var ) || !$var ) {
+      $var = null;
+    }
+  }
+
+  /**
+   * sets $var to empty if null, undefined or false
+   * @param mixed &$var
+   */
+  public function empty ( &$var ) {
+    if ( !isset( $var ) || is_null( $var ) || !$var ) {
+     $var = '';
+    }
+  }
+
+  /**
+   * sets $var to empty if null, undefined or false
+   * @param mixed &$var
+   */
+  public function int ( &$var ) {
+    $int = (int)$var;
+    if ( 'test'.$int == 'test'.$var ) {
+      $var = $int;
+    }
+    else {
+      $var = null;
+    }
+  }
+
+  /**
+   * @param mixed &$var
+   * @param bool $decode
+   * @return void
+   */
+  public function html ( &$var, $decode = false ) {
+    if ( $decode ) {
+      $var = htmlspecialchars_decode( $var );
+    }
+    else {
+      $var = htmlspecialchars( $var );
+    }
   }
 }
