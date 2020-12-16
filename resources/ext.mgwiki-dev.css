@@ -67,3 +67,13 @@
   color:red;
 	cursor:pointer;
 }
+
+.mgw-link{
+	text-decoration: none;
+}
+
+.mgw-parse-error{
+  font-style:italic;
+  font-weight:bold;
+  color:red;
+}

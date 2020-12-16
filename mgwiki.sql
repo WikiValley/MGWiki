@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS /*_*/mgw_utilisateur (
 
 CREATE INDEX /*i*/mgw_utilisateur_lookup ON /*_*/mgw_utilisateur (utilisateur_user_id, utilisateur_nom, utilisateur_prenom, utilisateur_level);
 
-CREATE TABLE IF NOT EXISTS /*_*/mgw_archive_utilisateur (
-  archive_id int unsigned not null auto_increment,
+CREATE TABLE IF NOT EXISTS /*_*/mgw_utilisateur_archive (
+  utilisateur_archive_id int unsigned not null auto_increment,
 	utilisateur_id int unsigned not null,
   utilisateur_user_id int not null,
 	utilisateur_nom varchar(64) not null,
@@ -28,10 +28,10 @@ CREATE TABLE IF NOT EXISTS /*_*/mgw_archive_utilisateur (
   utilisateur_updater_id int not null,
   utilisateur_drop_time varbinary(14) default null,
   utilisateur_drop_updater_id int default null,
-	PRIMARY KEY (archive_id)
+	PRIMARY KEY (utilisateur_archive_id)
 ) /*$wgDBTableOptions*/;
 
-CREATE INDEX /*i*/mgw_archive_utilisateur_lookup ON /*_*/mgw_archive_utilisateur (utilisateur_user_id, utilisateur_nom, utilisateur_prenom, utilisateur_level);
+CREATE INDEX /*i*/mgw_utilisateur_archive_lookup ON /*_*/mgw_utilisateur_archive (utilisateur_user_id, utilisateur_nom, utilisateur_prenom, utilisateur_level);
 
 CREATE TABLE IF NOT EXISTS /*_*/mgw_institution (
 	institution_id int unsigned auto_increment not null,
@@ -42,8 +42,8 @@ CREATE TABLE IF NOT EXISTS /*_*/mgw_institution (
   PRIMARY KEY (institution_id)
 ) /*$wgDBTableOptions*/;
 
-CREATE TABLE IF NOT EXISTS /*_*/mgw_archive_institution (
-  archive_id int unsigned not null auto_increment,
+CREATE TABLE IF NOT EXISTS /*_*/mgw_institution_archive (
+  institution_archive_id int unsigned not null auto_increment,
 	institution_id int unsigned not null,
   institution_page_id int not null,
 	institution_nom varchar(64) not null,
@@ -51,22 +51,14 @@ CREATE TABLE IF NOT EXISTS /*_*/mgw_archive_institution (
   institution_updater_id int not null,
   institution_drop_time varbinary(14) default null,
   institution_drop_updater_id int default null,
-  PRIMARY KEY (archive_id)
-) /*$wgDBTableOptions*/;
-
--- table ne nécessitant pas d'archive
-CREATE TABLE IF NOT EXISTS /*_*/mgw_institution_groupe (
-  institution_groupe_id int unsigned not null auto_increment,
-  institution_groupe_type_id int unsigned not null,
-  institution_groupe_institution_id int unsigned not null,
-  PRIMARY KEY (institution_groupe_id)
+  PRIMARY KEY (institution_archive_id)
 ) /*$wgDBTableOptions*/;
 
 CREATE TABLE IF NOT EXISTS /*_*/mgw_groupe (
 	groupe_id int unsigned auto_increment not null,
   groupe_institution_id int unsigned not null,
   groupe_page_id int,
-  groupe_type_id int unsigned,
+  groupe_frame_id int unsigned,
   groupe_start_time varbinary(14),
   groupe_end_time varbinary(14),
   groupe_actif smallint default 1,
@@ -75,79 +67,87 @@ CREATE TABLE IF NOT EXISTS /*_*/mgw_groupe (
   PRIMARY KEY (groupe_id)
 ) /*$wgDBTableOptions*/;
 
-CREATE INDEX /*i*/mgw_groupe_lookup ON /*_*/mgw_groupe (groupe_institution_id, groupe_page_id, groupe_type_id, groupe_actif);
+CREATE INDEX /*i*/mgw_groupe_lookup ON /*_*/mgw_groupe (groupe_institution_id, groupe_page_id, groupe_frame_id, groupe_actif);
 
  -- pas de cas d'usage drop pour les groupes
-CREATE TABLE IF NOT EXISTS /*_*/mgw_archive_groupe (
-  archive_id int unsigned not null auto_increment,
+CREATE TABLE IF NOT EXISTS /*_*/mgw_groupe_archive (
+  groupe_archive_id int unsigned not null auto_increment,
 	groupe_id int unsigned not null,
   groupe_institution_id int unsigned not null,
   groupe_page_id int,
-  groupe_type_id int unsigned,
+  groupe_frame_id int unsigned,
   groupe_start_time varbinary(14),
   groupe_end_time varbinary(14),
   groupe_actif smallint,
   groupe_update_time varbinary(14) not null,
   groupe_updater_id int not null,
-  PRIMARY KEY (archive_id)
+  PRIMARY KEY (groupe_archive_id)
 ) /*$wgDBTableOptions*/;
 
-CREATE INDEX /*i*/mgw_archive_groupe_lookup ON /*_*/mgw_archive_groupe (groupe_institution_id, groupe_page_id, groupe_type_id, groupe_actif);
+CREATE INDEX /*i*/mgw_groupe_archive_lookup ON /*_*/mgw_groupe_archive (groupe_institution_id, groupe_page_id, groupe_frame_id, groupe_actif);
 
-CREATE TABLE IF NOT EXISTS /*_*/mgw_groupe_membre (
-	groupe_membre_id int unsigned auto_increment not null,
-  groupe_membre_groupe_id int unsigned not null,
-  groupe_membre_user_id int not null,
-  groupe_membre_isadmin smallint default 0,
-  groupe_membre_update_time varbinary(14) not null,
-  groupe_membre_updater_id int not null,
-  PRIMARY KEY (groupe_membre_id)
+CREATE TABLE IF NOT EXISTS /*_*/mgw_membre (
+	membre_id int unsigned auto_increment not null,
+  membre_groupe_id int unsigned not null,
+  membre_user_id int not null,
+  membre_isadmin smallint default 0,
+  membre_update_time varbinary(14) not null,
+  membre_updater_id int not null,
+  PRIMARY KEY (membre_id)
 ) /*$wgDBTableOptions*/;
 
-CREATE INDEX /*i*/mgw_groupe_membre_lookup ON /*_*/mgw_groupe_membre (groupe_membre_groupe_id, groupe_membre_user_id, groupe_membre_isadmin);
+CREATE INDEX /*i*/mgw_membre_lookup ON /*_*/mgw_membre (membre_groupe_id, membre_user_id, membre_isadmin);
 
-CREATE TABLE IF NOT EXISTS /*_*/mgw_archive_groupe_membre (
-  archive_id int unsigned not null auto_increment,
-	groupe_membre_id int unsigned not null,
-  groupe_membre_groupe_id int unsigned not null,
-  groupe_membre_user_id int not null,
-  groupe_membre_isadmin smallint,
-  groupe_membre_update_time varbinary(14) not null,
-  groupe_membre_updater_id int not null,
-  groupe_membre_drop_time varbinary(14) default null,
-  groupe_membre_drop_updater_id int default null,
-  PRIMARY KEY (archive_id)
+CREATE TABLE IF NOT EXISTS /*_*/mgw_membre_archive (
+  membre_archive_id int unsigned not null auto_increment,
+	membre_id int unsigned not null,
+  membre_groupe_id int unsigned not null,
+  membre_user_id int not null,
+  membre_isadmin smallint,
+  membre_update_time varbinary(14) not null,
+  membre_updater_id int not null,
+  membre_drop_time varbinary(14) default null,
+  membre_drop_updater_id int default null,
+  PRIMARY KEY (membre_archive_id)
 ) /*$wgDBTableOptions*/;
 
-CREATE INDEX /*i*/mgw_archive_groupe_membre_lookup ON /*_*/mgw_archive_groupe_membre (groupe_membre_groupe_id, groupe_membre_user_id, groupe_membre_isadmin);
+CREATE INDEX /*i*/mgw_membre_archive_lookup ON /*_*/mgw_membre_archive (membre_groupe_id, membre_user_id, membre_isadmin);
 
-CREATE TABLE IF NOT EXISTS /*_*/mgw_groupe_type (
-	groupe_type_id int unsigned auto_increment not null,
-  groupe_type_nom varchar(64) not null,
-  groupe_type_page_id int,
-  groupe_type_admin_level smallint not null,
-  groupe_type_user_level smallint not null,
-  groupe_type_default_duration int default null,
-  groupe_type_update_time varbinary(14) not null,
-  groupe_type_updater_id int not null,
-  PRIMARY KEY (groupe_type_id)
+CREATE TABLE IF NOT EXISTS /*_*/mgw_frame (
+	frame_id int unsigned auto_increment not null,
+  frame_nom varchar(64) not null,
+  frame_page_id int,
+  frame_admin_level smallint not null,
+  frame_user_level smallint not null,
+  frame_default_duration int default null,
+  frame_update_time varbinary(14) not null,
+  frame_updater_id int not null,
+  PRIMARY KEY (frame_id)
 ) /*$wgDBTableOptions*/;
 
-CREATE INDEX /*i*/mgw_groupe_type_lookup ON /*_*/mgw_groupe_type (groupe_type_nom, groupe_type_page_id, groupe_type_user_level, groupe_type_admin_level);
+CREATE INDEX /*i*/mgw_frame_lookup ON /*_*/mgw_frame (frame_nom, frame_page_id, frame_user_level, frame_admin_level);
 
-CREATE TABLE IF NOT EXISTS /*_*/mgw_archive_groupe_type (
-  archive_id int unsigned not null auto_increment,
-	groupe_type_id int unsigned not null,
-  groupe_type_nom varchar(64) not null,
-  groupe_type_page_id int,
-  groupe_type_admin_level smallint not null,
-  groupe_type_user_level smallint not null,
-  groupe_type_default_duration int,
-  groupe_type_update_time varbinary(14) not null,
-  groupe_type_updater_id int not null,
-  groupe_type_drop_time varbinary(14) default null,
-  groupe_type_drop_updater_id int default null,
-  PRIMARY KEY (archive_id)
+CREATE TABLE IF NOT EXISTS /*_*/mgw_frame_archive (
+  frame_archive_id int unsigned not null auto_increment,
+	frame_id int unsigned not null,
+  frame_nom varchar(64) not null,
+  frame_page_id int,
+  frame_admin_level smallint not null,
+  frame_user_level smallint not null,
+  frame_default_duration int,
+  frame_update_time varbinary(14) not null,
+  frame_updater_id int not null,
+  frame_drop_time varbinary(14) default null,
+  frame_drop_updater_id int default null,
+  PRIMARY KEY (frame_archive_id)
 ) /*$wgDBTableOptions*/;
 
-CREATE INDEX /*i*/mgw_archive_groupe_type_lookup ON /*_*/mgw_archive_groupe_type (groupe_type_nom, groupe_type_page_id, groupe_type_user_level, groupe_type_admin_level);
+CREATE INDEX /*i*/mgw_frame_archive_lookup ON /*_*/mgw_frame_archive (frame_nom, frame_page_id, frame_user_level, frame_admin_level);
+
+-- table ne nécessitant pas d'archive
+CREATE TABLE IF NOT EXISTS /*_*/mgw_instit_allow (
+  instit_allow_id int unsigned not null auto_increment,
+  instit_allow_institution_id int unsigned not null,
+  instit_allow_frame_id int unsigned not null,
+  PRIMARY KEY (institution_groupe_id)
+) /*$wgDBTableOptions*/;

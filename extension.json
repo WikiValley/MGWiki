@@ -36,7 +36,8 @@
 		"ApiAllow": "MGWikiDevHooks::onApiAllow",
 		"ParserFirstCallInit": "MGWikiDevHooks::onParserFirstCallInit",
     "LoadExtensionSchemaUpdates": "MGWikiDevHooks::onLoadExtensionSchemaUpdates",
-		"AuthChangeFormFields": "MGWikiDevHooks::onAuthChangeFormFields"
+		"AuthChangeFormFields": "MGWikiDevHooks::onAuthChangeFormFields",
+		"SpecialPageBeforeExecute": "MGWikiDevHooks::onSpecialPageBeforeExecute"
 	},
 	"callback": "MGWikiDevHooks::onExtensionLoad",
 	"APIModules": {

@@ -6,6 +6,8 @@ use Title;
 use WikiPage;
 use CommentStoreComment;
 use WikitextContent;
+use MovePage;
+use MediaWiki\Extension\MGWikiDev\Classes\MGWStatus as Status;
 
 /**
   * Ensemble de fonctions statiques sur les pages
@@ -159,5 +161,103 @@ class PagesFunctions
     $newRev = $updater->saveRevision( $comment, $flags );
 
     return ( !is_null( $newRev ) && $updater->wasSuccessful() );
+  }
+
+  /**
+   * @param string $titletext
+   * @param int $namespace
+   * @param string $wikitextContent
+   * @param string $summary
+   * @param User $user
+   *
+   * @return MGWStatus
+   */
+  public static function newPage( $titletext, $namespace, $wikitext, $summary, $user ) {
+
+    global $wgNamespaceAliases;
+
+    $title = Title::newFromText( $titletext, $namespace );
+    $article = WikiPage::factory( $title );
+    $content = new WikitextContent( $wikitext );
+    $flags = EDIT_NEW;
+    $status = $article->doEditContent( $content, $summary, $flags, false, $user );
+    if ( !$status->isOK() ) {
+      return Status::newFailed( $status->getMessage() );
+    }
+    else {
+      return Status::newDone( 'La page "' . array_search ( $namespace, $wgNamespaceAliases ) .
+        ":" . $titletext . '" a été créée.', $article->getId() );
+    }
+  }
+
+  /**
+   * @param string $oldTitletext
+   * @param int $oldNamespace
+   * @param string $newTitletext
+   * @param int $newNamespace
+   * @param string $summary
+   * @param User $user
+   *
+   * @return MGWStatus
+   */
+  public static function renamePage( $oldTitletext, $oldNamespace, $newTitleText, $newNamespace, $summary, $user ) {
+
+    $oldTitle = Title::newFromText( $oldTitletext, $oldNamespace );
+    $newTitle = Title::newFromText( $newTitleText, $newNamespace );
+    $movePage = new MovePage( $oldTitle, $newTitle );
+    if ( $movePage->isValidMove() ) {
+      $movePage->move( $user, $summary, $createRedirect = true );
+      return Status::newDone( 'La page a été renommée', $newTitle->getArticleID() );
+    }
+    else {
+      return Status::newFailed( 'Impossible de renomer la page' );
+    }
+  }
+
+  /**
+   * @param int $page_id
+   * @param string $summary
+   * @param User $user
+   *
+   * @return MGWStatus
+   */
+  public static function refreshPage( $page_id, $summary, $user ) {
+
+    $title = Title::newFromID( $page_id );
+    if ( is_null( $title ) ) {
+      return Status::newFailed( 'La page n\'existe pas.', MGW_PAGE_MISSING );
+    }
+    $article = WikiPage::factory( $title );
+    $content = $article->getContent(); // enregistrement sans modification pour actualiser les parsers
+    $flags = EDIT_MINOR;
+    $ret = $article->doEditContent( $content, $summary, $flags, false, $user );
+
+    if ( ! $ret->isOK() ) {
+      return Status::newFailed( 'La page n\'a pas pu être rafraîchie ( ' .
+        $ret->getMessage() .' )' );
+    }
+    else {
+      return Status::newDone( 'La page a été rafraîchie' );
+    }
+  }
+
+  /**
+   * @param int $page_id
+   * @param string $summary
+   *
+   * @return MGWStatus
+   */
+  public static function lightDelete( $page_id, $reason ) {
+
+    $title = Title::newFromID( $page_id );
+    $article = WikiPage::factory( $title );
+    $delete = $article->doDeleteArticleReal( $reason );
+    if ( ! $delete->isOK() ) {
+      return Status::newFailed( 'La page n\'a pas pu être supprimée ( ' .
+        $delete->getMessage() .' )' );
+    }
+    else {
+      return Status::newDone( 'La page a été supprimée' );
+    }
   }
 }

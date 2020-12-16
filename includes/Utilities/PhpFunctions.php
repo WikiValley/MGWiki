@@ -77,6 +77,23 @@ class PhpFunctions
     }
   }
 
+  /**
+    * recherche récursivement une clé, fusionne le résultat si plusieurs occurences
+    * @return mixed (valeur, array ou array_merge)
+    */
+  public function recursiveArrayKeyValueCount ( $key, $value, $array )
+  {
+    $recursive = self::recursiveIterator( $array );
+    $ret = 0;
+    foreach ($recursive as $kkey => $vvalue) {
+      if ( $key === $kkey && $value == $vvalue ) {
+          $ret++;
+      }
+    }
+    return $ret;
+  }
+
+
   private function recursiveIterator( $array ) {
     $iterator  = new \RecursiveArrayIterator( $array );
     $recursive = new \RecursiveIteratorIterator(

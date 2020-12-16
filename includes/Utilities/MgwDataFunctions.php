@@ -106,12 +106,12 @@ class MgwDataFunctions {
         }
 
         // 2. on vérifie la nouveauté des valeurs proposées
-        $row = self::extractResData( $res );
-        $row = $row[0];
+        $oldData = self::extractResData( $res );
+        $oldData = $oldData[0];
         $same_data = true;
 
         foreach ( $data as $field => $value ) {
-          if ( $row[ $table . '_' . $field ] != $value ) {
+          if ( $oldData[ $table . '_' . $field ] != $value ) {
             $same_data = false;
             break;
           }
@@ -124,7 +124,7 @@ class MgwDataFunctions {
         }
 
         // 3. on archive les données actuelles
-        $archive = self::archive( $table, $row, false, $updater_id );
+        $archive = self::archive( $table, $oldData, false, $updater_id );
         if ( ! $archive->done() ) {
           return $archive;
         }
@@ -310,10 +310,10 @@ class MgwDataFunctions {
     foreach ( $columns as $key => $value ) {
       if ( $value != 'archive_id' ) {
         if ( preg_match( '/archive_id/', $select ) < 1 ) {
-          $select = str_replace( $value, $prefix . '_' . $value, $select );
+          $select = preg_replace( '/^' . $value . '/', $prefix . '_' . $value, $select );
         }
         foreach ( $opts as $kkey => $vvalue ) {
-          $opts[$kkey] = str_replace( $value, $prefix . '_' . $value, $vvalue );
+          $opts[$kkey] = preg_replace( '/^' . $value . '/', $prefix . '_' . $value, $vvalue );
         }
         $columns[$key] = $prefix . '_' . $value;
       }
@@ -332,4 +332,5 @@ class MgwDataFunctions {
 
 		return self::extractResData( $res, $table );
   }
+
 }

@@ -12,9 +12,13 @@ $magicWords = [];
 /** English (English) */
 $magicWords['en'] = [
 	'mgw-onclick' => [ 0, 'mgw-onclick' ],
+	'mgw-groupe-type' => [ 0, 'mgw-groupe-type' ],
+	'mgw-display' => [ 0, 'mgw-display' ]
 ];
 
 /** French (français) */
 $magicWords['fr'] = [
 	'mgw-onclick' => [ 0, 'mgw-onclick' ],
+	'mgw-groupe-type' => [ 0, 'mgw-groupe-type' ],
+	'mgw-display' => [ 0, 'mgw-display' ]
 ];

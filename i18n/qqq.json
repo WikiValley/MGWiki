@@ -12,5 +12,6 @@
 	"specialcheckgroups": "Maintenance : groupes",
 	"specialadmingrouptypes": "Maintenance: types de groupes",
 	"specialmgwikilogin": "Login",
-	"specialmgwikilogin-unknownuser": "utilisateur inconnu"
+	"specialmgwikilogin-unknownuser": "utilisateur inconnu",
+	"mgw-cannot-move-page": "Vous ne pouvez pas renommer cette page"
 }

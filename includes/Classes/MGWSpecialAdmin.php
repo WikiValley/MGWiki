@@ -1,9 +1,11 @@
 <?php
 /**
  * Archétype pour les pages Special:Admin
+ * à adapter au cas par cas...
+ * (! ce n'est pas une classe à appeler en tant que telle)
  */
 
-namespace MediaWiki\Extension\MGWikiDev\Classes;
+namespace MediaWiki\Extension\MGWikiDev;
 
 use SpecialPage;
 use MediaWiki\Extension\MGWikiDev\Utilities\GetMessage as Msg;
@@ -39,9 +41,9 @@ class SpecialAdmin extends SpecialPage {
 	 * $this->headActions = [ 'action' => 'label' ]
 	 * $this->headHiddenFields = [ 'name' => 'value' ]
 	 */
-	public function __construct( $specialSettings )
+	public function __construct(  )
   {
-		parent::__construct( ...$specialSettings );
+		parent::__construct( 'SpecialAdmin', 'permission' ); // ADAPTER
 
 		$out = $this->getOutput();
 		$out->addModules('ext.mgwiki-specialadmin');
@@ -89,6 +91,82 @@ class SpecialAdmin extends SpecialPage {
 		return $this->getRequest()->getPostValues();
 	}
 
+
+  /**
+   * @param array $reqData
+   */
+  private function set_select( &$reqData )
+  {
+		global $tri;
+		$select = &$this->select;
+
+    $tri[1] = ( isset( $reqData['tri1'] ) )
+			? $reqData['tri1'] : 'user_id';
+
+    $tri[2] = ( isset( $reqData['tri2'] ) )
+			? $reqData['tri2'] : '';
+
+    foreach ( $this->triOptions as $value ) {
+
+      if ( isset($reqData['tri1'] ) && $reqData['tri1'] == $value ) {
+				$select[1][$value] = 'selected';
+			} else {
+				$select[1][$value] = '';
+			}
+
+      if ( isset($reqData['tri2'] ) && $reqData['tri2'] == $value ) {
+				$select[2][$value] = 'selected';
+			} else {
+				$select[2][$value] = '';
+			}
+
+      if ( !in_array( 'selected', $select[2] ) ) {
+				$select[2]['...'] = 'selected';
+			} else {
+				$select[2]['...'] = '';
+			}
+    }
+
+		return $tri;
+	}
+
+  /**
+   * @param array $reqData
+   */
+  private function set_check( &$reqData )
+  {
+    $check = &$this->check;
+
+    foreach ( $this->filtreOptions as $value ) {
+
+			PhpF::empty( $reqData[$value] );
+
+      $check[$value]['view'] =
+				( $reqData[$value] == 'view' )
+				? 'checked' : '';
+
+      $check[$value]['hide'] =
+				( $reqData[$value] == 'hide' )
+				? 'checked' : '';
+
+      $check[$value]['only'] =
+				( $reqData[$value] == 'only' )
+				? 'checked' : '';
+
+      if ( !in_array(
+					'checked',
+					[
+						$check[$value]['view'],
+						$check[$value]['hide'],
+						$check[$value]['only']
+					] )
+				) {
+        $check[$value]['view'] = 'checked';
+			}
+    }
+  }
+
+
 	/**
 	 * TODO OVERRIDE
 	 */
@@ -130,6 +208,7 @@ class SpecialAdmin extends SpecialPage {
 	 * @param array $hidden [ 'name' => 'value' ]
 	 * @param string $ctrlFn 'mw.maFonction()'
 	 */
+	 // => HtmlFunctions.php
 	private function actionButton (
 		$action,
 		$label,
@@ -188,83 +267,6 @@ class SpecialAdmin extends SpecialPage {
 		return '<input id="mgw-check-del-all" type="checkbox" onclick="mw.mgwDelAll()" >
 			<label for="mgw-check-del-all">' . $label . '</label>';
 	}
-
-
-	/***********************
-	 **  Native fuctions  **
-	 ***********************/
-
-  /**
-   * @param array $reqData
-   */
-  private function set_select( &$reqData )
-  {
-		global $tri;
-		$select = &$this->select;
-
-    $tri[1] = ( isset( $reqData['tri1'] ) )
-			? $reqData['tri1'] : 'user_id';
-
-    $tri[2] = ( isset( $reqData['tri2'] ) )
-			? $reqData['tri2'] : '';
-
-    foreach ( $this->triOptions as $value ) {
-
-      if ( isset($reqData['tri1'] ) && $reqData['tri1'] == $value ) {
-				$select[1][$value] = 'selected';
-			} else {
-				$select[1][$value] = '';
-			}
-
-      if ( isset($reqData['tri2'] ) && $reqData['tri2'] == $value ) {
-				$select[2][$value] = 'selected';
-			} else {
-				$select[2][$value] = '';
-			}
-
-      if ( !in_array( 'selected', $select[2] ) ) {
-				$select[2]['...'] = 'selected';
-			} else {
-				$select[2]['...'] = '';
-			}
-    }
-
-		return $tri;
-	}
-
-  /**
-   * @param array $reqData
-   */
-  private function set_check( &$reqData )
-  {
-    $check = &$this->check;
-
-    foreach ( $this->filtreOptions as $value ) {
-
-      $check[$value]['view'] =
-				( isset( $reqData[$value] ) && $reqData[$value] == 'view' )
-				? 'checked' : '';
-
-      $check[$value]['hide'] =
-				( isset( $reqData[$value] ) && $reqData[$value] == 'hide' )
-				? 'checked' : '';
-
-      $check[$value]['only'] =
-				( isset( $reqData[$value] ) && $reqData[$value] == 'only' )
-				? 'checked' : '';
-
-      if ( !in_array(
-					'checked',
-					[
-						$check[$value]['view'],
-						$check[$value]['hide'],
-						$check[$value]['only']
-					] )
-				) {
-        $check[$value]['view'] = 'checked';
-			}
-    }
-  }
 
 	/**
 	 * @param string $msg_prefix

@@ -1,3 +1,23 @@
+#content{
+}
+
+#mgw-admin-form{
+  display:flex;
+  justify-content: space-around;
+}
+
+#mgw-fieldset-tri, #mgw-fieldset-filtre{
+  border:none;
+  font-size:small;
+}
+
+legend{
+  font-weight:bold;
+}
+
+#mgw-admin-buttons{
+  align-self: flex-end;
+}
 .mgw-radio{
   display:block;
   margin:auto;
@@ -6,11 +26,24 @@
 .mgw-action-button{
   margin-left:50px;
   margin-bottom:20px;
+  background-color: #848484;
+  border-radius: 4px;
+  color: #eeeeee;
+  text-align: center;
+  font-size: 18px;
+  cursor: pointer;
+  padding-left:10px;
+  padding-right:10px;
+
+  float:right;
 }
 
 .mgw-show-array{
+  background:#f6f6f6;
   border: 1px solid black;
-  height:500px;
+  min-height:150px;
+  max-height:500px;
+  resize:vertical;
   overflow: auto;
 }
 
@@ -31,4 +64,8 @@
 
 .mgw-deleted{
   background:#ffcece;
+}
+
+.mgw-history-link{
+  margin-left:5px;
 }

@@ -2,6 +2,7 @@
 
 use MediaWiki\Extension\MGWikiDev\Parsers;
 use MediaWiki\Extension\MGWikiDev\Utilities\UsersFunctions as UserF;
+use MediaWiki\Extension\MGWikiDev\Utilities\MgwDataFunctions as DbF;
 
 /**
  * MGWiki - development version
@@ -25,6 +26,7 @@ class MGWikiDevHooks {
     define("MGW_DB_UPDATED", 3);
     define("MGW_DB_DROPED", 4);
     define("MGW_DB_ERROR", 5);
+    define("MGW_PAGE_MISSING", 0);
 
     // définition des variables de type string
     global $wgMgwStringVars;
@@ -34,7 +36,8 @@ class MGWikiDevHooks {
     	'institution_nom',
       'groupe_type_nom'
     ];
-    // définition des niveaux de permissions
+
+    // niveaux de permissions
     global $wgMgwLevels;
     $wgMgwLevels = [
       0 => 'U0',
@@ -43,14 +46,62 @@ class MGWikiDevHooks {
       3 => 'U3',
       4 => 'sysop'
     ];
+
+    // duration
+    function wfMgwDuration( int $int ) {
+			switch ( $int ) {
+				case 0:
+					return 'indéfini';
+					break;
+				case 1:
+					return '6 mois';
+					break;
+				case 2:
+					return '1 an';
+					break;
+				default:
+					return ( $int / 2 ) . ' ans';
+					break;
+			}
+    }
   }
 
 	/**
 	 * Chargement du module MGWikiDev
 	 */
   public static function onBeforePageDisplay( OutputPage $out, Skin $skin ) {
+
     //Modules pour toutes les pages
     $out->addModules('ext.mgwiki-dev');
+  }
+
+  public static function onSpecialPageBeforeExecute ( $specialPage, $sub )
+  {
+    // rediriger dans certains cas d'usage
+
+    # pages ne devant pas être renommées manuellement
+    if ( $specialPage->getName() == 'Movepage') {
+      $url = $specialPage->getRequest()->getGlobalRequestURL();
+
+      // sous-pages MGWiki:Types_de_groupes/Xxx
+      if ( preg_match( '/MGWiki:(Types_de_groupes\/.*)$/', $url, $matches ) > 0 ) {
+        $title = Title::newFromText( $matches[1], NS_PROJECT );
+        $screen = DbF::select_clean(
+          'groupe_type',
+          [ 'id', 'page_id' ],
+          'page_id = ' . $title->getArticleID()
+        );
+        if ( !is_null( $screen ) ) {
+          $returnto = $specialPage->getTitleFor( 'specialadmingrouptypes' )->getLinkURL( [
+              "action" => "edit",
+              "id" => $screen[0]['id']
+            ] );
+          $specialPage->getOutput()->redirect( $returnto );
+        }
+      }
+
+    }
+
   }
 
 	/**
@@ -70,8 +121,9 @@ class MGWikiDevHooks {
    // Register any render callbacks with the parser
    public static function onParserFirstCallInit( Parser $parser ) {
 
-      // Create a function hook associating the "example" magic word with renderExample()
       $parser->setFunctionHook( 'mgw-onclick', [ Parsers::class, 'onclickSpan' ] );
+      $parser->setFunctionHook( 'mgw-groupe-type', [ Parsers::class, 'mgw_groupe_type' ] );
+      $parser->setFunctionHook( 'mgw-display', [ Parsers::class, 'mgw_display' ] );
    }
 
  	/**

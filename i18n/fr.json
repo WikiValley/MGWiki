@@ -16,5 +16,6 @@
 	"usermerge-badoldid": "user_id de l'ancien utilisateur inexistant",
 	"usermerge-badnewuserid": "user_id du nouvel utilisateur inexistant",
 	"specialmgwikilogin": "Login",
-	"specialmgwikilogin-unknownuser": "utilisateur inconnu"
+	"specialmgwikilogin-unknownuser": "utilisateur inconnu",
+	"mgw-cannot-move-page": "Vous ne pouvez pas renommer cette page"
 }
