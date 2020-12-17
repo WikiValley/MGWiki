@@ -261,7 +261,8 @@
 	},
 	"APIModules": {
 		"nouveau-groupe-adepul": "ApiNewADEPULGroup",
-		"membre-groupe-adepul": "ApiADEPULGroupMember"
+		"membre-groupe-adepul": "ApiADEPULGroupMember",
+		"mgwiki-envoi-notification": "ApiMGWikiSendNotification"
 	},
 	"manifest_version": 1
 }

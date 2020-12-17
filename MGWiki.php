@@ -513,7 +513,7 @@ class MGWiki {
 	 * @param bool $complete Is set to true or false depending if all fields were found in the data
 	 * @return array Requested data
 	 */
-	protected static function collectSemanticData( array $fields, SMW\SemanticData $semanticData, &$complete ) {
+	public static function collectSemanticData( array $fields, SMW\SemanticData $semanticData, &$complete ) {
 
 		# Init
 		$userData = array();

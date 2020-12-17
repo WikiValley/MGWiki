@@ -37,5 +37,12 @@
 	"mgwiki-parserfunction-internalerror": "PHP code internal error",
 	"mgwiki-wrong-secret-key": "Wrong secret key",
 	"mgwiki-bad-adepul-group": "Badly recognised ADEPUL group",
-	"mgwiki-add-member-grouppage": "Add a new member in the group"
+	"mgwiki-add-member-grouppage": "Add a new member in the group",
+	"mgwiki-subject-email-notification": "",
+	"mgwiki-content-email-notification": "",
+	"mgwiki-subject-email-notification-webmaster": "",
+	"mgwiki-content-email-notification-webmaster": "",
+	"mgwiki-send-notification-success": "",
+	"mgwiki-send-notification-noreferreremail": "",
+	"mgwiki-send-notification-failure": ""
 }

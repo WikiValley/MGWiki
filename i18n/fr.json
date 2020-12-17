@@ -35,6 +35,14 @@
 	"mgwiki-isusersysop-nousername": "Pas de nom d’utilisateur indiqué",
 	"mgwiki-isusersysop-badusername": "Mauvais nom d’utilisateur",
 	"mgwiki-parserfunction-internalerror": "Erreur interne au code PHP",
+	"mgwiki-wrong-secret-key": "Mauvaise clé secrète",
 	"mgwiki-bad-adepul-group": "Groupe ADEPUL mal reconnu",
-	"mgwiki-add-member-grouppage": "Ajout d’un nouveau membre au groupe"
+	"mgwiki-add-member-grouppage": "Ajout d’un nouveau membre au groupe",
+	"mgwiki-subject-email-notification": "Votre apprenant $1 vous demande de relire sa page $2.",
+	"mgwiki-content-email-notification": "$1 a fini d’écrire sa page sur $2 et vous demande de la relire.\n\nCordialement,\nMGWiki.",
+	"mgwiki-subject-email-notification-webmaster": "Le référent $1 n’a pas d’e-mail renseigné.",
+	"mgwiki-content-email-notification-webmaster": "L’apprenant $2 a voulu envoyer une demande de relecture à son référent $2 mais celui-ci n’a pas d’e-mail renseigné.",
+	"mgwiki-send-notification-success": "Notification envoyée au référent",
+	"mgwiki-send-notification-noreferreremail": "Votre destinataire n’a pas d’e-mail. Nous nous chargeons de corriger cette anomalie dans les meilleurs délais.",
+	"mgwiki-send-notification-failure": "Il y a eu une erreur lors de l’envoi d’e-mail, veuillez contacter votre référent"
 }

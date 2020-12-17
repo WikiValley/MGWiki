@@ -26,8 +26,10 @@
 	"mgwiki-userpage-without-useraccount": "Warning message on top of a form",
 	"mgwiki-useraccount-without-userpage": "Warning message on top of a form",
 	"mgwiki-create-userpage": "Summary when a userpage is created",
+	"mgwiki-create-grouppage": "",
 	"mgwiki-template-new-userpage": "Wikitext template when a userpage is initialised.\nParameters:\n* $1 - username\n* $2 - first name\n* $3 - family name\n* $4 - email\n* $5 - status (interne/médecin/scientifique)\n* $6 additional status (tuteur/modérateur)\n* $7 Institution\n* $8 Referrer\n* $9 ADEPUL code",
 	"mgwiki-bad-email-token": "Warning message when a user has a bad token when trying to connect with",
+	"mgwiki-changed-email": "",
 	"mgwiki-summary-rewrite-grouppage": "Summary when group page is edited to convert new users to group members",
 	"mgwiki-ephemeral-page-deleted": "Log message when an ephemeral page is deleted",
 	"mgwiki-isusersysop-nousername": "Error message for #isusersysop",
@@ -35,5 +37,12 @@
 	"mgwiki-parserfunction-internalerror": "Error message for parser functions",
 	"mgwiki-wrong-secret-key": "Error message in API",
 	"mgwiki-bad-adepul-group": "Error message in API",
-	"mgwiki-add-member-grouppage": "Summary"
+	"mgwiki-add-member-grouppage": "Summary",
+	"mgwiki-subject-email-notification": "",
+	"mgwiki-content-email-notification": "",
+	"mgwiki-subject-email-notification-webmaster": "",
+	"mgwiki-content-email-notification-webmaster": "",
+	"mgwiki-send-notification-success": "",
+	"mgwiki-send-notification-noreferreremail": "",
+	"mgwiki-send-notification-failure": ""
 }
