@@ -15,6 +15,24 @@ use MediaWiki\Extension\MGWikiDev\Classes\MGWStatus as Status;
 class PagesFunctions
 {
   /**
+   * @param int $page_id
+   * @return bool
+   */
+  public static function pageID( $page_name ) {
+    $title = Title::newFromText( $page_name );
+    return $title->getArticleID();
+  }
+
+  /**
+   * @param string $page_name
+   * @return bool
+   */
+  public static function pageArchiveExists( $page_name ) {
+    $title = Title::newFromText( $page_name );
+    return $title->isDeletedQuick();
+  }
+
+  /**
     * @param string $pagename : titre de la page
     * @param int $namespace : constante de l'espace de nom de la page (ex.: 'NS_MAIN')
     * @param bool $check = false (return null if title does not exist)
@@ -250,14 +268,41 @@ class PagesFunctions
   public static function lightDelete( $page_id, $reason ) {
 
     $title = Title::newFromID( $page_id );
-    $article = WikiPage::factory( $title );
-    $delete = $article->doDeleteArticleReal( $reason );
-    if ( ! $delete->isOK() ) {
-      return Status::newFailed( 'La page n\'a pas pu être supprimée ( ' .
-        $delete->getMessage() .' )' );
+    if ( !is_null( $title ) ) {
+      $article = WikiPage::factory( $title );
+      $delete = $article->doDeleteArticleReal( $reason );
+      if ( ! $delete->isOK() ) {
+        return Status::newFailed( 'La page n\'a pas pu être supprimée ( ' .
+          $delete->getMessage() .' )' );
+      }
+    }
+    return Status::newDone( 'La page a été supprimée' );
+  }
+
+
+  /**
+   * @param int $page_id
+   * @param string $summary
+   * @param User $user
+   *
+   * @return MGWStatus
+   */
+  public static function undeletePage( $page_name, $summary, $user ) {
+
+    $title = Title::newFromText( $page_name );
+    if ( !$title ) {
+       return Status::newFailed( "Invalid title" );
+    }
+
+    $archive = new PageArchive( $title, \RequestContext::getMain()->getConfig() );
+    $archive->undeleteAsUser( [], $user, $reason );
+    $page_id = $title->getArticleID();
+
+    if ( $page_id < 1 ) {
+      return Status::newFailed( 'La page n\'a pas pu être restaurée' );
     }
     else {
-      return Status::newDone( 'La page a été supprimée' );
+      return Status::newDone( 'La page a été restaurée', $page_id );
     }
   }
 }

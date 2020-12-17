@@ -182,16 +182,38 @@ class SpecialAdminGroupTypes extends SpecialPage {
 			[ 'id', 'nom' ]
 		);
 
-		// on vérifie la non création de doublon
+		// on interdit la création de doublon
 		foreach ( $currentNames as $row ) {
-			if ( strtolower( $row['nom'] ) == strtolower( $old['nom'] ) ) {
+			if ( $row['id'] != $old['id'] &&
+				strtolower( $row['nom'] ) == strtolower( $old['nom'] ) )
+			{
 				return Status::newFailed( 'Le nom <strong>'.$old['nom'] .
 					'</strong> correspond à un autre type de groupe en cours d\'utilisation.'
 					.' Veuillez rétablir les modifications manuellement avec un autre nom.' );
 			}
 		}
 
-		// renamePage si besoin
+		// on vérifie l'existence de la page
+		$page_id = PageF::pageID( 'MGWiki:Types de groupes/' . $actual['nom'] );
+		if ( $page_id < 1 ) {
+			$actualPage = PageF::newPage(
+				'Types de groupes/' . $actual['nom'],
+				NS_PROJECT,
+				'{{Modèle:Types de groupes}}',
+				Msg::get( 'specialadmingrouptypes-newpage-summary' ),
+				$wgUser
+			);
+			if( !$actualPage->done() ) {
+				return Status::newFailed( 'Action annulée: la page <strong>MGWiki:Types de groupes/' .
+					$actual['nom'] . '</strong> n\'a pas pu être créée. (' . $actualPage->mess() . ')'  );
+			}
+			$old['page_id'] = $actualPage->extra();
+		}
+		elseif ( $old['page_id'] != $page_id ) {
+			$old['page_id'] != $page_id;
+		}
+
+		// rename si besoin
 		if ( $old['nom'] != $actual['nom'] ) {
 			$rename = PageF::renamePage(
 				'Types de groupes/' . $actual['nom'],
@@ -280,18 +302,32 @@ class SpecialAdminGroupTypes extends SpecialPage {
 		}
 
 		// on re-crée la page
-		$newPage = PageF::newPage(
-			'Types de groupes/' . $old['nom'],
-			NS_PROJECT,
-			'{{Modèle:Types de groupes}}',
-			Msg::get( 'specialadmingrouptypes-newpage-summary' ),
-			$wgUser
-		);
-		if( !$newPage->done() ) {
-			return Status::newFailed( 'Action annulée: la page <strong>MGWiki:Types de groupes/' .
-				$old['nom'] . '</strong> n\'a pas pu être créée. (' . $newPage->mess() . ')'  );
+		if ( PageF::pageArchiveExists( 'MGWiki:Types de groupes/' . $old['nom'] ) ) {
+			$undelete = PageF::undeletePage(
+				'MGWiki:Types de groupes/' . $old['nom'],
+				'Restauration du type de groupe.',
+				$wgUser
+			);
+			if( !$undelete->done() ) {
+				return Status::newFailed( 'Action annulée: la page <strong>MGWiki:Types de groupes/' .
+					$old['nom'] . '</strong> n\'a pas pu être restaurée.'  );
+			}
+			$old['page_id'] = $undelete->extra();
 		}
-		$old['page_id'] = $newPage->extra();
+		else {
+			$newPage = PageF::newPage(
+				'Types de groupes/' . $old['nom'],
+				NS_PROJECT,
+				'{{Modèle:Types de groupes}}',
+				Msg::get( 'specialadmingrouptypes-newpage-summary' ),
+				$wgUser
+			);
+			if( !$newPage->done() ) {
+				return Status::newFailed( 'Action annulée: la page <strong>MGWiki:Types de groupes/' .
+					$old['nom'] . '</strong> n\'a pas pu être créée. (' . $newPage->mess() . ')'  );
+			}
+			$old['page_id'] = $newPage->extra();
+		}
 
 		// on rétablit l'ancienne version
 		$status = DbF::insert( 'groupe_type', $old, $wgUser->getId() );
@@ -299,7 +335,6 @@ class SpecialAdminGroupTypes extends SpecialPage {
 			return $status;
 		}
 
-		// page refresh
 		$refresh = PageF::refreshPage(
 			$old['page_id'],
 			Msg::get( 'specialadmingrouptypes-update-summary' ),
@@ -689,10 +724,29 @@ class SpecialAdminGroupTypes extends SpecialPage {
 			$data['page_id'] = $status->extra();
 		}
 		else {
-
-			# on renomme la page si le nom est modifié
 			$oldData = DbF::select_clean( 'groupe_type', ['id', 'nom', 'page_id' ], 'id = ' . $reqData['id'] )[0];
 
+			# on vérifie l'existence de la page et l'actualité de la base
+			$page_id = PageF::pageID( 'MGWiki:Types de groupes/' . $oldData['nom'] );
+			if ( $page_id < 1 ) {
+				$actualPage = PageF::newPage(
+					'Types de groupes/' . $oldData['nom'],
+					NS_PROJECT,
+					'{{Modèle:Types de groupes}}',
+					Msg::get( 'specialadmingrouptypes-newpage-summary' ),
+					$wgUser
+				);
+				if ( !$actualPage->done() ) {
+					return Status::newFailed( 'Action annulée: la page <strong>MGWiki:Types de groupes/' .
+						$oldData['nom'] . '</strong> n\'a pas pu être créée. (' . $actualPage->mess() . ')'  );
+				}
+				$oldData['page_id'] = $actualPage->extra();
+			}
+			elseif ( $oldData['page_id'] != $page_id ) {
+				$oldData['page_id'] = $page_id;
+			}
+
+			# on renomme la page si le nom est modifié
 			if ( $oldData['nom'] != $data['nom'] ) {
 				$status = PageF::renamePage(
 					'Types de groupes/' . $oldData['nom'],
