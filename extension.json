@@ -221,8 +221,8 @@
 			"MGWikiMarguerite::onBeforePageDisplay",
 			"MGWikiSendNotification::onBeforePageDisplay"
 		],
-		"SidebarBeforeOutput": [
-			"MGWikiSendNotification::onSidebarBeforeOutput"
+		"BaseTemplateToolbox": [
+			"MGWikiSendNotification::onBaseTemplateToolbox"
 		]
 	},
 	"AuthManagerAutoConfig": {
