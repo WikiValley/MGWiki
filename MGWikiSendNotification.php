@@ -59,9 +59,10 @@ class MGWikiSendNotification {
 		$skin = $template->getSkin();
 		$out = $skin->getOutput();
 		$context = $out->getContext();
+		$title = $out->getTitle();
 		$action = \Action::getActionName( $context );
 		$revisionId = $out->getRevisionId();
-		if( $out->isArticle() && $action === 'view' && ( $revisionId == 0 || $revisionId == $out->getTitle()->getLatestRevID() ) && $context->getRequest()->getVal( 'oldid' ) === null ) {
+		if( $out->isArticle() && $title->getNamespace() === 0 && $action === 'view' && ( $revisionId == 0 || $revisionId == $out->getTitle()->getLatestRevID() ) && $context->getRequest()->getVal( 'oldid' ) === null ) {
 			$sidebar['mgwiki-send-notification'] = [
 				'msg' => 'mgwiki-toolbox-link',
 				'href' => '#',
