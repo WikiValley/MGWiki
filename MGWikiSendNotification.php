@@ -18,9 +18,10 @@ class MGWikiSendNotification {
 	 */
 	public static function onBeforePageDisplay( OutputPage $out, Skin $skin ) {
 		$context = $out->getContext();
+		$title = $out->getTitle();
 		$action = \Action::getActionName( $context );
 		$revisionId = $out->getRevisionId();
-		if( $out->isArticle() && $action === 'view' && ( $revisionId == 0 || $revisionId == $out->getTitle()->getLatestRevID() ) && $context->getRequest()->getVal( 'oldid' ) === null ) {
+		if( $out->isArticle() && $title->getNamespace() === 0 && $action === 'view' && ( $revisionId == 0 || $revisionId == $out->getTitle()->getLatestRevID() ) && $context->getRequest()->getVal( 'oldid' ) === null ) {
 		#if( $out->isArticle() && $action === 'view' && $out->isRevisionCurrent() && $context->getRequest()->getVal( 'oldid' ) === null ) { // For 1.35+
 			$out->addModules( 'ext.mgwiki.send-notification' );
 		}
@@ -36,8 +37,9 @@ class MGWikiSendNotification {
 	public static function onSidebarBeforeOutput( Skin $skin, &$sidebar ) {
 		$out = $skin->getOutput();
 		$context = $out->getContext();
+		$title = $out->getTitle();
 		$action = \Action::getActionName( $context );
-		if( $out->isArticle() && $action === 'view' && $out->isRevisionCurrent() && $context->getRequest()->getVal( 'oldid' ) === null ) {
+		if( $out->isArticle() && $title->getNamespace() === 0 && $action === 'view' && $out->isRevisionCurrent() && $context->getRequest()->getVal( 'oldid' ) === null ) {
 			$sidebar['TOOLBOX'][] = [
 				'msg' => 'mgwiki-toolbox-link',
 				'href' => '#',
