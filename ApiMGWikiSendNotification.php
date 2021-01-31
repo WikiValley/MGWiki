@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2019 Wiki Valley
+ * Copyright © 2021 Wiki Valley
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,83 +20,107 @@
  * @file
  */
 
-use MediaWiki\MediaWikiServices;
-use MediaWiki\Revision\RevisionRecord;
-
 /**
  * A module that sends a notification.
  *
  * @ingroup API
  */
-class ApiSendNotification extends ApiBase {
+class ApiMGWikiSendNotification extends ApiBase {
+
 	public function execute() {
 
-		# Get general config
+		# General config
 		$config = $this->getConfig();
 		$wgMGWikiUserProperties = $config->get( 'MGWikiUserProperties' );
 		$wgMGWikiDefaultCreatorNewAccounts = $config->get( 'MGWikiDefaultCreatorNewAccounts' );
 		$wgPasswordSender = $config->get( 'PasswordSender' );
 
-		# Get parameters
+		# Services
+		$applicationFactory = \SMW\ApplicationFactory::getInstance();
+		$store = $applicationFactory->getStore( 'SMW\SQLStore\SQLStore' );
+
+		# Parameters
 		$params = $this->extractRequestParams();
-		$apiResult = $this->getResult();
+		$page = \Title::newFromText( $params['page'] );
+		$studentUser = $this->getUser();
+		$studentUserPage = $studentUser->getUserPage();
 
-		$page = $params['page']; # TODO échapper ?
-		$apprenant = $params['apprenant']; # TODO échapper ?
-
-		$apprenantUser = \User::newFromName( $params['apprenant'] );
-
-		# Formateur à récupérer depuis SMW propriété "Responsable référent" à partir de la page de l’apprenant
-		$complete = null;
-		$apprenantProperties = MGWiki::collectSemanticData( [ $wgMGWikiUserProperties['referrer'] ], $store->getSemanticData( SMW\DIWikiPage::newFromTitle( $apprenantUser->getUserPage() ) ), $complete );
-		$referrerUser = \User::newFromName( $apprenantProperties[$wgMGWikiUserProperties['referrer']];
-
-		$from = new \MailAddress( $wgPasswordSender, $this->msg( 'emailsender' )->inContentLanguage()->text() );
-		$to = \MailAddress::newFromUser( $referrerUser );
-		if( !$to ) {
-			$subject = $this->msg( 'mgwiki-subject-email-notification-webmaster' )->text();
-			$to = \MailAddress::newFromUser( \User::newFromName( $wgMGWikiDefaultCreatorNewAccounts ) );
-			$body = [
-				'text' => $this->msg( 'mgwiki-content-email-notification-webmaster', nom-référent = $apprenantUser->getName() )->text(),
-			];
-			\UserMailer::send( $to, $from, $subject, $body );
-
-			$apiResult->addValue( null, "result", "noreferreremail" );
+		# Check the page given in parameter does exist
+		if( !$page->exists() ) {
+			$this->dieWithError( 'apierror-mgwiki-page-does-not-exist' );
 			return;
 		}
-		$subject = $this->msg( 'mgwiki-subject-email-notification' )->text();
-		$body = [
-			'text' => $this->msg( 'mgwiki-content-email-notification', page = $page,  )->text(),
-		];
-		\UserMailer::send( $to, $from, $subject, $body );
 
-		$apiResult->addValue( null, "result", "success" );
-	}
+		# Get the student’s user page
+		if( !$studentUserPage->exists() ) {
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->warn(
+				'The student ' . $studentUserPage->getText() . ' has no user page.'
+			);
+			$this->dieWithError( 'apierror-mgwiki-no-user-page-for-student' );
+			return;
+		}
 
-	public function mustBePosted() {
-		return true;
-	}
+		# Get the referrer name from SMW property "Responsable référent" on the student’s page
+		$complete = null;
+		$studentProperties = MGWiki::collectSemanticData( [ $wgMGWikiUserProperties['referrer'] ], $store->getSemanticData( SMW\DIWikiPage::newFromTitle( $studentUserPage ) ), $complete );
+		if( ! $studentProperties[$wgMGWikiUserProperties['referrer']] instanceof \Title ) {
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->error(
+				'The referrer for ' . $studentUserPage->getText() . ' is not valid.'
+			);
+			$this->dieWithError( 'apierror-mgwiki-no-referrer-for-student' );
+			return;
+		}
 
-	public function isReadMode() {
-		return false;
-	}
+		# Get the referrer and check the user does exist
+		$referrerUser = \User::newFromName( $studentProperties[$wgMGWikiUserProperties['referrer']]->getText() );
+		if( !$referrerUser->getId() ) {
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->error(
+				'The referrer for ' . $studentUserPage->getText() . ' does not exist.'
+			);
+			$this->dieWithError( 'apierror-mgwiki-no-existing-referrer-for-student' );
+			return;
+		}
 
-	public function isWriteMode() {
-		return true;
+		# Get the referrer’s email
+		$from = new \MailAddress( $wgPasswordSender, $this->msg( 'emailsender' )->inContentLanguage()->text() );
+		$to = \MailAddress::newFromUser( $referrerUser );
+		if( !$to->toString() ) {
+			$subject = $this->msg( 'mgwiki-subject-email-notification-webmaster', $studentUser->getName() )->text();
+			$to = \MailAddress::newFromUser( \User::newFromName( $wgMGWikiDefaultCreatorNewAccounts ) );
+			$body = $this->msg( 'mgwiki-content-email-notification-webmaster', $studentUser->getName(), $referrerUser->getName() )->text();
+			\UserMailer::send( $to, $from, $subject, $body );
+
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->error(
+				'The referrer ' . $referrerUser->getName() . ' has no email.'
+			);
+			$this->dieWithError( 'apierror-mgwiki-referrer-has-no-email' );
+			return;
+		}
+
+		# Send the email
+		$subject = $this->msg( 'mgwiki-subject-email-notification', $studentUser->getName(), $page->getPrefixedText() )->text();
+		$body = $this->msg( 'mgwiki-content-email-notification', $studentUser->getName(), $page->getPrefixedText() )->text();
+		$status = \UserMailer::send( $to, $from, $subject, $body );
+
+		# Check the email was sent
+		if( !$status->isOK() ) {
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->error(
+				'Error when sending email to referrer ' . $referrerUser->getName() . ': ' . $status->getWikiText( false, false, 'en' )
+			);
+			$this->dieWithError( 'apiwarn-mgwiki-error-when-sending-email' );
+		}
 	}
 
 	public function getAllowedParams() {
 		return [
 			'page' => [
 				ApiBase::PARAM_TYPE => 'string',
-			],
-			'apprenant' => [
-				ApiBase::PARAM_TYPE => 'string',
+				ApiBase::PARAM_REQUIRED => true,
 			],
 		];
 	}
 
 	public function needsToken() {
-		return true;
+		return 'csrf';
 	}
 }

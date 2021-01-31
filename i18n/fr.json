@@ -41,8 +41,17 @@
 	"mgwiki-subject-email-notification": "Votre apprenant $1 vous demande de relire sa page $2.",
 	"mgwiki-content-email-notification": "$1 a fini d’écrire sa page sur $2 et vous demande de la relire.\n\nCordialement,\nMGWiki.",
 	"mgwiki-subject-email-notification-webmaster": "Le référent $1 n’a pas d’e-mail renseigné.",
-	"mgwiki-content-email-notification-webmaster": "L’apprenant $2 a voulu envoyer une demande de relecture à son référent $2 mais celui-ci n’a pas d’e-mail renseigné.",
-	"mgwiki-send-notification-success": "Notification envoyée au référent",
-	"mgwiki-send-notification-noreferreremail": "Votre destinataire n’a pas d’e-mail. Nous nous chargeons de corriger cette anomalie dans les meilleurs délais.",
-	"mgwiki-send-notification-failure": "Il y a eu une erreur lors de l’envoi d’e-mail, veuillez contacter votre référent"
+	"mgwiki-content-email-notification-webmaster": "L’apprenant $1 a voulu envoyer une demande de relecture à son référent $2 mais celui-ci n’a pas d’e-mail renseigné.",
+	"mgwiki-toolbox-link": "Demander la relecture",
+	"mgwiki-notification-title": "Demande de relecture",
+	"mgwiki-notification-success": "Notification envoyée au référent",
+	"mgwiki-notification-unknown-error": "Il y a eu une erreur lors de l’envoi de l’email, veuillez contacter le webmaster.",
+	"apihelp-mgwiki-envoi-notification-summary": "Demander la relecture d’une page par le responsable référent",
+	"apihelp-mgwiki-envoi-notification-param-page": "Page dont la relecture est demandée",
+	"apierror-mgwiki-page-does-not-exist": "La page dont vous demandez la relecture n’existe pas, veuillez la créer avant de demander sa relecture.",
+	"apierror-mgwiki-no-user-page-for-student": "Vous n’avez pas de page utilisateur, veuillez la créer pour notamment déclarer votre responsable référent.",
+	"apierror-mgwiki-no-referrer-for-student": "Vous n’avez pas déclaré de responsable référent sur votre page utilisateur, veuillez corriger cela sur votre page utilisateur.",
+	"apierror-mgwiki-no-existing-referrer-for-student": "Le responsable référent déclaré sur votre page utilisateur ne correspond pas à un utilisateur du wiki, veuillez corriger cela sur votre page utilisateur.",
+	"apierror-mgwiki-referrer-has-no-email": "Votre destinataire n’a pas d’e-mail. Nous nous chargeons de corriger cette anomalie dans les meilleurs délais.",
+	"apiwarn-mgwiki-error-when-sending-email": "Il y a eu une erreur lors de l’envoi de l’email, veuillez réessayer d’ici quelques minutes. Si le problème persiste, vous pouvez le mentionner au webmaster."
 }

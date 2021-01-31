@@ -185,8 +185,10 @@
 		"MGWikiParserFunctions": "MGWikiParserFunctions.php",
 		"MGWikiMarguerite": "MGWikiMarguerite.php",
 		"Invitation": "SpecialInvitation.php",
-		"ApiNewADEPULGroup": "ApiNewADEPULGroup.php",
 		"ApiADEPULGroupMember": "ApiADEPULGroupMember.php",
+		"ApiMGWikiSendNotification": "ApiMGWikiSendNotification.php",
+		"ApiNewADEPULGroup": "ApiNewADEPULGroup.php",
+		"MGWikiSendNotification": "MGWikiSendNotification.php",
 		"MediaWiki\\Auth\\EmailTokenAuthenticationRequest": "EmailTokenAuthenticationRequest.php",
 		"MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider": "EmailTokenPrimaryAuthenticationProvider.php"
 	},
@@ -216,7 +218,11 @@
 			"MGWikiParserFunctions::onParserFirstCallInit"
 		],
 		"BeforePageDisplay": [
-			"MGWikiMarguerite::onBeforePageDisplay"
+			"MGWikiMarguerite::onBeforePageDisplay",
+			"MGWikiSendNotification::onBeforePageDisplay"
+		],
+		"SidebarBeforeOutput": [
+			"MGWikiSendNotification::onSidebarBeforeOutput"
 		]
 	},
 	"AuthManagerAutoConfig": {
@@ -237,6 +243,18 @@
 		"remoteExtPath": "MGWiki/resources"
 	},
 	"ResourceModules": {
+		"ext.mgwiki.send-notification": {
+			"scripts": [
+				"ext.mgwiki.send-notification.js"
+			],
+			"messages": [
+				"mgwiki-notification-title",
+				"mgwiki-notification-sent",
+				"mgwiki-notification-unknown-error"
+			],
+			"dependencies": [
+			]
+		},
 		"ext.mgwiki": {
 			"scripts": [
 				"ext.mgwiki.js"
@@ -262,7 +280,7 @@
 	"APIModules": {
 		"nouveau-groupe-adepul": "ApiNewADEPULGroup",
 		"membre-groupe-adepul": "ApiADEPULGroupMember",
-		"mgwiki-envoi-notification": "ApiMGWikiSendNotification"
+		"mgwiki-send-notification": "ApiMGWikiSendNotification"
 	},
 	"manifest_version": 1
 }
