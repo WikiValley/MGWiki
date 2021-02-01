@@ -249,7 +249,7 @@
 			],
 			"messages": [
 				"mgwiki-notification-title",
-				"mgwiki-notification-sent",
+				"mgwiki-notification-success",
 				"mgwiki-notification-unknown-error"
 			],
 			"dependencies": [
