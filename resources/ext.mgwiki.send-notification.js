@@ -17,7 +17,7 @@
 
 				// It worked: acknowledge to the user
 				.then( function() {
-					mw.notify( mw.message( 'mgwiki-notification-success' ), { title: mw.message( 'mgwiki-notification-title' ) } );
+					mw.notify( mw.message( 'mgwiki-notification-success' ), { title: mw.message( 'mgwiki-notification-title' ), type: 'success' } );
 
 				// It failed: display the error to the user
 				}, function( code, result ) {
