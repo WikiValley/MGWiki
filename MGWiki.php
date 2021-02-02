@@ -82,7 +82,7 @@ class MGWiki {
 
 	public static function onPrefsEmailAudit( $user, $oldaddr, $newaddr ) {
 
-		global $wgMGWikiUserProperties;
+		global $wgMGWikiUserProperties, $wgUser;
 
 		# Normalise value
 		$emailProperty = $wgMGWikiUserProperties['email'];
@@ -100,7 +100,7 @@ class MGWiki {
 		}
 
 		# Update the content
-		$content = new WikitextContent( preg_replace( '/\| *'.preg_quote($emailProperty,'/').' *=[a-zA-Z0-9@._+-]+/', "|$emailProperty = $newaddr\n", $oldContent->getNativeData() ) );
+		$content = new WikitextContent( preg_replace( '/\| *'.preg_quote($emailProperty,'/').' *= *[a-zA-Z0-9@._+-]+/', "|$emailProperty=$newaddr", $oldContent->getNativeData() ) );
 
 		# And edit
 		$flags = EDIT_MINOR | EDIT_SUPPRESS_RC | EDIT_UPDATE;
