@@ -53,7 +53,7 @@
 	"mgwiki-notification-success": "Notification sent to the referrer",
 	"mgwiki-notification-unknown-error": "There was an error when sending the email, please contact the webmaster.",
 	"apihelp-mgwiki-envoi-notification-summary": "Request the review of a page by the referrer",
-	"apihelp-mgwiki-envoi-notification-param-page": "Page whose the review is requested",
+	"apihelp-mgwiki-envoi-notification-param-title": "Page whose the review is requested",
 	"apierror-mgwiki-page-does-not-exist": "The page whose you request the review does not exist, please create it before requesting its review.",
 	"apierror-mgwiki-no-user-page-for-student": "You have no user page, please create it especially to declare your referrer.",
 	"apierror-mgwiki-no-referrer-for-student": "You did not declare a referrer on your user page, please correct this on your user page.",
