@@ -42,7 +42,7 @@ class MGWikiSendNotification {
 		if( $out->isArticle() && $title->getNamespace() === 0 && $action === 'view' && $out->isRevisionCurrent() && $context->getRequest()->getVal( 'oldid' ) === null ) {
 			$sidebar['TOOLBOX'][] = [
 				'msg' => 'mgwiki-toolbox-link',
-				'href' => '#',
+				'href' => $title->getLocalURL( [ 'action' => 'send-notification' ] ),
 				'class' => 'mgwiki-send-notification',
 			];
 		}
@@ -69,5 +69,92 @@ class MGWikiSendNotification {
 				'class' => 'mgwiki-send-notification',
 			];
 		}
+	}
+
+	/**
+	 * Send the notification.
+	 *
+	 * If there is an error, the status contains it.
+	 *
+	 * @param \IContextSource $context Context containing, between other things, the user and the title.
+	 * @return \Status
+	 */
+	public static function doSendNotification( \IContextSource $context ) {
+
+		# General config
+		$config = $context->getConfig();
+		$wgMGWikiUserProperties = $config->get( 'MGWikiUserProperties' );
+		$wgMGWikiDefaultCreatorNewAccounts = $config->get( 'MGWikiDefaultCreatorNewAccounts' );
+		$wgPasswordSender = $config->get( 'PasswordSender' );
+
+		# Services
+		$store = \SMW\StoreFactory::getStore();
+
+		# Parameters
+		$title = $context->getTitle();
+		$studentUser = $context->getUser();
+		$studentUserPage = $studentUser->getUserPage();
+
+		# Check the page given in parameter does exist
+		if( !$title->exists() ) {
+			return \Status::newFatal( 'apierror-mgwiki-page-does-not-exist' );
+		}
+
+		# Get the student’s user page
+		if( !$studentUserPage->exists() ) {
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->warn(
+				'The student ' . $studentUserPage->getText() . ' has no user page.'
+			);
+			return \Status::newFatal( 'apierror-mgwiki-no-user-page-for-student' );
+		}
+
+		# Get the referrer name from SMW property "Responsable référent" on the student’s page
+		$complete = null;
+		$studentProperties = \MGWiki::collectSemanticData( [ $wgMGWikiUserProperties['referrer'] ], $store->getSemanticData( SMW\DIWikiPage::newFromTitle( $studentUserPage ) ), $complete );
+		if( ! $studentProperties[$wgMGWikiUserProperties['referrer']] instanceof \Title ) {
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->error(
+				'The referrer for ' . $studentUserPage->getText() . ' is not valid.'
+			);
+			return \Status::newFatal( 'apierror-mgwiki-no-referrer-for-student' );
+		}
+
+		# Get the referrer and check the user does exist
+		$referrerUser = \User::newFromName( $studentProperties[$wgMGWikiUserProperties['referrer']]->getText() );
+		if( !$referrerUser->getId() ) {
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->error(
+				'The referrer for ' . $studentUserPage->getText() . ' does not exist.'
+			);
+			return \Status::newFatal( 'apierror-mgwiki-no-existing-referrer-for-student' );
+		}
+
+		# Get the referrer’s email
+		$from = new \MailAddress( $wgPasswordSender, $context->msg( 'emailsender' )->inContentLanguage()->text() );
+		$to = \MailAddress::newFromUser( $referrerUser );
+		if( !$to->toString() ) {
+			$subject = $context->msg( 'mgwiki-subject-email-notification-webmaster', $studentUser->getName() )->text();
+			$to = \MailAddress::newFromUser( \User::newFromName( $wgMGWikiDefaultCreatorNewAccounts ) );
+			$body = $context->msg( 'mgwiki-content-email-notification-webmaster', $studentUser->getName(), $referrerUser->getName() )->text();
+			\UserMailer::send( $to, $from, $subject, $body );
+
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->error(
+				'The referrer ' . $referrerUser->getName() . ' has no email.'
+			);
+			return \Status::newFatal( 'apierror-mgwiki-referrer-has-no-email' );
+		}
+
+		# Send the email
+		$subject = $context->msg( 'mgwiki-subject-email-notification', $studentUser->getName(), $title->getPrefixedText() )->text();
+		$body = $context->msg( 'mgwiki-content-email-notification', $studentUser->getName(), $title->getPrefixedText() )->text();
+		$status = \UserMailer::send( $to, $from, $subject, $body );
+
+		# Check the email was sent
+		if( !$status->isOK() ) {
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->error(
+				'Error when sending email to referrer ' . $referrerUser->getName() . ': ' . $status->getWikiText( false, false, 'en' )
+			);
+			return \Status::newFatal( 'apiwarn-mgwiki-error-when-sending-email' );
+		}
+
+		return \Status::newGood();
 	}
 }

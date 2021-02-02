@@ -11,7 +11,7 @@
 				// Trigger the API action
 				new mw.Api().postWithToken( 'csrf', {
 					action: 'mgwiki-send-notification',
-					page: mw.config.get( 'wgPageName' ),
+					title: mw.config.get( 'wgPageName' ),
 					errorformat: 'plaintext'
 				} )
 
@@ -30,6 +30,9 @@
 						mw.notify( mw.message( 'mgwiki-notification-unknown-error' ), { title: mw.message( 'mgwiki-notification-title' ), type: 'error', autoHide: false } );
 					}
 				} );
+
+				e.preventDefault();
+				e.stopPropagation();
 
 				return false;
 			} );

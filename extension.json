@@ -189,6 +189,7 @@
 		"ApiMGWikiSendNotification": "ApiMGWikiSendNotification.php",
 		"ApiNewADEPULGroup": "ApiNewADEPULGroup.php",
 		"MGWikiSendNotification": "MGWikiSendNotification.php",
+		"MGWikiSendNotificationAction": "MGWikiSendNotificationAction.php",
 		"MediaWiki\\Auth\\EmailTokenAuthenticationRequest": "EmailTokenAuthenticationRequest.php",
 		"MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider": "EmailTokenPrimaryAuthenticationProvider.php"
 	},
@@ -276,6 +277,9 @@
 				"mobile"
 			]
 		}
+	},
+	"Actions": {
+		"send-notification": "MGWikiSendNotificationAction"
 	},
 	"APIModules": {
 		"nouveau-groupe-adepul": "ApiNewADEPULGroup",
