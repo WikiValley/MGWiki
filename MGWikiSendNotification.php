@@ -102,7 +102,7 @@ class MGWikiSendNotification {
 
 		# Get the student’s user page
 		if( !$studentUserPage->exists() ) {
-			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->warn(
+			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->warning(
 				'The student ' . $studentUserPage->getText() . ' has no user page.'
 			);
 			return \Status::newFatal( 'apierror-mgwiki-no-user-page-for-student' );
