@@ -5,8 +5,8 @@
 
 		$( function () {
 	
-			// Add the click action to the link - it could be added elsewhere easily also
-			$( '#p-tb li.mgwiki-send-notification a' ).click( function( e ) {
+			// Add the click action to the link
+			$( '#p-tb li.mgwiki-send-notification a, .mgwiki-send-notification-button' ).click( function( e ) {
 
 				// Trigger the API action
 				new mw.Api().postWithToken( 'csrf', {
