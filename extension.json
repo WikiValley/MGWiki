@@ -154,7 +154,11 @@
 			"codeAdepul": "Code ADEPUL",
 			"codeActionAdepul": "Code action"
 		},
-		"MGWikiFillADEPULCode": false
+		"MGWikiFillADEPULCode": false,
+		"MGWikiSendNotificationNamespaces": [
+			0,
+			724
+		]
 	},
 	"SpecialPages": {
 		"Invitation": "Invitation"

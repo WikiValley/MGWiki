@@ -18,10 +18,14 @@ class MGWikiSendNotification {
 	 */
 	public static function onBeforePageDisplay( OutputPage $out, Skin $skin ) {
 		$context = $out->getContext();
+		$config = $context->getConfig();
+		$wgMGWikiSendNotificationNamespaces = $config->get( 'MGWikiSendNotificationNamespaces' );
+
 		$title = $out->getTitle();
 		$action = \Action::getActionName( $context );
 		$revisionId = $out->getRevisionId();
-		if( $out->isArticle() && $title->getNamespace() === 0 && $action === 'view' && ( $revisionId == 0 || $revisionId == $out->getTitle()->getLatestRevID() ) && $context->getRequest()->getVal( 'oldid' ) === null ) {
+
+		if( $out->isArticle() && in_array( $title->getNamespace(), $wgMGWikiSendNotificationNamespaces ) && $action === 'view' && ( $revisionId == 0 || $revisionId == $out->getTitle()->getLatestRevID() ) && $context->getRequest()->getVal( 'oldid' ) === null ) {
 		#if( $out->isArticle() && $action === 'view' && $out->isRevisionCurrent() && $context->getRequest()->getVal( 'oldid' ) === null ) { // For 1.35+
 			$out->addModules( 'ext.mgwiki.send-notification' );
 		}
@@ -37,9 +41,13 @@ class MGWikiSendNotification {
 	public static function onSidebarBeforeOutput( Skin $skin, &$sidebar ) {
 		$out = $skin->getOutput();
 		$context = $out->getContext();
+		$config = $context->getConfig();
+		$wgMGWikiSendNotificationNamespaces = $config->get( 'MGWikiSendNotificationNamespaces' );
+
 		$title = $out->getTitle();
 		$action = \Action::getActionName( $context );
-		if( $out->isArticle() && $title->getNamespace() === 0 && $action === 'view' && $out->isRevisionCurrent() && $context->getRequest()->getVal( 'oldid' ) === null ) {
+
+		if( $out->isArticle() && in_array( $title->getNamespace(), $wgMGWikiSendNotificationNamespaces ) && $action === 'view' && $out->isRevisionCurrent() && $context->getRequest()->getVal( 'oldid' ) === null ) {
 			$sidebar['TOOLBOX'][] = [
 				'msg' => 'mgwiki-toolbox-link',
 				'href' => $title->getLocalURL( [ 'action' => 'send-notification' ] ),
@@ -59,10 +67,14 @@ class MGWikiSendNotification {
 		$skin = $template->getSkin();
 		$out = $skin->getOutput();
 		$context = $out->getContext();
+		$config = $context->getConfig();
+		$wgMGWikiSendNotificationNamespaces = $config->get( 'MGWikiSendNotificationNamespaces' );
+
 		$title = $out->getTitle();
 		$action = \Action::getActionName( $context );
 		$revisionId = $out->getRevisionId();
-		if( $out->isArticle() && $title->getNamespace() === 0 && $action === 'view' && ( $revisionId == 0 || $revisionId == $out->getTitle()->getLatestRevID() ) && $context->getRequest()->getVal( 'oldid' ) === null ) {
+
+		if( $out->isArticle() && in_array( $title->getNamespace(), $wgMGWikiSendNotificationNamespaces ) && $action === 'view' && ( $revisionId == 0 || $revisionId == $out->getTitle()->getLatestRevID() ) && $context->getRequest()->getVal( 'oldid' ) === null ) {
 			$sidebar['mgwiki-send-notification'] = [
 				'msg' => 'mgwiki-toolbox-link',
 				'href' => $title->getLocalURL( [ 'action' => 'send-notification' ] ),
