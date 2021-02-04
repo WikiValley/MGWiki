@@ -253,11 +253,14 @@
 				"ext.mgwiki.send-notification.js"
 			],
 			"messages": [
+				"mgwiki-send-notification-confirm-title",
+				"mgwiki-send-notification-confirm-top",
 				"mgwiki-notification-title",
 				"mgwiki-notification-success",
 				"mgwiki-notification-unknown-error"
 			],
 			"dependencies": [
+				"oojs-ui-windows"
 			]
 		},
 		"ext.mgwiki": {
