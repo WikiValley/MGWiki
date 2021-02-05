@@ -57,12 +57,16 @@ class MGWikiSendNotificationAction extends FormAction {
 	}
 
 	protected function getFormFields() {
+		$list = \MGWikiSendNotification::getRecipientsList( $this->getContext() );
+		$default = ( is_array( $list ) )
+			? $this->msg( 'mgwiki-send-notification-confirm-top', $list[0]['user_name'] )->parse()
+			: $list->getMessage();
 		return [
 			'intro' => [
 				'type' => 'info',
 				'vertical-label' => true,
 				'raw' => true,
-				'default' => $this->msg( 'mgwiki-send-notification-confirm-top' )->parse()
+				'default' => $default
 			]
 		];
 	}
