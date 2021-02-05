@@ -37,9 +37,10 @@ class ApiMGWikiSendNotification extends ApiBase {
 
 		if ( $params['module'] == 'get' ) {
 			// on retourne la liste des destinataires
-			$r = $this->getResults();
+			$r = $this->getResult();
 			$status = \MGWikiSendNotification::getRecipientsList( $context );
 			if ( is_array( $status ) ) {
+				var_dump($status);
 				foreach ( $status as $key => $value ) {
 					$r->addValue( null, $key, $value );
 				}
