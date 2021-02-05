@@ -86,12 +86,33 @@ class MGWikiSendNotification {
 	/**
 	 * Send the notification.
 	 *
-	 * If there is an error, the status contains it.
-	 *
 	 * @param \IContextSource $context Context containing, between other things, the user and the title.
 	 * @return \Status
 	 */
 	public static function doSendNotification( \IContextSource $context ) {
+		return self::execute( $context, true );
+	}
+
+	/**
+	 * Return recipients list.
+	 *
+	 * @param \IContextSource $context Context containing, between other things, the user and the title.
+	 * @return array|\Status
+	 */
+	public static function getRecipientsList( $context ) {
+		return self::execute( $context, false );
+	}
+
+	/**
+	 * Send the notification or get the recipient.
+	 *
+	 * If there is an error, the status contains it.
+	 *
+	 * @param \IContextSource $context Context containing, between other things, the user and the title.
+	 * @param bool $send send notif (true) or return recipient (false)
+	 * @return array|\Status
+	 */
+	public static function execute( \IContextSource $context, $send = true ) {
 
 		# General config
 		$config = $context->getConfig();
@@ -143,6 +164,16 @@ class MGWikiSendNotification {
 			return \Status::newFatal( 'apierror-mgwiki-no-existing-referrer-for-student' );
 		}
 
+		# Renvoie le destinataire sans envoyer le message.
+		if ( !$send ) {
+			# (variable de retour au format array en prévision d'un choix multiple au futur)
+			$recipients[] = [
+				"user_id" => $referrerUser->getId(),
+				"user_name" => $referrerUser->getName()
+			];
+			return $recipients;
+		}
+
 		# Get the referrer’s email
 		$from = new \MailAddress( $wgPasswordSender, $context->msg( 'emailsender' )->inContentLanguage()->text() );
 		$to = \MailAddress::newFromUser( $referrerUser );
@@ -176,66 +207,5 @@ class MGWikiSendNotification {
 		}
 
 		return \Status::newGood();
-	}
-
-
-	/**
-	 * Return recipients list.
-	 *
-	 * @param \IContextSource $context Context containing, between other things, the user and the title.
-	 * @return \Status
-	 */
-	public static function getRecipientsList( $context ) {
-
-		# General config
-		$config = $context->getConfig();
-		$wgMGWikiUserProperties = $config->get( 'MGWikiUserProperties' );
-
-		# Services
-		$store = \SMW\StoreFactory::getStore();
-
-		# Parameters
-		$title = $context->getTitle();
-		$studentUser = $context->getUser();
-		$studentUserPage = $studentUser->getUserPage();
-
-		# Check the page given in parameter does exist
-		if( !$title->exists() ) {
-			return \Status::newFatal( 'apierror-mgwiki-page-does-not-exist' );
-		}
-
-		# Get the student’s user page
-		if( !$studentUserPage->exists() ) {
-			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->warning(
-				'The student ' . $studentUserPage->getText() . ' has no user page.'
-			);
-			return \Status::newFatal( 'apierror-mgwiki-no-user-page-for-student' );
-		}
-
-		# Get the referrer name from SMW property "Responsable référent" on the student’s page
-		$complete = null;
-		$studentProperties = \MGWiki::collectSemanticData( [ $wgMGWikiUserProperties['referrer'] ], $store->getSemanticData( SMW\DIWikiPage::newFromTitle( $studentUserPage ) ), $complete );
-		if( ! $studentProperties[$wgMGWikiUserProperties['referrer']] instanceof \Title ) {
-			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->error(
-				'The referrer for ' . $studentUserPage->getText() . ' is not valid.'
-			);
-			return \Status::newFatal( 'apierror-mgwiki-no-referrer-for-student' );
-		}
-
-		# Get the referrer and check the user does exist
-		$referrerUser = \User::newFromName( $studentProperties[$wgMGWikiUserProperties['referrer']]->getText() );
-		if( !$referrerUser->getId() ) {
-			\MediaWiki\Logger\LoggerFactory::getInstance( 'mgwiki' )->error(
-				'The referrer for ' . $studentUserPage->getText() . ' does not exist.'
-			);
-			return \Status::newFatal( 'apierror-mgwiki-no-existing-referrer-for-student' );
-		}
-
-		# variable de retour au format array en prévision d'un choix multiple au futur
-		$recipients[] = [
-			"user_id" => $referrerUser->getId(),
-			"user_name" => $referrerUser->getName()
-		];
-		return $recipients;
 	}
 }
