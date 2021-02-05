@@ -35,7 +35,19 @@ class ApiMGWikiSendNotification extends ApiBase {
 		$context = new \DerivativeContext( $this->getContext() );
 		$context->setTitle( $title );
 
-		$status = \MGWikiSendNotification::doSendNotification( $context );
+		if ( $params['module'] == 'get' ) {
+			// on retourne la liste des destinataires
+			$r = $this->getResults();
+			$status = \MGWikiSendNotification::getRecipientsList( $context );
+			if ( is_array( $status ) ) {
+				foreach ( $status as $key => $value ) {
+					$r->addValue( null, $key, $value );
+				}
+				return;
+			}
+		} else {
+			$status = \MGWikiSendNotification::doSendNotification( $context );
+		}
 
 		if( !$status->isGood() ) {
 			$errors = $status->getErrors();
@@ -57,6 +69,9 @@ class ApiMGWikiSendNotification extends ApiBase {
 			'title' => [
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true,
+			],
+			'module' => [
+				ApiBase::PARAM_TYPE => 'string'
 			],
 		];
 	}
