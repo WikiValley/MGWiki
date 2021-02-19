@@ -198,10 +198,7 @@ class AdminUsersMailAndGroups extends \SpecialPage {
 			 * (e.g. they don't have the userrights permission), then don't
 			 * allow them to change any user rights.
 			 */
-			if ( !MediaWikiServices::getInstance()
-					->getPermissionManager()
-					->userHasRight( $user, 'userrights' )
-			) {
+			if ( !in_array( 'userrights', $user->getRights() ) ) {
 				$block = $user->getBlock();
 				if ( $block && $block->isSitewide() ) {
 					throw new UserBlockedError( $block );
@@ -563,9 +560,7 @@ class AdminUsersMailAndGroups extends \SpecialPage {
 			if ( WikiMap::isCurrentWikiId( $dbDomain ) ) {
 				$dbDomain = '';
 			} else {
-				if ( $writing && !MediaWikiServices::getInstance()
-						->getPermissionManager()
-						->userHasRight( $this->getUser(), 'userrights-interwiki' )
+				if ( $writing && !in_array( 'userrights-interwiki', $user->getRights() )
 				) {
 					return \Status::newFatal( 'userrights-no-interwiki' );
 				}
