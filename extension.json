@@ -77,6 +77,15 @@
 					"participantTemplate": "membersList"
 				}
 			},
+     	"Modifier le groupe": {
+				"RegexPageName": "/^Groupe:(GEP|GAPP|DPC|Stage praticien|4folium)/",
+          "RequiredRight": "mgwikimanagelevel1",
+          "InstitutionFromCreator": true,
+          "SubObjects": true,
+          "MergeNewUsers": {
+             "participantTemplate": "membersList"
+          }
+	    },
 			"Groupe de niveau 2": {
 				"RegexPageName": "/^(Tuteurs|Modérateurs)/",
 				"RequiredRight": "mgwikimanagelevel2",
