@@ -1,6 +1,22 @@
 ( function ( mw, $ ) {
 
 	/**
+	 * Onglets d'action: correction de l'affichage si "ca-edit" au lieu de "ca-ve-edit"
+	 * pour les ns MAIN et RECIT
+	 */
+	 var veAllowedNameSpaces = [0,724 ];
+	 if ( ( mw.config.get('wgNamespaceNumber') === 0
+	 				|| mw.config.get('wgNamespaceNumber') === 724 )
+ 				&& mw.config.get( 'wgAction' ) === 'view' ) {
+			str = $('#ca-edit a').attr('href');
+			str = str.replace('&action', '&veaction');
+		console.log(str);
+			$('#ca-edit a').attr('href',str);
+			$('#ca-edit a').html('Modifier');
+			$('#ca-edit').attr('id','ca-ve-edit');
+		}
+
+	/**
 	 * Modify in background the competency on the current page.
 	 *
 	 * The edition is done by the current user without edit summary.
