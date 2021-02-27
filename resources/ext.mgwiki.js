@@ -9,9 +9,8 @@
 	 				|| mw.config.get('wgNamespaceNumber') === 724 )
  				&& mw.config.get( 'wgAction' ) === 'view' ) {
 			str = $('#ca-edit a').attr('href');
-			str = str.replace('&action', '&veaction');
-		console.log(str);
-			$('#ca-edit a').attr('href',str);
+			//str = str.replace('&action', '&veaction');
+			//$('#ca-edit a').attr('href',str);
 			$('#ca-edit a').html('Modifier');
 			$('#ca-edit').attr('id','ca-ve-edit');
 		}
