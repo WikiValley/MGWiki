@@ -13,7 +13,7 @@ class AdminSendMassEmail extends \SpecialPage {
 	public function __construct() {
 		$this->special = 'MgwAdminSendMassEmail';
 		$this->body_page = 'MediaWiki:SendMassEmail';
-		$this->pre_URL = 'http://localhost/wiki/';
+		$this->pre_URL = 'https://mgwiki.univ-lyon1.fr/wiki/';
 		parent::__construct( $this->special, 'editinterface' );
 
 	}
