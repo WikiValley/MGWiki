@@ -171,7 +171,8 @@
 	},
 	"SpecialPages": {
 		"Invitation": "Invitation",
-		"MgwAdminUsers": "MediaWiki\\Extension\\MGWiki\\AdminUsersMailAndGroups"
+		"MgwAdminUsers": "MediaWiki\\Extension\\MGWiki\\AdminUsersMailAndGroups",
+		"MgwAdminSendMassEmail": "MediaWiki\\Extension\\MGWiki\\AdminSendMassEmail"
 	},
 	"GroupPermissions": {
 		"interne": {},
@@ -199,7 +200,8 @@
 		"MGWikiParserFunctions": "MGWikiParserFunctions.php",
 		"MGWikiMarguerite": "MGWikiMarguerite.php",
 		"Invitation": "SpecialInvitation.php",
-		"MediaWiki\\Extension\\MGWiki\\AdminUsersMailAndGroups" : "SpecialAdminUsersMailAndGroups.php",
+		"MediaWiki\\Extension\\MGWiki\\AdminUsersMailAndGroups": "SpecialAdminUsersMailAndGroups.php",
+		"MediaWiki\\Extension\\MGWiki\\AdminSendMassEmail": "SpecialAdminSendMassEmail.php",
 		"ApiADEPULGroupMember": "ApiADEPULGroupMember.php",
 		"ApiMGWikiSendNotification": "ApiMGWikiSendNotification.php",
 		"ApiNewADEPULGroup": "ApiNewADEPULGroup.php",
