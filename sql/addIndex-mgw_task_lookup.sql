@@ -1,0 +1,1 @@
+CREATE INDEX /*i*/mgw_task_lookup ON /*_*/mgw_task (task_id, task_updater_id, task_label, task_archive);

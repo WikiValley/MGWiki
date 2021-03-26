@@ -13,9 +13,62 @@ use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
 
+use MediaWiki\Extension\MGWiki\Utilities\MgwFunctions as MgwF;
+use MediaWiki\Extension\MGWiki\Utilities\MailFunctions as MailF;
+use MediaWiki\Extension\MGWiki\Utilities\PagesFunctions as PageF;
+use MediaWiki\Extension\MGWiki\Utilities\PhpFunctions as PhpF;
+use MediaWiki\Extension\MGWiki\Foreign\MGWRenameuser as Renameuser;
+use MediaWiki\Extension\MGWiki\Foreign\MGWSemanticMediaWiki as SmwF;
+
 class MGWiki {
 
 	/**
+	 * callback au chargement de l'extension (ne peut être placé sous un namespace)
+	 */
+	public static function onExtensionLoad() {
+		/**
+		 * accesseur pour les variables de configuration
+		 * => config/<conf>.json
+		 * @param $conf
+		 * @param $item
+		 * @return array|null
+		 */
+		function wfMgwConfig( string $conf, string $item = "" ) {
+			$return = file_get_contents( __DIR__ . '/config/' . $conf . ".json" );
+			$return = json_decode( $return, true );
+			if ( empty( $item ) ) return $return;
+			else return $return[ $item ];
+		}
+	}
+
+	/**
+	 * callback au chargement de php maintenance/update.php
+	 *
+	 * @param DatabaseUpdater|MysqlUpdater $updater
+	 */
+	public static function onLoadExtensionSchemaUpdates( $updater ) {
+
+		/* tables additionnelles pour l'extension MGWiki.
+		 * mgw_tasks = table de tâches en cours (permet de reprendre à distance une tâche non finie)
+		 * mgw_stats = table destinée à l'observation de l'usage du site
+		 */
+
+		$dir = str_replace('includes', 'sql', __DIR__);
+		$tables = wfMgwConfig('db-tables');
+
+		foreach( $tables as $table ) {
+			$table_file = "$dir/addTable-" . $table . ".sql";
+			$index_file = "$dir/addIndex-" . $table . "_lookup.sql";
+			$updater->addExtensionTable( $table, $table_file );
+			if ( file_exists( $index_file ) ) {
+				$updater->addExtensionIndex( $table, $table . '_lookup', $index_file );
+			}
+		}
+	}
+
+	/**
+	 * TODO: harmoniser la gestion des droits sur les groupes U0 / U1 / U2 / U3
+	 *
 	 * Check permissions for actions.
 	 *
 	 * @param Title $title Title of the page
@@ -39,11 +92,19 @@ class MGWiki {
 		$titleEnglish .= $title->getText();
 		foreach ( $wgMGWikiForms as $form => $params ) {
 			# For each registered form type is associated a resulting page name, check the permissions on this page, not the form itself
-			if ( array_key_exists( 'RegexPageName', $params ) && preg_match( $params['RegexPageName'], $titleEnglish ) ) {
-				if ( $title->getNamespace() == NS_USER && $title->getText() == $user->getName() && array_key_exists( 'EditOwnUserpage', $params ) && $params['EditOwnUserpage'] === true ) {
+			if ( array_key_exists( 'RegexPageName', $params )
+					 && preg_match( $params['RegexPageName'], $titleEnglish ) ) {
+
+				if ( $title->getNamespace() == NS_USER
+					   && $title->getText() == $user->getName()
+						 && array_key_exists( 'EditOwnUserpage', $params )
+						 && $params['EditOwnUserpage'] === true ) {
 					return true;
 				}
-				if ( array_key_exists( 'RequiredRight', $params ) && is_string( $params['RequiredRight'] ) && !$user->isAllowed( $params['RequiredRight'] ) ) {
+
+				if ( array_key_exists( 'RequiredRight', $params )
+					   && is_string( $params['RequiredRight'] )
+					   && !$user->isAllowed( $params['RequiredRight'] ) ) {
 					# Unauthorised user, and all further permissions hooks must be skipped since this result is authoritative
 					$result = false;
 					return false;
@@ -55,13 +116,212 @@ class MGWiki {
 	}
 
 	/**
+	 * NB: FONCTIONS TEMPORAIRES ( MGW-0.2 debug )
+	 * 1/ modif pages UTILISATEUR
+	 * 2/ modif pages GROUPE
+	 *
+	 * TODO:
+	 * 1/ màj MGW 2.0: intégration de la gestion des utilisateurs & groupes détachée des modèles inclus
+	 * 2/ màj MW > 1.35: transfert des fonctions persistantes vers Hooks::onMultiContentSave()
+	 * modif pages GROUPE: création d'utilisateurs
+	 */
+	public static function onPageContentSaveComplete( $wikiPage, $user, $content,
+		$summary, $isMinor, $isWatch, $section, $flags, $revision, $status,
+		$originalRevId, $undidRevId
+	) {
+
+		$hookSummary = 'MGWiki::onPageContentSaveComplete';
+
+		////////////////////
+		// PAGES UTILISATEUR
+
+		if ( $wikiPage->getTitle()->getNamespace() == NS_USER && $summary != $hookSummary ) {
+			$changes = false;
+			$native_content = $content->getNativeData();
+
+			# If self userpage, update the “last-date-edited-by-user-her/himself”
+			if ( $wikiPage->getTitle()->getText() == $user->getName() ) {
+				global $wgMGWikiUserProperties;
+
+				if ( preg_match(
+						"/(^|\r?\n) *\| *" . preg_quote( $wgMGWikiUserProperties['timestamp'], '/' ) . " *=.*(\r?\n|$)/",
+						$native_content )
+				) {
+					$native_content = preg_replace(
+						"/(^|\r?\n) *\| *" . preg_quote( $wgMGWikiUserProperties['timestamp'], '/' ) . " *=.*(\r?\n|$)/",
+						'$1|' . $wgMGWikiUserProperties['timestamp'] . '=' . wfTimestamp() . '$2',
+						$native_content );
+				} else {
+					$native_content = preg_replace(
+						"/((^|\r?\n) *\| *" . preg_quote( $wgMGWikiUserProperties['lastname'], '/' ) . " *=.*)(\r?\n|$)/",
+						"\$1\n|" . $wgMGWikiUserProperties['timestamp'] . '=' . wfTimestamp() . '$3',
+						$native_content );
+				}
+				$changes = true;
+			}
+
+			# TEMPORAIRE: on efface le champs E-mail du formulaire Personne s'il existe
+			# raison: ménage poco à poco sans déclencher une modif de toutes les pages utilisateur
+			# par un administrateur...
+			if ( preg_match('/E\-mail/', $native_content ) ) {
+				$native_content = PageF::deleteTemplateFields ( $native_content, 'Personne', [ 'E-mail' ] );
+				$changes = true;
+			}
+
+			if ( $changes ) {
+				$status = PageF::edit( $wikiPage, $hookSummary, $user, $native_content );
+			}
+		}
+
+		////////////////////////////////////////////////////////////
+		// CREATION DE NOUVEAUX UTILISATEURS DEPUIS LES PAGES GROUPE
+
+		if ( $wikiPage->getTitle()->getNamespace() == NS_GROUP && $summary != $hookSummary ) {
+			# préparation des variables
+			$create = false;
+			$newUsers = [];
+			$bugs = [];
+			$redirectURL = '';
+			$native_content = $content->getNativeData();
+
+			# données sur le groupe
+			$tplGroupe = PageF::getTemplateInfos ( $native_content, 'Groupe', [
+				'Type de groupe' => 'Type de groupe',
+				'Institution de rattachement' => 'Institution de rattachement',
+				'Tuteur ou modérateur' => 'Tuteur ou modérateur',
+				'Année' => 'Année',
+				'Statut personne' => 'Statut personne'
+			] );
+			# nouveaux participants
+			$nouveauxParticipants = PageF::getTemplateInfos ( $native_content, 'Participant Groupe', [
+				'Nom' => 'Nom',
+				'Prénom' => 'Prénom',
+				'E-mail' => 'E-mail',
+				'Statut personne' => 'Statut personne',
+				'Statut additionnel personne' => 'Statut additionnel personne'
+			] );
+
+			# debug
+			if ( count( $tplGroupe ) != 1 && $nouveauxParticipants ) {
+				$create = true;
+				$bugs[] = MailF::bug(
+					"Le modèle {{Groupe}} de la page est corrompu, abandon de la création des utilisateurs.'",
+					$wikiPage->getTitle()->getFullText()
+				);
+			}
+
+			# création des nouveaux utilisateurs un à un
+			if ( count( $tplGroupe ) == 1 && $nouveauxParticipants ) {
+				$create = true;
+				foreach ( $nouveauxParticipants as $nouveau ) {
+					# création du compte
+					$nouveau['Nom'] = strtoupper( $nouveau['Nom'] );
+					$nouveau['Prénom'] = MgwF::sanitize_prenom( $nouveau['Prénom'] );
+					$username = $nouveau['Prénom'] . ' ' . $nouveau['Nom'];
+					$userData = array_merge( $nouveau, $tplGroupe[0] );
+					if ( isset( $userData['Année'] ) && in_array( $userData['Type de groupe'], ['GEP', 'Stage praticien'] ) )
+						$userData['Année de promotion'] = $userData['Année'];
+					if ( isset( $userData['Tuteur ou modérateur'] ) )
+						$userData['Responsable référent'] = $userData['Tuteur ou modérateur'];
+
+		      $new_user = User::newFromName ( $username );
+		      if ( $new_user->getId() == 0 ) {
+						if ( self::createUser( $username, $userData ) ) {
+							$newUsers[] = $username;
+						}
+						else {
+							$bugs[] = 'Echec à la création de l\'utilisateur ' . $username;
+						}
+					}
+
+					# on efface le modèle {{Nouveau Participant}} correspondant
+					$native_content = str_replace( $nouveau['full-template-string'], '', $native_content );
+
+					# on ajoute l'utilisateur à la liste des membres
+					$tplInfos = PageF::getTemplateInfos ( $native_content, 'Groupe', ['Membres' => 'Membres'] );
+					if ( $tplInfos && isset( $tplInfos[0]['Membres'] ) )
+						$membres = explode(',', $tplInfos[0]['Membres'] );
+					else $membres = [];
+					$membres[] = $username;
+					$membres = implode(',', $membres);
+					$native_content = PageF::updateTemplateInfos ( $native_content, 'Groupe', [ 'Membres' => $membres ] );
+				}
+			}
+
+			# on supprime la pages "fantôme" Groupe:Nouveaux_utilisateurs
+			if ( preg_match('/^Groupe:Nouveaux utilisateurs/', $wikiPage->getTitle()->getFullText() ) > 0 ) {
+				$mgwStatus = PageF::delete( $wikiPage, 'Suppression automatique d\'une page temporaire');
+				if ( !$mgwStatus->done() ) $bug[] = $mgwStatus->mess();
+				$redirectURL = '/wiki/index.php/MGWiki:Accueil';
+			}
+
+			if ( $create ) {
+
+				# on met à jour la page groupe
+				PageF::edit( $wikiPage, $hookSummary, $user, $native_content );
+
+				# on informe l'utilisateur du résultat de la création des comptes
+				$feedback = '';
+				if ( $newUsers ) {
+					$userlist = '';
+					foreach ( $newUsers as $newUser ) {
+						$userlist .= '<br>* [[Utilisateur:' . $newUser . '|' . $newUser . ']]';
+					}
+					$feedback .= wfMessage( 'mgw-createaccount-feedback', $userlist )->plain();
+				}
+				if ( $bugs ) {
+					$feedback .= "<br><br>'''Des erreurs sont survenues:'''<br>";
+					foreach ( $bugs as $bug ) {
+						$feedback .= '<br>* ' . $bug;
+					}
+				}
+				MgwF::afterSubmitInfo( $feedback, 'wikitext', 'continuer', $redirectURL );
+			}
+		}
+ 	}
+
+	/**
+	 * Redirect the user just after login if her/his semantic property says
+	 * s/he should update her/his informations.
+	 */
+	static function onPostLoginRedirect( &$returnTo, &$returnToQuery, &$type ) {
+		global $wgUser;
+		if ( self::userRequireUpdate() ) {
+			$returnTo = $wgUser->getUserPage()->getPrefixedText();
+			$returnToQuery = [ 'action' => 'formedit' ];
+			$type = 'successredirect';
+		}
+		return true;
+	}
+
+	/**
+	 * @param SpecialPage $specialPage
+	 * @param string|null $subpage
+	 */
+	static function onSpecialPageAfterExecute( $specialPage, $subpage ) {
+
+		global $wgUser, $wgOut;
+
+		# After the user has changed her/his password, send her/him to her/his userpage in form-edition to confirm her/his data
+		//if( $specialPage->getName() == 'ChangeCredentials' && $specialPage->getRequest()->wasPosted() ) {
+		// autres sp : 'MgwChangePassword'
+		if ( self::userRequireUpdate() ) {
+			$wgOut->redirect( $wgUser->getUserPage()->getFullURL( [ 'action' => 'formedit' ] ) );
+			$wgOut->output();
+		}
+
+		return true;
+	}
+
+	/**
+	 *
 	 * Display a warning if the user account and user page don’t together exist or are missing.
 	 *
 	 * @param Title $targetTitle Page title
 	 * @param string $pre_form_html String displayed just before the form
 	 * @return true
 	 */
-	public static function onsfHTMLBeforeForm( $targetTitle, &$pre_form_html ) {
+	public static function onHTMLBeforeForm( $targetTitle, &$pre_form_html ) {
 
 		# Only use this hook on user pages
 		if ( empty( $targetTitle ) || $targetTitle->getNamespace() != NS_USER ) return;
@@ -70,16 +330,179 @@ class MGWiki {
 		$user = User::newFromName( $targetTitle->getText() )->getId();
 
 		if ( $targetTitle->exists() xor $user ) {
-
 			$pre_form_html = '<div class="warningbox">';
 			if ( $targetTitle->exists() ) $pre_form_html .= wfMessage( 'mgwiki-userpage-without-useraccount' )->escaped();
 			else $pre_form_html .= wfMessage( 'mgwiki-useraccount-without-userpage' )->escaped();
 			$pre_form_html .= "</div>\n";
 		}
 
+		if ( self::userRequireUpdate() ) {
+			$pre_form_html = '<div class="warningbox">';
+			$pre_form_html .= wfMessage( 'mgwiki-userpage-update-needed' )->plain();
+			$pre_form_html .= "</div>\n";
+		}
+
 		return true;
 	}
 
+	/**
+	 * Create a user.
+	 *
+	 * @param string $username Username
+	 * @param string|null $email E-mail
+	 * @param array $groups Groups
+	 * @return bool The user was created
+	 */
+	public static function createUser( string $username, $userData = [], array $groups = [] ) {
+
+		global $wgUser, $wgNewUserLog, $wgVersion;
+		global $wgMGWikiUserProperties;
+
+		$username = User::getCanonicalName( $username, 'creatable' );
+		$user = User::newFromName( $username );
+		if ( $user->getId() )
+			return false;
+
+		$properties = [];
+		if ( array_key_exists( $wgMGWikiUserProperties['email'], $userData )
+			&& is_string( $userData[$wgMGWikiUserProperties['email']] ) )
+			$properties['email'] = $userData[$wgMGWikiUserProperties['email'] ];
+			/*
+		if ( array_key_exists( $userData['E-mail'] ) )
+			$properties['email'] = $userData['E-mail'];
+*/
+		# Create the user and add log entry
+		if ( false && version_compare( $wgVersion, '1.27.0' ) >= 0 ) {
+			//$data = $properties; // Not to send the confirmation email through AuthManager since I want to customise it
+			$data = [];
+			$data['username'] = $username;
+			$data['password'] = '';
+			$data['retype'] = '';
+
+			# This comes from AuthManagerAuthPlugin
+			$reqs = AuthManager::singleton()->getAuthenticationRequests( AuthManager::ACTION_CREATE );
+			$reqs = AuthenticationRequest::loadRequestsFromSubmission( $reqs, $data );
+			$res = AuthManager::singleton()->beginAccountCreation( $wgUser, $reqs, 'null:' );
+			switch ( $res->status ) {
+				case AuthenticationResponse::PASS:
+					return true;
+				case AuthenticationResponse::FAIL:
+					// Hope it's not a PreAuthenticationProvider that failed...
+					$msg = $res->message instanceof \Message ? $res->message : new \Message( $res->message );
+					return false;
+				default:
+					throw new \BadMethodCallException(
+						'AuthManager does not support such simplified account creation'
+					);
+			}
+
+		} else {
+			$user = User::createNew( $username, $properties );
+			if ( !$user instanceof User )
+				return false;
+			if ( $wgNewUserLog ) {
+				$logEntry = new ManualLogEntry( 'newusers', 'create2' );
+				$logEntry->setPerformer( $wgUser );
+				$logEntry->setTarget( $user->getUserPage() );
+				$logEntry->setParameters( array( '4::userid' => $user->getId() ) );
+				$logid = $logEntry->insert();
+				$logEntry->publish( $logid );
+			}
+		}
+
+		# Add template on userpage
+		$userTitle = Title::newFromText( $username, NS_USER );
+		$userArticle = WikiPage::factory( $userTitle );
+		$summary = wfMessage( 'mgwiki-create-userpage' )->inContentLanguage()->text();
+		$content = new WikitextContent( self::userTemplate( $username, $userData ) );
+		$flags = EDIT_NEW;
+		$userArticle->doEditContent( $content, $summary, $flags, false, $wgUser );
+
+		# Send email
+		$user->sendConfirmationMail( 'mgw-create' );
+
+		# Set groups
+		if ( isset( $userData['Statut personne'] ) ) {
+			if ( $userData['Statut personne'] == 'Interne' ) {
+				$user->addGroup('interne');
+			}
+			elseif ( $userData['Statut personne'] == 'Médecin' ) {
+				$user->addGroup('médecin');
+			}
+			elseif ( $userData['Statut personne'] == 'Scientifique' ) {
+				$user->addGroup('scientifique');
+			}
+		}
+
+		if ( isset( $userData['Statut additionnel personne'] )
+			&& in_array( $userData['Statut additionnel personne'], ['Tuteur', 'Modérateur', 'Formateur', 'MSU'] ) ) {
+				$user->addGroup('U2');
+		}
+		return true;
+	}
+
+	public static function userTemplate( $username, $userData ) {
+
+		global $wgMGWikiUserProperties;
+		//$email = array_key_exists( $wgMGWikiUserProperties['email'], $userData ) ? $userData[$wgMGWikiUserProperties['email']] : '';
+		$statutPers = array_key_exists( $wgMGWikiUserProperties['statutPersonne'], $userData ) ? $userData[$wgMGWikiUserProperties['statutPersonne']] : '';
+		$statutAddPers = array_key_exists( $wgMGWikiUserProperties['statutAdditionnelPersonne'], $userData ) ? $userData[$wgMGWikiUserProperties['statutAdditionnelPersonne']] : '';
+		$institution = array_key_exists( $wgMGWikiUserProperties['institution'], $userData ) ? $userData[$wgMGWikiUserProperties['institution']] : '';
+		$referrer = array_key_exists( $wgMGWikiUserProperties['referrer'], $userData ) ? $userData[$wgMGWikiUserProperties['referrer']] : '';
+		$codeAdepul = array_key_exists( $wgMGWikiUserProperties['codeAdepul'], $userData ) ? $userData[$wgMGWikiUserProperties['codeAdepul']] : '';
+		$year = array_key_exists( $wgMGWikiUserProperties['year'], $userData ) ? $userData[$wgMGWikiUserProperties['year']] : '';
+
+		// wfMessage ne semble pas fonctionner au-delà de 10 arguments ??
+		$content = "{{Personne\n|Titre=".
+			"\n|Prénom=".$userData[$wgMGWikiUserProperties['firstname']].
+			"\n|Nom=".$userData[$wgMGWikiUserProperties['lastname']].
+			//"\n|E-mail=".$email. // ??
+			"\n|Date de dernière modification=\n|Statut personne=".$statutPers.
+			"\n|Statut additionnel personne=".$statutAddPers.
+			"\n|Spécialité ou profession=\n|Institution de rattachement=".$institution.
+			"\n|Responsable référent=".$referrer.
+			"\n|Année de thèse=\n|Présentation=\n|Code ADEPUL=".$codeAdepul.
+			"\n|Année de promotion=".$year."\n}}\n{{Personne2\n|Rapports et conflits d'intérêts=\n}}";
+		/*
+		$content = wfMessage( 'mgwiki-template-new-userpage',
+			[
+				$username,
+				$userData[$wgMGWikiUserProperties['firstname']],
+				$userData[$wgMGWikiUserProperties['lastname']],
+				$email,
+				$statutPers,
+				$statutAddPers,
+				$institution,
+				$referrer,
+				$year,
+				$codeAdepul
+			] )->inContentLanguage()->plain();
+*/
+		return $content;
+	}
+
+	public static function userRequireUpdate() {
+		global $wgUser;
+		global $wgMGWikiUserProperties;
+
+		//$store = &smwfGetStore();
+		$complete = null;
+
+		$update = SmwF::collectSemanticData(
+			[ $wgMGWikiUserProperties['requiredUserUpdate'] ],
+			//$store->getSemanticData( SMW\DIWikiPage::newFromTitle( $wgUser->getUserPage() ) ),
+			SmwF::getSemanticData( $wgUser->getUserPage() ),
+			$complete
+		);
+
+		return ( count( $update ) == 1 && $update[$wgMGWikiUserProperties['requiredUserUpdate']] );
+	}
+
+	/**
+	 * NB: DEPRECATED (suppression des mails des pages utilisateurs)
+ 	 * TODO: vérifier la mécanique de màj
+	 */
+	 /*
 	public static function onPrefsEmailAudit( $user, $oldaddr, $newaddr ) {
 
 		global $wgMGWikiUserProperties, $wgUser;
@@ -109,137 +532,37 @@ class MGWiki {
 			return;
 		}
 	}
+	*/
 
 	/**
 	 * When a user page is modified by SemanticMediaWiki, create the corresponding MediaWiki user or update the email
-	 *
-	 * Only the user or 'admins' with the right 'mgwikimanagelevel1' can report the email address in the user preferences.
-	 * If $wgNewUserLog is true (default), add an entry in the 'newusers' log when a user is created.
-	 *
-	 * @param SMWSQLStore3 $store SemanticMediaWiki store
-	 * @param SMWSemanticData $semanticData Semantic data
-	 * @param SMW\SQLStore\CompositePropertyTableDiffIterator $compositePropertyTableDiffIterator Differences on property values
-	 * @return bool|void
+	 * (...)
 	 */
-	public static function onSMW_SQLStore_AfterDataUpdateComplete( SMWSQLStore3 $store, SMWSemanticData $semanticData, SMW\SQLStore\CompositePropertyTableDiffIterator $compositePropertyTableDiffIterator ) {
+		/*
+		public static function onSMW_SQLStore_AfterDataUpdateComplete(
+			SMWSQLStore3 $store,
+			SMWSemanticData $semanticData,
+			SMW\SQLStore\CompositePropertyTableDiffIterator
+			$compositePropertyTableDiffIterator )
+		{
 
-		global $wgMGWikiForms;
+		!!! MECANIQUE CASSEE (bug incompréhensible sur la propriété e-mail)
+		=> remplacement par MGWiki::onPageContentSaveComplete
 
-		# Get title with namespace in English
-		$title = $semanticData->getSubject()->getTitle();
-		$titleEnglish = '';
-		$ns = MWNamespace::getCanonicalName( $title->getNamespace() );
-		if ( $ns ) $titleEnglish .= $ns . ':';
-		$titleEnglish .= $title->getText();
-
-		# Get the user who made the change
-		# It is executed as a job, so $wgUser is not the real user who made the change
-		$statements = self::collectSemanticData( [ '_LEDT' ], $semanticData, $complete );
-		if ( !array_key_exists( '_LEDT', $statements ) || !$statements['_LEDT'] instanceof Title || $statements['_LEDT']->getNamespace() != 2 )
-			return;
-		$editor = User::newFromName( $statements['_LEDT']->getText() );
-		if( !$editor ) {
-			return false;
-		}
-		$editor->load();
-
-		# Search the form
-		foreach ( $wgMGWikiForms as $form => $params ) {
-			if ( array_key_exists( 'RegexPageName', $params ) && preg_match( $params['RegexPageName'], $titleEnglish ) ) {
-
-				self::synchroniseMediaWikiGroups( $title, $editor, $form, $params, $store, $semanticData, $compositePropertyTableDiffIterator );
-
-				# Delete the page if requested
-				if ( array_key_exists( 'EphemeralPage', $params ) && $params['EphemeralPage'] ) {
-					$page = WikiPage::factory( $title );
-					$deleteStatus = $page->doDeleteArticleReal( wfMessage( 'mgwiki-ephemeral-page-deleted' )->inContentLanguage()->text() );
-				}
-
-				break;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * Update the property on the userpage “last-date-edited-by-user-her/himself”
-	 *
-	 * @param WikiPage $wikiPage The WikiPage (object) being saved.
-	 * @param User $user The User (object) saving the article.
-	 * @param Content $content The new article content, as a Content object.
-	 * @param string $summary The article summary (comment).
-	 * @param integer $isMinor Minor flag.
-	 * @param null $isWatch Watch flag (not used, aka always null).
-	 * @param null $section Section number (not used, aka always null).
-	 * @param integer $flags See WikiPage::doEditContent documentation for flags' definition.
-	 * @param Status $status Status (object).
-	 */
-	public static function onPageContentSave( &$wikiPage, &$user, &$content, &$summary, $isMinor, $isWatch, $section, &$flags, &$status ) {
-
-		global $wgMGWikiUserProperties;
-
-		# If not the userpage, not in the scope of this hook
-		if( !$user->getUserPage()->equals( $wikiPage->getTitle() ) ) {
 			return true;
 		}
+		*/
 
-		# Always update the “last-date-edited-by-user-her/himself”
-		if( preg_match( "/(^|\r?\n) *\| *" . preg_quote( $wgMGWikiUserProperties['timestamp'], '/' ) . " *=.*(\r?\n|$)/", $content->getNativeData() ) ) {
-			$content = new WikitextContent( preg_replace( "/(^|\r?\n) *\| *" . preg_quote( $wgMGWikiUserProperties['timestamp'], '/' ) . " *=.*(\r?\n|$)/",
-				'$1|' . $wgMGWikiUserProperties['timestamp'] . '=' . wfTimestamp() . '$2',
-				$content->getNativeData() ) );
-		} else {
-			$content = new WikitextContent( preg_replace( "/((^|\r?\n) *\| *" . preg_quote( $wgMGWikiUserProperties['email'], '/' ) . " *=.*)(\r?\n|$)/",
-				"\$1\n|" . $wgMGWikiUserProperties['timestamp'] . '=' . wfTimestamp() . '$3',
-				$content->getNativeData() ) );
-		}
-	}
+		/*
+		public static function onPageContentSave( )
+
+		!!! comportement erratique...
+		=> transfert à onPageContentSaveComplete
+		*/
 
 	/**
-	 * Redirect the user just after login if her/his semantic property says
-	 * s/he should update her/his informations.
-	 */
-	static function onPostLoginRedirect( &$returnTo, &$returnToQuery, &$type ) {
-
-		global $wgUser;
-		global $wgMGWikiUserProperties;
-
-		$store = &smwfGetStore();
-		$complete = null;
-
-		$update = self::collectSemanticData( [ $wgMGWikiUserProperties['requiredUserUpdate'] ], $store->getSemanticData( SMW\DIWikiPage::newFromTitle( $wgUser->getUserPage() ) ), $complete );
-
-		if( count( $update ) == 1 && $update[$wgMGWikiUserProperties['requiredUserUpdate']] ) {
-			$returnTo = $wgUser->getUserPage()->getPrefixedText();
-			$returnToQuery = [ 'action' => 'formedit' ];
-			$type = 'successredirect';
-		}
-
-		return true;
-	}
-
-	/**
+	 * FONCTION ORPHELINE ???
 	 *
-	 *
-	 * @param SpecialPage $specialPage
-	 * @param string|null $subpage
-	 */
-	static function onSpecialPageAfterExecute( $specialPage, $subpage ) {
-
-		global $wgUser, $wgOut;
-
-		# After the user has changed her/his password, send her/him to her/his userpage in form-edition to confirm her/his data
-		if( $specialPage->getName() == 'ChangeCredentials' && $specialPage->getRequest()->wasPosted() ) {
-
-			$wgOut->redirect( $wgUser->getUserPage()->getFullURL( [ 'action' => 'formedit' ] ) );
-			$wgOut->output();
-		}
-
-		return true;
-	}
-
-	/**
 	 * Synchronise the requested groups from the semantic form with MediaWiki groups.
 	 *
 	 * @param Title $title Title of the subject page.
@@ -284,9 +607,9 @@ class MGWiki {
 		# Get moderator’s institution if defined
 		$institution = [];
 		if( array_key_exists( 'InstitutionFromModerator', $paramsForm ) && $paramsForm['InstitutionFromModerator'] ) {
-			$moderator = self::collectSemanticData( [ $wgMGWikiUserProperties['moderator'] ], $semanticData, $complete );
+			$moderator = SmwF::collectSemanticData( [ $wgMGWikiUserProperties['moderator'] ], $semanticData, $complete );
 			if( count( $moderator ) == 1 ) {
-				$institution = self::collectSemanticData(
+				$institution = SmwF::collectSemanticData(
 					[ $wgMGWikiUserProperties['institution'] ],
 					$store->getSemanticData( SMW\DIWikiPage::newFromTitle( $moderator[$wgMGWikiUserProperties['moderator']] ) ),
 					$complete
@@ -298,9 +621,9 @@ class MGWiki {
 			}
 		}
 		elseif( array_key_exists( 'InstitutionFromCreator', $paramsForm ) && $paramsForm['InstitutionFromCreator'] ) {
-			$creator = self::collectSemanticData( [ '_LEDT' ], $semanticData, $complete );
+			$creator = SmwF::collectSemanticData( [ '_LEDT' ], $semanticData, $complete );
 			if( count( $creator ) == 1 ) {
-				$institution = self::collectSemanticData(
+				$institution = SmwF::collectSemanticData(
 					[ $wgMGWikiUserProperties['institution'] ],
 					$store->getSemanticData( SMW\DIWikiPage::newFromTitle( $creator['_LEDT'] ) ),
 					$complete
@@ -332,8 +655,9 @@ class MGWiki {
 
 					# Create users
 					$propertiesToBeSearched = array_values( $wgMGWikiUserProperties );
-					$userData = self::collectSemanticData( $propertiesToBeSearched, $userSemanticData, $complete );
+					$userData = SmwF::collectSemanticData( $propertiesToBeSearched, $userSemanticData, $complete );
 					$userData = array_merge( $institution, $userData );
+
 					if ( array_key_exists( $wgMGWikiUserProperties['firstname'], $userData ) && array_key_exists( $wgMGWikiUserProperties['lastname'], $userData ) ) {
 						# Iterate over the fields groups
 						$userGroups = self::searchFieldsGroups( null, $editor, $userSemanticData, $editOwnUserpage );
@@ -392,7 +716,7 @@ class MGWiki {
 		elseif ( $title->getNamespace() == NS_USER ) {
 			# Search if there is an email property
 			$email = '';
-			$statements = self::collectSemanticData( [ $wgMGWikiUserProperties['email'] ], $semanticData, $complete );
+			$statements = SmwF::collectSemanticData( [ $wgMGWikiUserProperties['email'] ], $semanticData, $complete );
 			if ( array_key_exists( $wgMGWikiUserProperties['email'], $statements ) )
 				$email = $statements[$wgMGWikiUserProperties['email']];
 
@@ -410,6 +734,9 @@ class MGWiki {
 		}
 	}
 
+	/**
+	 * FONCTION ORPHELINE ?
+	 */
 	private static function searchFieldsGroups( $title, $editor, $semanticData, $editOwnUserpage ) {
 
 		global $wgMGWikiFieldsGroups;
@@ -420,7 +747,7 @@ class MGWiki {
 		foreach( $wgMGWikiFieldsGroups as $property => $paramsProperty ) {
 
 			# Get data
-			$statements = self::collectSemanticData( [ $property ], $semanticData, $complete );
+			$statements = SmwF::collectSemanticData( [ $property ], $semanticData, $complete );
 			#echo "\$statements ($property) = ";var_dump($statements);
 
 			# Check permissions
@@ -454,6 +781,9 @@ class MGWiki {
 		return $groups;
 	}
 
+	/**
+	 * FONCTION ORPHELINE ?
+	 */
 	private static function addMediaWikiGroups( $user, $groups, $editOwnUserpage ) {
 
 		global $wgMGWikiFieldsGroups;
@@ -503,375 +833,5 @@ class MGWiki {
 				continue;
 			$user->addGroup( $valueProperty );
 		}
-	}
-
-	/**
-	 * Collect the requested data.
-	 *
-	 * @param string[] $fields Field names
-	 * @param SMW\SemanticData $semanticData Semantic data
-	 * @param bool $complete Is set to true or false depending if all fields were found in the data
-	 * @return array Requested data
-	 */
-	public static function collectSemanticData( array $fields, SMW\SemanticData $semanticData, &$complete ) {
-
-		# Init
-		$userData = array();
-		$count = 0;
-
-		# Retrieve values
-		$properties = $semanticData->getProperties();
-
-		# Normalise keys
-		$mapNormalisation = [];
-		foreach( $fields as $field )
-			$mapNormalisation[str_replace( ' ', '_', $field )] = $field;
-		#echo "mapNormalisation = ";var_dump($mapNormalisation);
-
-		# Iterate over existing properties and search requested properties
-		foreach( $properties as $key => $diProperty ) {
-			$values = $semanticData->getPropertyValues( $diProperty );
-			#echo "property ".$diProperty->getKey()." found with ".count( $values )." values and type ".current( $values )->getDIType()."\n";
-			if ( !in_array( $diProperty->getKey(), array_keys( $mapNormalisation ) ) )
-				continue;
-			#echo "property ".$diProperty->getKey()." (".$mapNormalisation[$diProperty->getKey()].") found with ".count( $values )." values and type ".current( $values )->getDIType()."\n";
-			if ( count( $values ) == 1 && current( $values )->getDIType() == SMWDataItem::TYPE_BLOB ) {
-				#echo "property ".$diProperty->getKey()." (".$mapNormalisation[$diProperty->getKey()].") = ".current( $values )->getString()."\n";
-				$userData[$mapNormalisation[$diProperty->getKey()]] = current( $values )->getString();
-				$count++;
-			}
-			elseif ( count( $values ) == 1 && current( $values )->getDIType() == SMWDataItem::TYPE_WIKIPAGE ) {
-				#echo "property ".$diProperty->getKey()." (".$mapNormalisation[$diProperty->getKey()].") = ".current( $values )->getTitle()."\n";
-				$userData[$mapNormalisation[$diProperty->getKey()]] = current( $values )->getTitle();
-				$count++;
-			}
-			elseif ( count( $values ) == 1 && current( $values )->getDIType() == SMWDataItem::TYPE_BOOLEAN ) {
-				#echo "property ".$diProperty->getKey()." (".$mapNormalisation[$diProperty->getKey()].") = ".(current( $values )->getBoolean()?'true':'false')."\n";
-				$userData[$mapNormalisation[$diProperty->getKey()]] = current( $values )->getBoolean();
-				$count++;
-			}
-		}
-
-		# Check if we have all mandatory values
-		$complete = false;
-		if ( $count == count( $fields ) ) $complete = true;
-
-		return $userData;
-	}
-
-	/**
-	 * Create a user.
-	 *
-	 * @param string $username Username
-	 * @param string|null $email E-mail
-	 * @param array $groups Groups
-	 * @return bool The user was created
-	 */
-	public static function createUser( string $username, $userData = [], array $groups = [] ) {
-
-		global $wgUser, $wgNewUserLog, $wgVersion;
-		global $wgMGWikiUserProperties;
-
-		$username = User::getCanonicalName( $username, 'creatable' );
-		$user = User::newFromName( $username );
-		if ( $user->getId() )
-			return false;
-
-		$properties = [];
-		if ( array_key_exists( $wgMGWikiUserProperties['email'], $userData ) && is_string( $userData[$wgMGWikiUserProperties['email']] ) )
-			$properties['email'] = $userData[$wgMGWikiUserProperties['email']];
-
-		# Create the user and add log entry
-		if ( false && version_compare( $wgVersion, '1.27.0' ) >= 0 ) {
-			//$data = $properties; // Not to send the confirmation email through AuthManager since I want to customise it
-			$data = [];
-			$data['username'] = $username;
-			$data['password'] = '';
-			$data['retype'] = '';
-
-			# This comes from AuthManagerAuthPlugin
-			$reqs = AuthManager::singleton()->getAuthenticationRequests( AuthManager::ACTION_CREATE );
-			$reqs = AuthenticationRequest::loadRequestsFromSubmission( $reqs, $data );
-			$res = AuthManager::singleton()->beginAccountCreation( $wgUser, $reqs, 'null:' );
-			switch ( $res->status ) {
-				case AuthenticationResponse::PASS:
-					return true;
-				case AuthenticationResponse::FAIL:
-					// Hope it's not a PreAuthenticationProvider that failed...
-					$msg = $res->message instanceof \Message ? $res->message : new \Message( $res->message );
-					return false;
-				default:
-					throw new \BadMethodCallException(
-						'AuthManager does not support such simplified account creation'
-					);
-			}
-
-		} else {
-			$user = User::createNew( $username, $properties );
-			if ( !$user instanceof User )
-				return false;
-			if ( $wgNewUserLog ) {
-				$logEntry = new ManualLogEntry( 'newusers', 'create2' );
-				$logEntry->setPerformer( $wgUser );
-				$logEntry->setTarget( $user->getUserPage() );
-				$logEntry->setParameters( array( '4::userid' => $user->getId() ) );
-				$logid = $logEntry->insert();
-				$logEntry->publish( $logid );
-			}
-		}
-
-		# Add template on userpage
-		$userTitle = Title::newFromText( $username, NS_USER );
-		$userArticle = WikiPage::factory( $userTitle );
-		$summary = wfMessage( 'mgwiki-create-userpage' )->inContentLanguage()->text();
-		$content = new WikitextContent( self::userTemplate( $username, $userData ) );
-		$flags = EDIT_NEW;
-		$userArticle->doEditContent( $content, $summary, $flags, false, $wgUser );
-
-		# Send email
-		$user->sendConfirmationMail( 'created_by_mgwiki' );
-
-		return true;
-	}
-
-	public static function userTemplate( $username, $userData ) {
-
-		global $wgMGWikiUserProperties;
-		$email = array_key_exists( $wgMGWikiUserProperties['email'], $userData ) ? $userData[$wgMGWikiUserProperties['email']] : '';
-		$statutPers = array_key_exists( $wgMGWikiUserProperties['statutPersonne'], $userData ) ? $userData[$wgMGWikiUserProperties['statutPersonne']] : '';
-		$statutAddPers = array_key_exists( $wgMGWikiUserProperties['statutAdditionnelPersonne'], $userData ) ? $userData[$wgMGWikiUserProperties['statutAdditionnelPersonne']] : '';
-		$institution = array_key_exists( $wgMGWikiUserProperties['institution'], $userData ) ? $userData[$wgMGWikiUserProperties['institution']]->getPrefixedText() : '';
-		$referrer = array_key_exists( $wgMGWikiUserProperties['referrer'], $userData ) ? $userData[$wgMGWikiUserProperties['referrer']] : '';
-		$codeAdepul = array_key_exists( $wgMGWikiUserProperties['codeAdepul'], $userData ) ? $userData[$wgMGWikiUserProperties['codeAdepul']] : '';
-		$content = wfMessage( 'mgwiki-template-new-userpage',
-			$username, $userData[$wgMGWikiUserProperties['firstname']], $userData[$wgMGWikiUserProperties['lastname']],
-			$email, $statutPers, $statutAddPers, $institution, $referrer, $codeAdepul
-		)->inContentLanguage()->plain();
-
-		return $content;
-	}
-
-	/**
-	 * Add a given parameter with a value on a template wikitext.
-	 *
-	 * @param string $template Template wikitext.
-	 * @param string $key Parameter key.
-	 * @param string $value Parameter value.
-	 * @return string|null Template wikitext with the given parameter or null if the parameter exists with another value.
-	 */
-	public static function addParameterTemplate( $template, $key, $value ) {
-		$keyRegex = preg_replace( '/[ _]/', '[ _]', $key );
-		if( preg_match( '/\|[ \n]*' . $keyRegex . ' *= *([^|}]*)/', $template, $matches ) ) {
-			$matches[1] = trim( $matches[1] );
-			if( $matches[1] && $matches[1] !== $value ) return null;
-			return preg_replace( '/\|[ \n]*(' . $keyRegex . ') *= *([^|}]*)/', '|' . $key . ' = ' . $value . "\n", $template );
-		}
-		return preg_replace( '/\n?\}\}$/', "\n|" . $key . ' = ' . $value . "\n}}", $template );
-	}
-
-	/**
-	 * Get the user from the official ADEPUL database.
-	 *
-	 * @param string $code_adepul ADEPUL id.
-	 * @return object|false|null Object with the various data describing the ADEPUL user, or false if non-existing ADEPUL user, or null if error.
-	 */
-	public static function getUserFromOfficialADEPUL( $code_adepul ) {
-		global $wgMGWikiUserEndpointADEPUL, $wgMGWikiSecretKeyADEPUL;
-		$infoADEPUL = Http::get( $wgMGWikiUserEndpointADEPUL . '?t_idf=' . $code_adepul . '&cle=' . $wgMGWikiSecretKeyADEPUL );
-		if( !$infoADEPUL ) {
-			return null;
-		}
-		$infoADEPUL = json_decode( $infoADEPUL );
-		if( $infoADEPUL === null ) {
-			return null;
-		}
-		if( $infoADEPUL->existe === 'NON' ) {
-			return false;
-		}
-		return $infoADEPUL;
-	}
-
-	/**
-	 * Get (or create) the user corresponding to an ADEPUL id.
-	 *
-	 * @param string $code_adepul ADEPUL id.
-	 * @param string|null $creator Username creating a new user, or $wgMGWikiDefaultCreatorNewAccounts if null.
-	 * @return User|null MediaWiki user, possibly just created with the specific MGWiki process.
-	 */
-	public static function getUserByADEPUL( $code_adepul, $creator = null ) {
-		global $wgUser;
-		global $wgMGWikiUserProperties, $wgMGWikiDefaultCreatorNewAccounts, $wgMGWikiFillADEPULCode;
-
-		$codeAdepulTitle = Title::newFromText( 'Property:' . $wgMGWikiUserProperties['codeAdepul'] );
-		$codeAdepul = $codeAdepulTitle->getDBkey();
-
-		// Create property instance
-		$property = new SMWDIProperty( $codeAdepul );
-		$property->setPropertyTypeId( SMW\DataValues\StringValue::TYPE_ID );
-		$dataItem = new SMWDIBlob( $code_adepul );
-		$dataValue = SMW\DataValueFactory::getInstance()->newDataValueByItem(
-			$dataItem,
-			$property
-		);
-
-		// Create a description that represents the condition
-		$descriptionFactory = new SMW\Query\DescriptionFactory();
-		$namespaceDescription = $descriptionFactory->newNamespaceDescription(
-			NS_USER
-		);
-		$descriptionAdepul = $descriptionFactory->newSomeProperty(
-			$property,
-			$descriptionFactory->newValueDescription( $dataItem )
-		);
-		$description = $descriptionFactory->newConjunction( array(
-			$namespaceDescription,
-			$descriptionAdepul
-		) );
-		$propertyValue = SMW\DataValueFactory::getInstance()->newPropertyValueByLabel(
-			$codeAdepul
-		);
-
-		$description->addPrintRequest(
-			new SMW\Query\PrintRequest( SMW\Query\PrintRequest::PRINT_PROP, null, $propertyValue )
-		);
-
-		// Create query object
-		$query = new SMWQuery(
-			$description
-		);
-
-		$query->querymode = SMWQuery::MODE_INSTANCES;
-
-		// Try to match condition against the store
-		$queryResult = SMW\ApplicationFactory::getInstance()->getStore()->getQueryResult( $query );
-
-		if( $queryResult->getCount() === 0 ) {
-			# Create user
-			$backupWgUser = $wgUser;
-			$creator = $creator ?: $wgMGWikiDefaultCreatorNewAccounts;
-			$wgUser = User::newFromName( $creator );
-			if( !$wgUser || $wgUser->getId() === 0 ) {
-				if( $creator !== $wgMGWikiDefaultCreatorNewAccounts ) {
-					$wgUser = User::newFromName( $wgMGWikiDefaultCreatorNewAccounts );
-				} else {
-					throw new Exception( 'Creator account "' . $creator . '" not found' );
-				}
-			}
-			$adhAdepul = self::getUserFromOfficialADEPUL( $code_adepul );
-			if( !$adhAdepul ) {
-				throw new Exception( 'ADEPUL code "' . $code_adepul . '" unknown on MGWiki and on ADEPUL' );
-			}
-			$prenom = $adhAdepul->prenom;
-			$nom = $adhAdepul->nom;
-			$mail = $adhAdepul->mail;
-			$profession = $adhAdepul->profession;
-			$specialite = $adhAdepul->specialite;
-			$username = $prenom . ' ' . strtoupper( $nom );
-			$userData = [];
-			$userData[$wgMGWikiUserProperties['firstname']] = $prenom;
-			$userData[$wgMGWikiUserProperties['lastname']] = $nom;
-			$userData[$wgMGWikiUserProperties['institution']] = Title::newFromText( 'ADEPUL', NS_PROJECT );
-			$userData[$wgMGWikiUserProperties['codeAdepul']] = $code_adepul;
-			$userData[$wgMGWikiUserProperties['email']] = $mail;
-			$user = User::newFromName( $username );
-			if( $user->getId() !== 0 ) {
-				if( ! $wgMGWikiFillADEPULCode ) {
-					throw new Exception( 'ADEPUL code not found but corresponding user found on MGWiki' );
-				}
-				$userTitle = Title::newFromText( $username, NS_USER );
-				$userArticle = WikiPage::factory( $userTitle );
-				$summary = wfMessage( 'mgwiki-create-userpage' )->inContentLanguage()->text();
-				if( ! $userArticle->exists() ) {
-					$content = new WikitextContent( self::userTemplate( $username, $userData ) );
-				} elseif( ! preg_match( '/\{\{Personne[ \n]*(?:\||\}\})/', $userArticle->getContent()->getText() ) ) {
-					$content = new WikitextContent( self::userTemplate( $username, $userData ) . $userArticle->getContent()->getText() );
-				} else {
-					$content = new WikitextContent( preg_replace(
-						'/\{\{Personne[^}]+\}\}/',
-						function( $matches ) use( $code_adepul, $wgMGWikiUserProperties ) {
-							$template = MGWiki::addParameterTemplate( $matches[0], $wgMGWikiUserProperties['codeAdepul'], $code_adepul );
-							if( $template === null ) throw new Exception( 'Conflicting ADEPUL code with existing and expected values' );
-							return $template;
-						},
-						$userArticle->getContent()->getText()
-					) );
-				}
-				$flags = EDIT_NEW;
-				$userArticle->doEditContent( $content, $summary, $flags, false, $wgUser );
-			}
-			throw new Exception( "We are about to create the user $username on MGWiki with ADEPUL code $code_adepul and email $mail" );
-			MGWiki::createUser( $username, $userData );
-			$wgUser = $backupWgUser;
-			$user = User::newFromName( $username );
-			return $user;
-		} elseif( $queryResult->getCount() > 1 ) {
-			throw new Exception( 'There are multiple users on MGWiki with the ADEPUL code "' . $code_adepul . '"' );
-		} elseif( $queryResult->getCount() === 1 ) {
-			$userValue = $queryResult->getResults()[0];
-			$username = $userValue->getDBkey();
-			$user = User::newFromName( $username );
-			return $user;
-		}
-
-		return null;
-	}
-
-	/**
-	 * Get an ADEPUL group.
-	 *
-	 * @param string $code_action ADEPUL action id.
-	 * @return Title|null MediaWiki page of the ADEPUL group.
-	 */
-	public static function getADEPULGroup( $code_action ) {
-		global $wgUser;
-		global $wgMGWikiUserProperties;
-
-		$codeActionTitle = Title::newFromText( 'Property:' . $wgMGWikiUserProperties['codeActionAdepul'] );
-		$codeAction = $codeActionTitle->getDBkey();
-
-		// Create property instance
-		$property = new SMWDIProperty( $codeAction );
-		$property->setPropertyTypeId( SMW\DataValues\StringValue::TYPE_ID );
-		$dataItem = new SMWDIBlob( $code_action );
-		$dataValue = SMW\DataValueFactory::getInstance()->newDataValueByItem(
-			$dataItem,
-			$property
-		);
-
-		// Create a description that represents the condition
-		$descriptionFactory = new SMW\Query\DescriptionFactory();
-		$description = $descriptionFactory->newSomeProperty(
-			$property,
-			$descriptionFactory->newValueDescription( $dataItem )
-		);
-		$propertyValue = SMW\DataValueFactory::getInstance()->newPropertyValueByLabel(
-			$codeAction
-		);
-
-		$description->addPrintRequest(
-			new SMW\Query\PrintRequest( SMW\Query\PrintRequest::PRINT_PROP, null, $propertyValue )
-		);
-
-		// Create query object
-		$query = new SMWQuery(
-			$description
-		);
-
-		$query->querymode = SMWQuery::MODE_INSTANCES;
-
-		// Try to match condition against the store
-		$queryResult = SMW\ApplicationFactory::getInstance()->getStore()->getQueryResult( $query );
-
-		if( $queryResult->getCount() === 0 ) {
-			return null;
-		} elseif( $queryResult->getCount() > 1 ) {
-			throw new Exception(); // TODO improve
-		} elseif( $queryResult->getCount() === 1 ) {
-			$groupValue = $queryResult->getResults()[0];
-			$group = Title::newFromText( $groupValue->getDBkey(), $groupValue->getNamespace() );
-			return $group;
-		}
-
-		return null;
 	}
 }

@@ -1,0 +1,81 @@
+.mgw-groupe{
+	padding-bottom:10px;
+}
+.mgw-archived-groupe{
+	padding-bottom:10px;
+}
+.mgw-group-toggle{
+	color:blue;
+	cursor:pointer;
+	margin:0px 5px;
+}
+.mgw-groupe-archive-btn{
+	padding:0px 5px;
+	margin:0px 5px;
+	color:red;
+	font-size:small;
+	cursor:pointer;
+}
+.mgw_confirmed{
+	color:green;
+	font-weight:bold;
+	margin:0px 10px;
+	cursor:help;
+}
+.mgw_unconfirmed{
+	color:red;
+	margin:0px 10px;
+	cursor:help;
+}
+.mgw-changecredentials-link{
+	background:#ffc65f;
+	padding:0px 5px;
+	margin:0px 5px;
+	color:white;
+	font-size:small;
+	border-radius:5px;
+	cursor:pointer;
+}
+.mgw-invite-again{
+	background:#c1bfbf;
+	padding:0px 5px;
+	margin:0px 5px;
+	color:white;
+	font-size:small;
+	border-radius:5px;
+	cursor:pointer;
+}
+.mgw-last-contrib{
+	font-size: small;
+}
+.mgw-new-groupe-button{
+	background-color:#3366cc;
+	color:white;
+	border: 2px #8fa9dd outset;
+	border-radius:5px;
+	padding: 4px 6px;
+	font-weight:bold;
+	font-size:small;
+	cursor:pointer;
+}
+.mgw-new-recit-button{
+	background-color:#3366cc;
+	color:white;
+	border: 2px #8fa9dd outset;
+	border-radius:5px;
+	padding: 4px 6px;
+	font-weight:bold;
+	font-size:small;
+	cursor:pointer;
+}
+.mgw-new-page-button{
+	background-color:#3366cc;
+	color:white;
+	border: 2px #8fa9dd outset;
+	border-radius:5px;
+	padding: 4px 6px;
+	margin-left:20px;
+	font-weight:bold;
+	font-size:small;
+	cursor:pointer;
+}

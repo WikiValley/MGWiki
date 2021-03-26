@@ -1,18 +1,216 @@
 {
 	"@note": "When updating this file please also update MGWiki.php with the same changes.",
 	"name": "MGWiki",
-	"version": "0.1",
+	"version": "1.0",
 	"author": [
-		"Sébastien Beyou"
+		"Sébastien Beyou",
+		"Alexandre Brulet"
 	],
 	"url": "https://mgwiki.univ-lyon1.fr",
 	"descriptionmsg": "mgwiki-desc",
 	"license-name": "GPL-3.0+",
 	"type": "other",
+	"MessagesDirs": {
+		"MGWiki": [
+			"i18n"
+		]
+	},
+	"ExtensionMessagesFiles": {
+		"MGWikiAlias": "includes/MGWiki.alias.php",
+		"MGWikiMagic": "includes/MGWiki.magic.php"
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\MGWiki\\": "includes/",
+		"MediaWiki\\Extension\\MGWiki\\Api\\": "includes/Api/",
+		"MediaWiki\\Extension\\MGWiki\\Foreign\\": "includes/Foreign/",
+		"MediaWiki\\Extension\\MGWiki\\Utilities\\": "includes/Utilities/",
+		"MediaWiki\\Extension\\MGWiki\\Modules\\Admin": "includes/Modules/Admin/",
+		"MediaWiki\\Extension\\MGWiki\\Modules\\Auth": "includes/Modules/Auth/",
+		"MediaWiki\\Extension\\MGWiki\\Modules\\Adepul": "includes/Modules/Adepul/",
+		"MediaWiki\\Extension\\MGWiki\\Modules\\Notifications": "includes/Modules/Notifications/",
+		"MediaWiki\\Extension\\MGWiki\\Modules\\Json": "includes/Modules/Json/"
+	},
+	"AutoloadClasses": {
+		"MGWiki": "MGWiki.php"
+	},
+	"SpecialPages": {
+		"SpecialAccountRequest": "MediaWiki\\Extension\\MGWiki\\Modules\\Json\\SpecialAccountRequest",
+		"MgwEmailAuth": "MediaWiki\\Extension\\MGWiki\\Modules\\Auth\\SpecialMgwEmailAuth",
+		"MgwChangePassword": "MediaWiki\\Extension\\MGWiki\\Modules\\Auth\\SpecialMgwChangePassword",
+		"MgwChangeCredentials": "MediaWiki\\Extension\\MGWiki\\Modules\\Auth\\SpecialMgwChangeCredentials",
+		"MgwAdminUsers": "MediaWiki\\Extension\\MGWiki\\Modules\\Admin\\SpecialAdminUsersMailAndGroups",
+		"MgwSendMassMail": "MediaWiki\\Extension\\MGWiki\\Modules\\Admin\\SpecialSendMassMail"
+	},
+	"Actions": {
+		"send-notification": "MediaWiki\\Extension\\MGWiki\\Modules\\Notifications\\MGWikiSendNotificationAction"
+	},
+	"APIModules": {
+		"nouveau-groupe-adepul": "MediaWiki\\Extension\\MGWiki\\Modules\\Adepul\\ApiNewADEPULGroup",
+		"membre-groupe-adepul": "MediaWiki\\Extension\\MGWiki\\Modules\\Adepul\\ApiADEPULGroupMember",
+		"mgwiki-send-notification": "MediaWiki\\Extension\\MGWiki\\Modules\\Notifications\\ApiMGWikiSendNotification",
+		"mgw-send-mail": "MediaWiki\\Extension\\MGWiki\\Api\\ApiMgwSendMail",
+		"mgw-query" : "MediaWiki\\Extension\\MGWiki\\Api\\ApiMgwQuery",
+		"mgw-action" : "MediaWiki\\Extension\\MGWiki\\Api\\ApiMgwAction",
+		"getjson" : "MediaWiki\\Extension\\MGWiki\\Modules\\Json\\ApiGetJson"
+	},
+	"Hooks": {
+		"ApiAllow": [
+			"MediaWiki\\Extension\\MGWiki\\MGWikiHooks::onApiAllow"
+		],
+		"AuthChangeFormFields": [
+			"MediaWiki\\Extension\\MGWiki\\MGWikiHooks::onAuthChangeFormFields"
+		],
+		"BaseTemplateToolbox": [
+			"MediaWiki\\Extension\\MGWiki\\Modules\\Notifications\\MGWikiSendNotification::onBaseTemplateToolbox"
+		],
+		"BeforePageDisplay": [
+			"MediaWiki\\Extension\\MGWiki\\MGWikiHooks::onBeforePageDisplay",
+			"MediaWiki\\Extension\\MGWiki\\Modules\\Notifications\\MGWikiSendNotification::onBeforePageDisplay",
+			"MediaWiki\\Extension\\MGWiki\\Modules\\Admin\\SpecialSendMassMail::onBeforePageDisplay"
+		],
+		"ChangeMailFormFields": [
+			"MediaWiki\\Extension\\MGWiki\\MGWikiHooks::onChangeMailFormFields"
+		],
+		"LoadExtensionSchemaUpdates": [
+			"MGWiki::onLoadExtensionSchemaUpdates"
+		],
+		"ParserFirstCallInit": [
+			"MediaWiki\\Extension\\MGWiki\\MGWikiParserFunctions::onParserFirstCallInit"
+		],
+		"PageContentSaveComplete" : [
+			"MGWiki::onPageContentSaveComplete"
+		],
+		"PostLoginRedirect": [
+			"MGWiki::onPostLoginRedirect"
+		],
+		"PageForms::HTMLBeforeForm": [
+			"MGWiki::onHTMLBeforeForm"
+		],
+		"SpecialPageAfterExecute": [
+			"MGWiki::onSpecialPageAfterExecute"
+		],
+		"userCan": [
+			"MGWiki::onuserCan"
+		],
+		"UserSendConfirmationMail": [
+			"MediaWiki\\Extension\\MGWiki\\MGWikiHooks::onUserSendConfirmationMail"
+		]
+	},
+	"callback": "MGWiki::onExtensionLoad",
+	"AuthManagerAutoConfig": {
+		"primaryauth": {
+			"MediaWiki\\Extension\\MGWiki\\Modules\\Auth\\EmailTokenPrimaryAuthenticationProvider": {
+				"class": "MediaWiki\\Extension\\MGWiki\\Modules\\Auth\\EmailTokenPrimaryAuthenticationProvider",
+				"args": [
+					{
+						"authoritative": false
+					}
+				],
+				"sort": 0
+			}
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "resources",
+		"remoteExtPath": "MGWiki/resources"
+	},
+	"ResourceModules": {
+		"ext.mgwiki": {
+			"scripts": [
+				"ext.mgwiki.js"
+			],
+			"dependencies": [
+				"ext.mgwiki.edit"
+			]
+		},
+		"ext.mgwiki.edit": {
+			"scripts": [
+				"ext.mgwiki.edit.js"
+			],
+			"dependencies": [
+				"mediawiki.api",
+				"mediawiki.Title"
+			],
+			"targets": [
+				"desktop",
+				"mobile"
+			]
+		},
+		"ext.mgwiki.send-notification": {
+			"scripts": [
+				"send-notification.js"
+			],
+			"messages": [
+				"mgwiki-send-notification-confirm-title",
+				"mgwiki-send-notification-confirm-top",
+				"mgwiki-notification-title",
+				"mgwiki-notification-success",
+				"mgwiki-notification-unknown-error"
+			],
+			"dependencies": [
+				"oojs-ui-windows"
+			]
+		},
+		"ext.mgwiki.mass-email": {
+			"scripts": [
+				"mass-email.js"
+			],
+			"dependencies": [
+				"ext.mgwiki.ooui-search"
+			]
+		},
+		"ext.mgwiki.ooui-search": {
+			"scripts": [
+				"ooui-search.js"
+			],
+			"dependencies": [
+				"oojs-ui-core",
+				"oojs-ui-windows",
+				"oojs-ui-widgets"
+			]
+		},
+		"ext.mgwiki.userpage": {
+			"scripts": [ "userpage.js" ],
+			"dependencies": [
+				"oojs-ui-core",
+				"oojs-ui-windows",
+				"oojs-ui-widgets"
+			]
+		},
+		"ext.mgwiki.specialchangecredentials": {
+			"scripts": [
+				"specialchangecredentials.js"
+			],
+			"dependencies": [
+				"oojs-ui-core",
+				"oojs-ui-windows",
+				"oojs-ui-widgets"
+			]
+		},
+		"ext.mgwiki.jsonform": {
+			"packageFiles": [ "jsonform.js" ],
+			"styles": [ "jsonform.css" ]
+		},
+		"ext.mgwiki-specialaccountrequest": {
+			"packageFiles": [ "specialaccountrequest.js" ]
+		}
+	},
 	"AvailableRights": [
 		"mgwikimanagelevel1",
 		"mgwikimanagelevel2"
 	],
+	"GroupPermissions": {
+		"interne": {},
+		"médecin": {},
+		"scientifique": {},
+		"U2": {
+			"mgwikimanagelevel1": true
+		},
+		"sysop": {
+			"mgwikimanagelevel1": true,
+			"mgwikimanagelevel2": true
+		}
+	},
 	"config": {
 		"MGWikiSecretKeyADEPUL": null,
 		"MGWikiInitialDelayBeforeInactive": 1209600,
@@ -78,13 +276,13 @@
 				}
 			},
 			"Modifier le groupe": {
-							 "RegexPageName": "/^Groupe:(GEP|GAPP|DPC|Stage praticien|4folium)/",
-							 "RequiredRight": "mgwikimanagelevel1",
-							 "InstitutionFromCreator": true,
-							 "SubObjects": true,
-							 "MergeNewUsers": {
-											"participantTemplate": "membersList"
-							 }
+				 "RegexPageName": "/^Groupe:(GEP|GAPP|DPC|Stage praticien|4folium)/",
+				 "RequiredRight": "mgwikimanagelevel1",
+				 "InstitutionFromCreator": true,
+				 "SubObjects": true,
+				 "MergeNewUsers": {
+								"participantTemplate": "membersList"
+				 }
 			},
 			"Groupe de niveau 2": {
 				"RegexPageName": "/^(Tuteurs|Modérateurs)/",
@@ -155,6 +353,7 @@
 			"statutAdditionnelPersonne": "Statut additionnel personne",
 			"timestamp": "Dernière modification",
 			"institution": "Institution de rattachement",
+			"year": "Année de promotion",
 			"referrer": "Responsable référent",
 			"moderator": "Tuteur ou modérateur",
 			"requiredUserUpdate": "Mise à jour requise",
@@ -168,143 +367,6 @@
 			0,
 			724
 		]
-	},
-	"SpecialPages": {
-		"Invitation": "Invitation",
-		"MgwAdminUsers": "MediaWiki\\Extension\\MGWiki\\AdminUsersMailAndGroups",
-		"MgwAdminSendMassEmail": "MediaWiki\\Extension\\MGWiki\\AdminSendMassEmail"
-	},
-	"GroupPermissions": {
-		"interne": {},
-		"médecin": {},
-		"scientifique": {},
-		"U2": {
-			"mgwikimanagelevel1": true
-		},
-		"sysop": {
-			"mgwikimanagelevel1": true,
-			"mgwikimanagelevel2": true
-		}
-	},
-	"MessagesDirs": {
-		"MGWiki": [
-			"i18n"
-		]
-	},
-	"ExtensionMessagesFiles": {
-		"MGWikiAlias": "MGWiki.alias.php",
-		"MGWikiMagic": "MGWiki.magic.php"
-	},
-	"AutoloadClasses": {
-		"MGWiki": "MGWiki.php",
-		"MGWikiParserFunctions": "MGWikiParserFunctions.php",
-		"MGWikiMarguerite": "MGWikiMarguerite.php",
-		"Invitation": "SpecialInvitation.php",
-		"MediaWiki\\Extension\\MGWiki\\AdminUsersMailAndGroups": "SpecialAdminUsersMailAndGroups.php",
-		"MediaWiki\\Extension\\MGWiki\\AdminSendMassEmail": "SpecialAdminSendMassEmail.php",
-		"ApiADEPULGroupMember": "ApiADEPULGroupMember.php",
-		"ApiMGWikiSendNotification": "ApiMGWikiSendNotification.php",
-		"ApiNewADEPULGroup": "ApiNewADEPULGroup.php",
-		"MGWikiSendNotification": "MGWikiSendNotification.php",
-		"MGWikiSendNotificationAction": "MGWikiSendNotificationAction.php",
-		"MediaWiki\\Auth\\EmailTokenAuthenticationRequest": "EmailTokenAuthenticationRequest.php",
-		"MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider": "EmailTokenPrimaryAuthenticationProvider.php"
-	},
-	"Hooks": {
-		"userCan": [
-			"MGWiki::onuserCan"
-		],
-		"sfHTMLBeforeForm": [
-			"MGWiki::onsfHTMLBeforeForm"
-		],
-		"PrefsEmailAudit": [
-			"MGWiki::onPrefsEmailAudit"
-		],
-		"SMW::SQLStore::AfterDataUpdateComplete": [
-			"MGWiki::onSMW_SQLStore_AfterDataUpdateComplete"
-		],
-		"PageContentSave": [
-			"MGWiki::onPageContentSave"
-		],
-		"PostLoginRedirect": [
-			"MGWiki::onPostLoginRedirect"
-		],
-		"SpecialPageAfterExecute": [
-			"MGWiki::onSpecialPageAfterExecute"
-		],
-		"ParserFirstCallInit": [
-			"MGWikiParserFunctions::onParserFirstCallInit"
-		],
-		"BeforePageDisplay": [
-			"MGWikiMarguerite::onBeforePageDisplay",
-			"MGWikiSendNotification::onBeforePageDisplay"
-		],
-		"BaseTemplateToolbox": [
-			"MGWikiSendNotification::onBaseTemplateToolbox"
-		]
-	},
-	"AuthManagerAutoConfig": {
-		"primaryauth": {
-			"MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider": {
-				"class": "MediaWiki\\Auth\\EmailTokenPrimaryAuthenticationProvider",
-				"args": [
-					{
-						"authoritative": false
-					}
-				],
-				"sort": 0
-			}
-		}
-	},
-	"ResourceFileModulePaths": {
-		"localBasePath": "resources",
-		"remoteExtPath": "MGWiki/resources"
-	},
-	"ResourceModules": {
-		"ext.mgwiki.send-notification": {
-			"scripts": [
-				"ext.mgwiki.send-notification.js"
-			],
-			"messages": [
-				"mgwiki-send-notification-confirm-title",
-				"mgwiki-send-notification-confirm-top",
-				"mgwiki-notification-title",
-				"mgwiki-notification-success",
-				"mgwiki-notification-unknown-error"
-			],
-			"dependencies": [
-				"oojs-ui-windows"
-			]
-		},
-		"ext.mgwiki": {
-			"scripts": [
-				"ext.mgwiki.js"
-			],
-			"dependencies": [
-				"ext.mgwiki.edit"
-			]
-		},
-		"ext.mgwiki.edit": {
-			"scripts": [
-				"ext.mgwiki.edit.js"
-			],
-			"dependencies": [
-				"mediawiki.api",
-				"mediawiki.Title"
-			],
-			"targets": [
-				"desktop",
-				"mobile"
-			]
-		}
-	},
-	"Actions": {
-		"send-notification": "MGWikiSendNotificationAction"
-	},
-	"APIModules": {
-		"nouveau-groupe-adepul": "ApiNewADEPULGroup",
-		"membre-groupe-adepul": "ApiADEPULGroupMember",
-		"mgwiki-send-notification": "ApiMGWikiSendNotification"
 	},
 	"manifest_version": 1
 }

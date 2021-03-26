@@ -1,0 +1,10 @@
+{
+  "messages": {
+    "namespace": "NS_MEDIAWIKI",
+    "title": "MGWiki-messages.json"
+  },
+  "specialaccountrequest": {
+    "namespace": "NS_MEDIAWIKI",
+    "title": "Specialaccountrequest.json"
+  }
+}

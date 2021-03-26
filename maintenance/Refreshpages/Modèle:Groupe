@@ -1,0 +1,43 @@
+<noinclude>
+Ceci est le modèle « groupe ». Il devrait être appelé selon le format suivant :
+<pre>
+{{Groupe
+|Type de groupe=
+|Institution de rattachement=
+|Description=
+|Tuteur ou modérateur=
+|Membres=
+|Archivé=
+|Code action=
+}}
+</pre>
+
+Modifier la page pour voir le texte du modèle. __NOEDITSECTION__
+</noinclude><includeonly><!--
+-->{{#set:Code action={{{Code action|}}}}}<!--
+-->{{#set:Archive={{{Archivé|}}}}}<!--
+-->{{#set:Institution de rattachement Full=MGWiki:{{{Institution de rattachement|}}} }}<!--
+-->{{#ifeq:{{{Archivé|}}}|Oui|<center><span style="color: red;">'''''Ce groupe est archivé'''''</span></center><br>|}}
+{| style="margin-top:10px; background:none" align="center"
+|-
+| style="border:2px solid #d9992a;  vertical-align:top; padding: 0px 10px 10px 0px; -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius:10px;" |<div style="margin:10px; float:right"><!--
+-->{{#ifeq:{{CURRENTUSER}}|{{{Tuteur ou modérateur|}}}|[[Fichier:Edit-button.png|20px|link=Spécial:AjouterDonnées/Modifier_le_groupe/{{#replace:{{FULLPAGENAME}}| |_}}]] [[Fichier:Modifier-archiver le groupe.png|200px|link=Spécial:AjouterDonnées/Modifier_le_groupe/{{#replace:{{FULLPAGENAME}}| |_}}]]<!--
+-->|{{#ifingroup:sysop|[[Fichier:Edit-button.png|20px|link=Spécial:AjouterDonnées/Modifier_le_groupe/{{#replace:{{FULLPAGENAME}}| |_}}]] [[Fichier:Modifier-archiver le groupe.png|200px|link=Spécial:AjouterDonnées/Modifier_le_groupe/{{#replace:{{FULLPAGENAME}}| |_}}]]<!--
+-->|}} <!--
+-->}}</div>
+{| cellpadding="2" cellspacing="10"
+|
+;Description:
+:{{{Description|}}}
+;Institution de rattachement:
+:[[MGWiki:{{{Institution de rattachement|}}}|{{{Institution de rattachement|}}}]]{{#set:Institution de rattachement={{{Institution de rattachement|}}}}}
+;Responsable:
+:[[Tuteur ou modérateur::Utilisateur:{{{Tuteur ou modérateur|}}}|{{{Tuteur ou modérateur|}}}]]
+;{{#ifeq:{{{Type de groupe|}}}|Thèse|Thèse soutenue par:|Membres:}}
+:{{#arraymap:{{{Membres|}}}|,|@@@|[[Membres::Utilisateur:@@@|@@@]]}}
+|}
+|}
+<div style="float:right"><span class="ParentTab"> [[Fichier:Edit-button2.png|20px|link={{fullurl:{{FULLPAGENAME}}|veaction=edit}}]] </span></div>
+
+[[Catégorie:Groupe]][[Catégorie:{{{Type de groupe|}}}]]__NOEDITSECTION__
+</includeonly>

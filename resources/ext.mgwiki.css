@@ -1,0 +1,112 @@
+.mgw-admin-link{
+	border-style: solid;
+	border-width: 5px;
+	border-radius: 4px;
+	font-weight: bold;
+	padding-left: 5px;
+	padding-right: 5px;
+	cursor:pointer;
+	margin:0px 10px;
+}
+.mgw-contentheader-editinfo{
+	text-align:center;
+	margin-top:-15px;
+	margin-bottom:10px;
+	font-size: x-small;
+	font-style:italic;
+}
+
+/***** MGW CUSTOM STYLES *****/
+/* TODO: Ménage ... */
+.mgw-dropdown {
+	cursor:pointer;
+}
+
+.mgw-toggle-show {
+	color:white;
+	cursor:pointer;
+	float: right;
+	background: #447ff5;
+	border-radius: 3px;
+	padding-left:5px;
+	padding-right:5px;
+}
+
+.mgw-toggle-hide {
+	color:white;
+	cursor:pointer;
+	float: right;
+	background: #447ff5;
+	border-radius: 3px 3px 0 0;
+	padding-left:5px;
+	padding-right:5px;
+}
+
+.mgw-toggle-content {
+  color:black;
+  border: 1px solid #447ff5;
+	background: white;
+  padding:8px;
+	float: right;
+	border-radius: 5px 0 5px 5px;
+}
+
+/* Tooltip container */
+.mgw-tooltip {
+ position: relative;
+ display: inline-block;
+}
+
+/* Tooltip text */
+.mgw-tooltip .mgw-tooltiptext {
+ visibility: hidden;
+ width: 120px;
+ background-color: #555;
+ color: #fff;
+ text-align: center;
+ padding: 5px 0;
+ border-radius: 6px;
+
+ /* Position the tooltip text */
+ position: absolute;
+ z-index: 1;
+ bottom: 125%;
+ left: 50%;
+ margin-left: -60px;
+
+ /* Fade in tooltip */
+ opacity: 0;
+ transition: opacity 0.3s;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.mgw-tooltip:hover .mgw-tooltiptext {
+ visibility: visible;
+ opacity: 1;
+}
+
+.mgw-red-link{
+  color:red;
+	cursor:pointer;
+  margin-left:5px;
+}
+
+.mgw-blue-link{
+  color:blue;
+	cursor:pointer;
+  margin-left:5px;
+}
+
+.mgw-link{
+	text-decoration: none;
+}
+
+.mgw-post-submit{
+	cursor: pointer;
+}
+
+.mgw-parse-error{
+  font-style:italic;
+  font-weight:bold;
+  color:red;
+}

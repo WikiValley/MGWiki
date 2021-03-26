@@ -1,0 +1,1 @@
+CREATE INDEX /*i*/mgw_stat_lookup ON /*_*/mgw_stat (stat_id, stat_updater_id, stat_label);
