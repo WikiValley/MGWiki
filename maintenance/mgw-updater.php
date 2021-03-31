@@ -38,7 +38,7 @@ class MgwUpdater extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Programme d'automatisation des màj de MGWiki";
-		$this->summary = "Mise à jour MGWiki 0.2";
+		$this->summary = "Mise à jour MGWiki 1.0";
 
 		$this->addDescription( file_get_contents( 'mgw-updater.description.txt' )	);
 
@@ -218,7 +218,8 @@ class MgwUpdater extends Maintenance {
 
 		# MAJ CONTENU
     $filelist = array();
-    if ( $handle = opendir( "Refreshpages" ) ) {
+    $dir_name = __DIR__ . '/Refreshpages';
+    if ( $handle = opendir( $dir_name ) ) {
         while ($entry = readdir($handle)) {
             $filelist[] = $entry;
         }
@@ -230,7 +231,7 @@ class MgwUpdater extends Maintenance {
 			if ( !in_array( $file, ['.PagesSaver.php','.refreshpages.txt','.renamepages.txt','.','..'] ) ) {
 				$page = str_replace( ['~~','_','°°'], [':',' ','/'], $file );
 	      if ( preg_match( '/^[\.]*$/', $page ) == 0 ) {
-	        $content = file_get_contents('Refreshpages/'.$file);
+	        $content = file_get_contents( $dir_name . '/' . $file );
 	        $status = \MediaWiki\Extension\MGWiki\Utilities\PagesFunctions::edit(
 	          $page,
 	          $this->summary,
@@ -238,7 +239,7 @@ class MgwUpdater extends Maintenance {
 	          $content,
 						true
 	        );
-	        echo $page . ': ' . $status->mess() . "\n";
+	        echo $page . ' ' . str_replace( ['<p>','</p>'], '', $status->mess() ) . "\n\n";
 	      }
 			}
     }

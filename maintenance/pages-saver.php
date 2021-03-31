@@ -30,15 +30,15 @@ class PageSaver extends Maintenance {
     $dir = opendir( $dir_name );  // ouvre le répertoire
     $files = readdir( $dir );
 
-    while ( $files = readdir( $dir ) ) {
-	    if ( !in_array( $files, ['.refreshpages.txt','.renamepages.txt', '.', '..' ] ) ) { // exceptions
-				unlink( $files );  // supprime chaque fichier du répertoire
+    while ( $file = readdir( $dir ) ) {
+	    if ( !in_array( $file, ['.refreshpages.txt','.renamepages.txt', '.', '..' ] ) ) { // exceptions
+				unlink( $dir_name . '/' . $file );  // supprime chaque fichier du répertoire
     	}
     }
 		closedir( $dir );
 
 		# 2. on reconstitue les fichiers
-		$handle = fopen('.refreshpages.txt', 'r');
+		$handle = fopen( $dir_name . '/' . '.refreshpages.txt', 'r');
 		if ($handle)
 		{
 			/*Tant que l'on est pas à la fin du fichier*/
@@ -51,7 +51,7 @@ class PageSaver extends Maintenance {
 					if ( $title->getArticleID() > 0 ) {
 						$page = \WikiPage::factory($title);
 						$content = $page->getContent()->getNativeData();
-						file_put_contents( str_replace( [':',' ', '/'], ['~~','_', '°°'], $buffer), $content );
+						file_put_contents( $dir_name . '/' . str_replace( [':',' ', '/'], ['~~','_', '°°'], $buffer), $content );
 					}
 					else {
 						echo $buffer . " : page inconnue\n";

@@ -2,6 +2,7 @@ MGWiki:Développement
 MGWiki:Développement/MySQL
 MGWiki:Développement/Utilities
 MGWiki:Développement/PagesFunctions.php
+MGWiki:Développement/MGWStatus.php
 Formulaire:Nouveaux utilisateurs
 Formulaire:GEP
 Formulaire:GAPP
@@ -13,3 +14,4 @@ Modèle:Groupe2
 Formulaire:Personne
 Modèle:Personne
 MGWiki:Administration/Créer un groupe
+Modèle:Entête Pages documentaires

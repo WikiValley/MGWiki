@@ -1,0 +1,41 @@
+== MGWiki 0.2 ==
+Développement: 
+* WikiValley (Sébastien BEYOU / Nicolas NALLET)
+* [[Utilisateur:Alexandre BRULET|Alexandre BRULET]]
+=== [https://www.mediawiki.org/wiki/MediaWiki/fr MediaWiki 1.33] ===
+* répertoire d'installation: 
+ /var/www/html/wiki
+* configuration générale:
+ /var/www/html/wiki/LocalSettings.php
+* base de données MySQL:
+ mediawiki
+=== Extension MGWiki ===
+* répertoire d'installation:
+ /var/www/html/wiki/extensions/MGWiki
+* paramètres génériques ([https://www.mediawiki.org/wiki/Manual:Extensions docu]):
+ /extension.json
+ /composer.json
+ /config.shema.json
+* messages et internationalisation
+ /includes/MGWiki.alias.php (internationalisation des alias pour les pages spéciales)
+ /includes/MGWiki.magics.php (internationalisation des mots magiques)
+ /i18n/... (internationalisation des messages système)
+* paramètres spécifiques:
+Fichiers json appelés par la fonction  <code>wfMgwConfig( <nom du fichier sans l'extension>, <clé> = null );</code>
+ /config/... 
+* base de données:
+Déclaration des tables et des index MGWiki:
+ /mgwiki.sql
+Ce fichier n'est pas lu directement lors de l'installation => [[MGWiki:Développement/MySQL]]. 
+
+==== Organisation ====
+* Le répertoire <code>/includes</code> est destiné à accueillir la quasi-totalité du code php de l'extension.
+** Les fichiers placés directement dans <code>/includes</code> sont les fichiers d'interface avec MediaWiki (Hooks, Parsers, etc.) -> namespace: <code>MediaWiki\extension\MGWiki</code>
+** Sous-répertoires:
+  [[MGWiki:Développement/Api|/includes/Api]]        toutes les API de l'extension
+  [[MGWiki:Développement/Foreign|/includes/Foreign]]    interfaces avec les extensions étrangères à MGWiki
+  [[MGWiki:Développement/Modules|/includes/Modules]]    modules spécifiques (1 répertoire par module)
+  [[MGWiki:Développement/Utilities|/includes/Utilities]]  ensemble de fonctions génériques à toute l'extension
+* Le fichier [[MGWiki:Développement/MGWiki.php|MGWiki.php]] placé à la racine de l'extension comporte une partie du code développé en 2016. Il est destiné à disparaître au profit de <code>includes/MGWikiHooks.php</code> et <code>includes/MGWikiParsers.php</code>
+
+== Bugs ==

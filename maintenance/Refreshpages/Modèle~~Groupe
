@@ -37,7 +37,6 @@ Modifier la page pour voir le texte du modèle. __NOEDITSECTION__
 :{{#arraymap:{{{Membres|}}}|,|@@@|[[Membres::Utilisateur:@@@|@@@]]}}
 |}
 |}
-<div style="float:right"><span class="ParentTab"> [[Fichier:Edit-button2.png|20px|link={{fullurl:{{FULLPAGENAME}}|veaction=edit}}]] </span></div>
 
 [[Catégorie:Groupe]][[Catégorie:{{{Type de groupe|}}}]]__NOEDITSECTION__
 </includeonly>

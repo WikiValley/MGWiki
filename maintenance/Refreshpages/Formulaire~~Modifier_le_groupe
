@@ -16,7 +16,7 @@
 | {{{field|Tuteur ou modérateur|input type=dropdown|values from property=Nom U2|default=current user|mandatory}}}
 |-
 |-
-! Ajouter des membres déjà inscrits :
+! Ajouter des membres déjà inscrits : 
 | {{{field|Membres|input type=tokens|placeholder=Entrer le nom des utilisateurs existants|rows=5|property=Utilisateur|values from namespace=Utilisateur}}}
 |}
 {{{end template}}}
@@ -24,21 +24,19 @@
 '''Inviter de nouveaux membres''' (création de nouveaux comptes):
 {{{for template|Participant Groupe|multiple|add button text=Rajouter un(e) participant(e)}}}
 {| class="formtable"
-|'''Nom''' (écrire en ''MAJUSCULE'')
-|{{{field|Nom|values from property=Nom personne|mandatory|input type=text with autocomplete|size=30}}}
+|'''Nom'''
+|{{{field|Nom|mandatory|input type=text|size=30}}}
 |-
-|'''Prénom''' (écrire en ''minuscule'')
-|{{{field|Prénom|values from property=Prénom personne|mandatory|input type=text with autocomplete|size=30}}}
+|'''Prénom'''
+|{{{field|Prénom|mandatory|input type=text|size=30}}}
 |-
 !E-mail
-|{{{field|E-mail|values from property=E-mail|mandatory|input type=text|size=50}}}
+|{{{field|E-mail|mandatory|input type=email|size=50}}}
 |-
 !Statut
 |{{{field|Statut personne|input type=radiobutton|mandatory|default=Médecin|values=Visiteur,Interne, Médecin, Scientifique}}}
 |}
 {{{end template}}}
-
-{{{standard input|free text|hidden}}}
 
 {{{for template|Groupe2}}}
 {{{end template}}}
