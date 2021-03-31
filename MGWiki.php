@@ -16,6 +16,7 @@ use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Extension\MGWiki\Utilities\MgwFunctions as MgwF;
 use MediaWiki\Extension\MGWiki\Utilities\MailFunctions as MailF;
 use MediaWiki\Extension\MGWiki\Utilities\PagesFunctions as PageF;
+use MediaWiki\Extension\MGWiki\Utilities\UsersFunctions as UserF;
 use MediaWiki\Extension\MGWiki\Utilities\PhpFunctions as PhpF;
 use MediaWiki\Extension\MGWiki\Foreign\MGWRenameuser as Renameuser;
 use MediaWiki\Extension\MGWiki\Foreign\MGWSemanticMediaWiki as SmwF;
@@ -39,6 +40,13 @@ class MGWiki {
 			if ( empty( $item ) ) return $return;
 			else return $return[ $item ];
 		}
+
+		// déclaration des constantants MGW
+		# user_status
+		define("MGW_NEVERCONFIRMED", -1);
+		define("MGW_CONFIRMED", 0);
+		define("MGW_UNCONFIRMED", 1);
+		define("MGW_NOEDITS", 2);
 	}
 
 	/**
@@ -115,8 +123,16 @@ class MGWiki {
 		return true;
 	}
 
+	/* CONTROLE DES FORMULAIRES DE CREATION DE GROUPES VIA JAVASCRIPT */
+	public static function onSpecialPageBeforeExecute( $special, $subPage ) {
+		if ( $special->getName() == 'FormEdit' ) {
+			$out = $special->getOutput();
+			$out->addModules('ext.mgwiki.formedit');
+		}
+	}
+
 	/**
-	 * NB: FONCTIONS TEMPORAIRES ( MGW-0.2 debug )
+	 * NB: FONCTIONS TEMPORAIRES ( MGW 1.0 debug )
 	 * 1/ modif pages UTILISATEUR
 	 * 2/ modif pages GROUPE
 	 *
@@ -224,14 +240,11 @@ class MGWiki {
 					if ( isset( $userData['Tuteur ou modérateur'] ) )
 						$userData['Responsable référent'] = $userData['Tuteur ou modérateur'];
 
-		      $new_user = User::newFromName ( $username );
-		      if ( $new_user->getId() == 0 ) {
-						if ( self::createUser( $username, $userData ) ) {
-							$newUsers[] = $username;
-						}
-						else {
-							$bugs[] = 'Echec à la création de l\'utilisateur ' . $username;
-						}
+					if ( self::createUser( $username, $userData ) ) {
+						$newUsers[] = $username;
+					}
+					else {
+						$bugs[] = 'Echec à la création de l\'utilisateur ' . $username;
 					}
 
 					# on efface le modèle {{Nouveau Participant}} correspondant
@@ -284,6 +297,7 @@ class MGWiki {
 	 * Redirect the user just after login if her/his semantic property says
 	 * s/he should update her/his informations.
 	 */
+
 	static function onPostLoginRedirect( &$returnTo, &$returnToQuery, &$type ) {
 		global $wgUser;
 		if ( self::userRequireUpdate() ) {
@@ -293,6 +307,7 @@ class MGWiki {
 		}
 		return true;
 	}
+
 
 	/**
 	 * @param SpecialPage $specialPage
@@ -305,7 +320,9 @@ class MGWiki {
 		# After the user has changed her/his password, send her/him to her/his userpage in form-edition to confirm her/his data
 		//if( $specialPage->getName() == 'ChangeCredentials' && $specialPage->getRequest()->wasPosted() ) {
 		// autres sp : 'MgwChangePassword'
-		if ( self::userRequireUpdate() ) {
+		if ( self::userRequireUpdate()
+				 && $specialPage->getName() == 'MgwChangePassword'
+			 	 && $specialPage->done ) {
 			$wgOut->redirect( $wgUser->getUserPage()->getFullURL( [ 'action' => 'formedit' ] ) );
 			$wgOut->output();
 		}
@@ -353,15 +370,24 @@ class MGWiki {
 	 * @param array $groups Groups
 	 * @return bool The user was created
 	 */
-	public static function createUser( string $username, $userData = [], array $groups = [] ) {
+	public static function createUser( string &$username, $userData = [], array $groups = [] ) {
 
 		global $wgUser, $wgNewUserLog, $wgVersion;
 		global $wgMGWikiUserProperties;
 
 		$username = User::getCanonicalName( $username, 'creatable' );
 		$user = User::newFromName( $username );
-		if ( $user->getId() )
-			return false;
+		if ( $user->getId() ) {
+			# mail identique: on annule la création
+			if ( $user->getEmail() == $userData[$wgMGWikiUserProperties['email'] ] )
+				return false;
+			# mails différents: on crée un homonyme numéroté
+			else {
+				$n = UserF::countUsersWithName( $username ) + 1;
+				$username = $username . ' ' . $n;
+				$userData[$wgMGWikiUserProperties['lastname']] = $userData[$wgMGWikiUserProperties['lastname']] . ' ' . $n;
+			}
+		}
 
 		$properties = [];
 		if ( array_key_exists( $wgMGWikiUserProperties['email'], $userData )

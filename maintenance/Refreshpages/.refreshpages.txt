@@ -2,12 +2,14 @@ MGWiki:Développement
 MGWiki:Développement/MySQL
 MGWiki:Développement/Utilities
 MGWiki:Développement/PagesFunctions.php
-Modèle:Groupe
 Formulaire:Nouveaux utilisateurs
-Formulaire:Personne
-Modèle:Personne
-MGWiki:Administration/Créer un groupe
 Formulaire:GEP
 Formulaire:GAPP
 Formulaire:DPC
 Formulaire:Stage praticien
+Formulaire:Modifier le groupe
+Modèle:Groupe
+Modèle:Groupe2
+Formulaire:Personne
+Modèle:Personne
+MGWiki:Administration/Créer un groupe

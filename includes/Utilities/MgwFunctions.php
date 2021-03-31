@@ -97,12 +97,18 @@ class MgwFunctions {
   }
 
 	public static function sanitize_prenom( $prenom ) {
-		$prenom = str_replace(' ', '-', trim($prenom) );
 		$prenom = explode( '-', $prenom );
 		foreach ( $prenom as $key => $sub ) {
 			$prenom[$key] = ucfirst( strtolower($sub) );
 		}
 		$prenom = implode( '-', $prenom );
+
+    $prenom = explode( ' ', $prenom );
+    foreach ( $prenom as $key => $sub ) {
+      $prenom[$key] = ucfirst( $sub );
+    }
+    $prenom = implode( ' ', $prenom );
+
     return $prenom;
 	}
 

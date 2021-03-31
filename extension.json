@@ -65,8 +65,7 @@
 		],
 		"BeforePageDisplay": [
 			"MediaWiki\\Extension\\MGWiki\\MGWikiHooks::onBeforePageDisplay",
-			"MediaWiki\\Extension\\MGWiki\\Modules\\Notifications\\MGWikiSendNotification::onBeforePageDisplay",
-			"MediaWiki\\Extension\\MGWiki\\Modules\\Admin\\SpecialSendMassMail::onBeforePageDisplay"
+			"MediaWiki\\Extension\\MGWiki\\Modules\\Notifications\\MGWikiSendNotification::onBeforePageDisplay"
 		],
 		"ChangeMailFormFields": [
 			"MediaWiki\\Extension\\MGWiki\\MGWikiHooks::onChangeMailFormFields"
@@ -88,6 +87,9 @@
 		],
 		"SpecialPageAfterExecute": [
 			"MGWiki::onSpecialPageAfterExecute"
+		],
+		"SpecialPageBeforeExecute": [
+			"MGWiki::onSpecialPageBeforeExecute"
 		],
 		"userCan": [
 			"MGWiki::onuserCan"
@@ -158,6 +160,10 @@
 			"dependencies": [
 				"ext.mgwiki.ooui-search"
 			]
+		},
+		"ext.mgwiki.formedit": {
+			"scripts": [ "formedit.js" ],
+			"styles": [ "formedit.css" ]
 		},
 		"ext.mgwiki.ooui-search": {
 			"scripts": [

@@ -296,13 +296,12 @@ class JsonToForm
     else return '';
   }
 
-  public function sendEmail()
-  {
+  public function sendEmail() {
     $mailer = new \UserMailer();
     $mail_to = $this->mailAdress( 'mailto' );
     $mail_from = $this->mailAdress( 'mailfrom' );
     $body = $this->composeEmail();
-    $mailer->send(
+    $status = $mailer->send(
       array($mail_to, $mail_from), 							//to
       $mail_to,                    							//from
       wfMessage( $this->formName . '-email-subject' )->plain(),	//subject
@@ -313,8 +312,7 @@ class JsonToForm
     );
   }
 
-  private function mailAdress( $dest )
-  {
+  private function mailAdress( $dest ) {
     $controller = $this->Json->getSubData( $dest, ['sendmail'] );
     if ( isset( $controller['getvalue'] ) ) {
       $email = $this->postData[$controller['getvalue']];

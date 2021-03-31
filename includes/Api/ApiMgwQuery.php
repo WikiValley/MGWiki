@@ -9,6 +9,7 @@ use ApiBase;
 use MediaWiki\Extension\MGWiki\Utilities\MgwFunctions as MgwF;
 use MediaWiki\Extension\MGWiki\Utilities\DataFunctions as DbF;
 use MediaWiki\Extension\MGWiki\Utilities\PhpFunctions as PhpF;
+use MediaWiki\Extension\MGWiki\Utilities\UsersFunctions as UserF;
 
 class ApiMgwQuery extends ApiBase {
 
@@ -110,7 +111,25 @@ class ApiMgwQuery extends ApiBase {
 						$n = $res[0]['default_duration'];
 					}
 					else $n = $params['data'];
-					$res['new'] = PhpF::date(PhpF::tmstp_add( $params['timestamp'], MgwF::duration_read( (int)$n, true ) ) );
+					$res['new'] = date( 'd-m-Y H:i:s', wfTimestamp( $params['timestamp'] ) + MgwF::duration_read( (int)$n, true ) );
+					break;
+
+				case 'check_user_creation':
+					$res = [];
+
+					$screenUser = UserF::getUserFromAny( $params['user_name'] );
+					$res['user_exists'] = ( is_null( $screenUser ) ) ? 'false' : 'true';
+					if ( !is_null( $screenUser ) ) $res['user_email'] = $screenUser->getEmail();
+
+					if ( $params['user_email'] ) {
+						$screenMail = UserF::emailExists( $params['user_email'] );
+						if ( $screenMail ) {
+							$res['email_exists'] = 'true';
+							$res['user_name'] = $screenMail[0]['user_name'];
+						}
+					}
+					if ( ! isset( $res['email_exists'] ) ) $res['email_exists'] = 'false';
+					break;
 
 				case 'mw_groups':
 					$res = [];
@@ -125,26 +144,14 @@ class ApiMgwQuery extends ApiBase {
 					break;
 
 				case 'membre_status':
-					if ( !isset( $params['user_name'] ) ) {
-						throw new \Exception("Le paramètre 'user_name' doit être défini", 1);
+					if ( !isset( $params['user_name'] ) && !isset( $params['user_id'] ) ) {
+						throw new \Exception("'user_name' ou 'user_id' doit être défini", 1);
 					}
-
-					$sql = 'SELECT user_id, user_email_authenticated, user_email_token_expires FROM '
-						. $wgDBprefix . 'user WHERE user_name LIKE "' . $params['user_name'] . '"';
-					$req = DbF::mysqli_query( $sql );
-
-					if ( $req ) {
-						$req = $req[0];
-						if ( $req['user_email_token_expires'] ) {
-							$tmstp = wfTimestamp(TS_UNIX,(int)$req['user_email_token_expires']);
-							$tmstp = strtotime('-7 days', $tmstp);
-							$req['user_invite_time'] = date( 'd-m-Y à H:i:s', strtotime('-1 hour', $tmstp) );
-						}
-						else $req['user_invite_time'] = null;
+					$target = ( isset( $params['user_name'] ) ) ? $params['user_name'] : $params['user_id'];
+					$res = [];
+					if ( is_null( UserF::user_status( $params['user_name'], $res ) ) ) {
+						$res['user_id'] = 0;
 					}
-					else $req['user_id'] = 0;
-
-					$res = $req;
 					break;
 
         default:
@@ -186,6 +193,12 @@ class ApiMgwQuery extends ApiBase {
 				ApiBase::PARAM_TYPE => 'string'
 			],
 			'user_name' => [
+				ApiBase::PARAM_TYPE => 'string'
+			],
+			'user_email' => [
+				ApiBase::PARAM_TYPE => 'string'
+			],
+			'check_user_creation' => [
 				ApiBase::PARAM_TYPE => 'string'
 			],
 			'mw_groups' => [

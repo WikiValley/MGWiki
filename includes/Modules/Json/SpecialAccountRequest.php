@@ -1,14 +1,13 @@
 <?php
 namespace MediaWiki\Extension\MGWiki\Modules\Json;
 
-use SpecialPage;
 use MediaWiki\Extension\MGWiki\Modules\Json\JsonToForm;
 
 /**
  * Page spéciale demande de création de compte
  * Accessible du public (whitelisted)
  */
-class SpecialAccountRequest extends SpecialPage {
+class SpecialAccountRequest extends \SpecialPage {
 
 	private $JsonForm;    // obj
 	private $cookieData;  // array

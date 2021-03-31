@@ -28,7 +28,12 @@
 			 $membres_inline.hide();
 
 			 $toggle = $('<span class="mgw-group-toggle" groupe_name="'+groupe_name+'" title="réduire">▼</span>');
-			 $btn_archive = $('<span class="mgw-groupe-archive-btn" groupe_name="'+groupe_name+'" title="archiver ce groupe">archiver</span>');
+
+			 $btn_modifier = $('<a class="mgw-groupe-modifier-btn" groupe_name="'+groupe_name+'" '
+			 	 +'href="/wiki/index.php/Spécial:AjouterDonnées/Modifier_le_groupe/Groupe:'+groupe_name
+				 +'" title="modifier le groupe '+groupe_name+'">modifier</a>');
+			 $btn_archive = $('<span class="mgw-groupe-archive-btn" groupe_name="'+ groupe_name
+			 	 +'" title="archiver le groupe '+groupe_name+'">archiver</span>');
 			 $btn_archive.on("click", {
 					 archive: 'do',
 					 groupe: groupe_name
@@ -36,14 +41,14 @@
 			 );
 
 			 $membres_inline.before( $toggle );
+			 $membres_inline.before( $btn_modifier );
 			 $membres_inline.before( $btn_archive );
 			 var $membres_list = $('<ul class="mgw-groupe-membres-ul" groupe_name="'+groupe_name+'"></ul>');
 
 			 $membres_inline.children('.smw-value').each( function ( index, membre ){
 			 	$inner = $(membre);
-
-				//$html_new = '<li class="mgw-groupe-membre" groupe_membre="'+$inner.children('a').html()+'"></li>';
-				html_new = '<li class="mgw-groupe-membre" groupe_membre="'+$inner.children('a').html().replace(/\s/g,'_')+'"></li>';
+				html_new = '<li class="mgw-groupe-membre" groupe_membre="'
+					+ $inner.children('a').html().replace(/\s/g,'_') + '"></li>';
 				$membre_li = $(html_new);
 				$membre_li.html( $inner.first('span').html() );
 	 			$membres_list.append($membre_li);
@@ -67,11 +72,30 @@
 			 api = new mw.Api()
 	     api.post( query ).done( function ( ret ) {
 				 var $membre_li = $('.mgw-groupe-membre[groupe_membre='+membre+']');
+				 var $icon;
+				 var $info = $('<span class="mgw-user-info mgw-last-contrib" title="dernière activité"></span');
+				 var $btn = $('<span class="mgw-changecredentials-link" '
+					+ 'onclick="window.location.href = \'/wiki/index.php/Special:MgwChangeCredentials?user_name=' + membre +
+					'&returnto=/wiki/index.php/' + mw.config.get('wgPageName')
+					+ '\'" title="administrer le compte '+membre+' ( nom / prénom / e-mail, (ré-)inviter... )">gérer</span>');
 
-				 // l'utilisateur a confirmé son compte
-				 if ( ret.user_id != 0 && ret.user_email_authenticated ) {
-					 $icon = $('<span class="mgw_confirmed" title="cet utilisateur a activé son compte MGWiki">✓</span>');
-					 $membre_li.append( $icon );
+				 if ( ret.user_id == 0 ) {
+					 // UTILISATEUR INEXISTANT
+					 $icon = $('<span class="mgw-user-icon mgw-user-wrong">!</span>');
+					 $info = $('<span class="mgw-user-info mgw-user-wrong">utilisateur inexistant</span>');
+					 $btn = false;
+				 }
+				 else if ( ret.user_status == 0 || ret.user_status == 1 ) {
+					 if ( ret.user_status == 0 ) {
+						 // COMPTE ACTIF, EMAIL CONFIRME
+						 $icon = $('<span class="mgw-user-icon mgw-user-complete" title="compte actif">✓</span>');
+	 					 $btn = false;
+					 }
+					 else {
+						 // COMPTE ACTIF, EMAIL NON CONFIRME
+						 $icon = $('<span class="mgw-user-icon mgw-user-incomplete" title="e-mail non confirmé">?</span>');
+					 }
+					 	 // on recherche la dernière contrib sur les ns 0 (main) et 724 (récit)
 					 query = {
 						 action: 'query',
 						 list: 'usercontribs',
@@ -79,7 +103,6 @@
 						 uclimit: 1,
 						 ucnamespace:'0|724'
 					 }
-					 // on requête ses dernères contributions sur les ns 0 (main) et 724 (récit)
 					 api = new mw.Api();
 					 api.post( query ).done( function ( req ) {
 						 if ( typeof( req.query.usercontribs[0] ) != "undefined" ) {
@@ -87,34 +110,29 @@
 							 last_date += req.query.usercontribs[0].timestamp.substring(5, 7) + '/';
 							 last_date += req.query.usercontribs[0].timestamp.substring(0, 4);
 
-							 $last_contrib = $('<span class="mgw-last-contrib" title="dernière page éditée">( '+
-							  '<a href="/wiki/index.php/' + req.query.usercontribs[0].title
-							 	+'"><i>'+req.query.usercontribs[0].title + '</i></a> le ' + last_date +' )</span>');
+							 $info.html( '( <a href="/wiki/index.php/' + req.query.usercontribs[0].title
+							 	+'"><i>'+req.query.usercontribs[0].title + '</i></a> le ' + last_date +' )' );
 						 }
 						 else {
-							 $last_contrib = $('<span class="mgw-last-contrib" title="dernière activité">Aucune contribution</span>');
+							 $info.html( '( Aucune contribution )' );
 						 }
-						 $membre_li.append($last_contrib);
 					 });
 				 }
-				 // l'utilisateur n'a pas confirmé son compte
-				 else if ( ret.user_id != 0 ){
-					 $icon = $('<span class="mgw_unconfirmed" title="cet utilisateur n\'a pas activé son compte MGWiki">✖</span>');
-					 returnto = '/wiki/index.php/' + mw.config.get('wgPageName');
-					 $btn_modif = $('<span class="mgw-changecredentials-link" '
-						+ 'onclick="window.location.href = \'/wiki/index.php/Special:MgwChangeCredentials?user_name=' + membre +
-						'&returnto='+returnto+'\'" title="modifier les informations du compte ( nom / prénom / e-mail )">modifier</span>');
-					 $btn_invite = $('<span class="mgw-invite-again" title="relancer une invitation par mail">relancer</span>');
-	         $btn_invite.on("click", {
-	             user_name: membre,
-							 last_invite: ret.user_invite_time
-	           }, mw.mgw_invite_send
-	         );
-					 if ( $membre_li.children('.mgw_unconfirmed').length == 0 ) {
-						 $membre_li.append( $icon );
-						 $membre_li.append( $btn_invite );
-						 $membre_li.append( $btn_modif );
-					 }
+				 else if ( ret.user_status == -1 ) {
+					 // COMPTE INACTIF, EMAIL NON CONFIRME
+					 $icon = $('<span class="mgw-user-icon mgw-user-wrong" title="compte non confirmé">✖</span>');
+					 $info = false;
+				 }
+				 else if ( ret.user_status == 2 ) {
+					 // COMPTE INACTIF, EMAIL CONFIRME
+					 $icon = $('<span class="mgw-user-icon mgw-user-incomplete" title="compte confirmé, utilisateur inactif">?</span>');
+					 $info.html( '( Aucune contribution )' );
+				 }
+
+				 if ( !$membre_li.find('.mgw-user-icon').length ) {
+					 $membre_li.append( $icon );
+					 if ( $btn ) $membre_li.append( $btn );
+					 if ( $info ) $membre_li.append( $info );
 				 }
 	     } );
 		 });
@@ -177,10 +195,12 @@
 	  $inline = $('.mgw-groupe-membres-inline[groupe_name='+groupe_name+']');
 	  $inlist = $('.mgw-groupe-membres-ul[groupe_name='+groupe_name+']');
 	  $arch_btn = $('.mgw-groupe-archive-btn[groupe_name='+groupe_name+']');
+	  $modif_btn = $('.mgw-groupe-modifier-btn[groupe_name='+groupe_name+']');
 	  if ( $inline.is(":hidden") ) {
 	 	 $inline.show();
 	 	 $inlist.hide();
 	 	 $arch_btn.hide();
+	 	 $modif_btn.hide();
 	 	 $(this).attr('title', 'détails');
 	 	 $(this).html('►');
 	  }
@@ -188,6 +208,7 @@
 	 	 $inline.hide();
 	 	 $inlist.show();
 	 	 $arch_btn.show();
+	 	 $modif_btn.show();
 	 	 $(this).attr('title', 'réduire');
 	 	 $(this).html('▼');
 	  }

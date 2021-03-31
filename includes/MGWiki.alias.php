@@ -12,11 +12,13 @@ $specialPageAliases = array();
 /** English (English) */
 $specialPageAliases['en'] = array(
 	'Invitation' => [ 'Invitation' ],
-	'Confirmemail' => [ 'ConfirmEmail' ]
+	'Confirmemail' => [ 'ConfirmEmail' ],
+	'SpecialAccountRequest' => [ 'SpecialAccountRequest']
 );
 
 /** French (français) */
 $specialPageAliases['fr'] = array(
 	'Invitation' => [ 'Invitation' ],
-	'Confirmemail' => [ 'ConfirmEmail' ]
+	'Confirmemail' => [ 'ConfirmEmail' ],
+	'SpecialAccountRequest' => [ 'Demande de création de compte']
 );

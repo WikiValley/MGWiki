@@ -80,7 +80,7 @@
     "mgw-data-empty-row": "'Aucune ligne ne correspond à la requête '$1' dans la table '$2'",
     "mgw-data-empty-update": "Table '$1' : '$2' déjà à jour.",
 		"mgwsendmassmail": "E-mail à tous les utilisateurs ...",
-		"mgw-massmail-bodypage-info": "MGWiki: Cette page est destinée à l'édition du corps de mail lors des envois groupés.",
+		"mgw-massmail-bodypage-info": "MGWiki: Cette page est destinée à l'édition du corps de mail lors des envois groupés -> [[Spécial:MgwSendMassMail|revenir à l'envoi du mail]]",
 		"mgw-massmail-confirm": "Vous êtes sur le point d'envoyer le mail suivant à <strong>$1 destinataires</strong>:",
 		"mgw-massmail-task-waiting": "Certains de vos envois précédents ne sont pas terminés ",
 		"mgw-sendmail-success": "E-mail envoyé à $1.",
@@ -99,13 +99,13 @@
 		"mgwemailauth": "MgwEmailAuth",
 
 	  "confirmemail_subject_mgw-create": "MGWiki: création de compte",
-	  "confirmemail_body_mgw-create": "$1 créé un compte « $2 » avec cette adresse de courriel.\n\nMGWiki est un site permettant aux internes en médecine générale \net aux généralistes en formation continue de mutualiser leurs recherches et d’échanger sur leurs pratiques \n({{SERVER}}/wiki/index.php/MGWiki:Présentation).\n\nPour vous connecter et confirmer ce compte, veuillez suivre ce lien dans votre navigateur :\n\n{{SERVER}}/wiki/index.php/Special:MgwEmailAuth/{{#titleparts:$3||-1}}\n\nCe lien expirera le $4.\n''Si ce vous n’avez pas sollicité un tel compte, merci de ne pas ouvrir ce lien.''",
+	  "confirmemail_body_mgw-create": "$1 créé un compte « $2 » avec cette adresse de courriel.\n\nPour vous connecter et confirmer ce compte, veuillez suivre ce lien dans votre navigateur :\n\n{{SERVER}}/wiki/index.php/Special:MgwEmailAuth/{{#titleparts:$3||-1}}\n\nCe lien expirera le $4.\nSi ce vous n’avez pas sollicité un tel compte, merci de ne pas ouvrir ce lien.\n\nMGWiki est un site permettant aux internes en médecine générale et aux généralistes en formation continue de mutualiser leurs recherches et d’échanger sur leurs pratiques ({{SERVER}}/wiki/index.php/MGWiki:Présentation).",
 
 	  "confirmemail_subject_mgw-reset": "MGWiki: mise à jour du mot de passe",
-	  "confirmemail_body_mgw-reset": "$1 demandé une mise à jour du mot de passe pour le compte « $2 » avec cette adresse de courriel.\n\nPour renouveller le mot de passe, veuillez suivre ce lien dans votre navigateur :\n\n{{SERVER}}/wiki/index.php/Special:MgwEmailAuth/{{#titleparts:$3||-1}}\n\nCe lien expirera le $4.\n''Si ce vous n’avez pas sollicité ce renouvellement de mot de passe, merci de ne pas ouvrir ce lien.''\n\nMGWiki est un site permettant aux internes en médecine générale \net aux généralistes en formation continue de mutualiser leurs recherches et d’échanger sur leurs pratiques \n({{SERVER}}/wiki/index.php/MGWiki:Présentation).",
+	  "confirmemail_body_mgw-reset": "$1 demandé une mise à jour du mot de passe pour le compte « $2 » avec cette adresse de courriel.\n\nPour renouveller le mot de passe, veuillez suivre ce lien dans votre navigateur :\n\n{{SERVER}}/wiki/index.php/Special:MgwEmailAuth/{{#titleparts:$3||-1}}\n\nCe lien expirera le $4.\nSi ce vous n’avez pas sollicité ce renouvellement de mot de passe, merci de ne pas ouvrir ce lien.\n\nMGWiki est un site permettant aux internes en médecine générale et aux généralistes en formation continue de mutualiser leurs recherches et d’échanger sur leurs pratiques ({{SERVER}}/wiki/index.php/MGWiki:Présentation).",
 
 	  "confirmemail_subject_mgw-confirm": "MGWiki: confirmation d'adresse de courriel",
-	  "confirmemail_body_mgw-confirm": "$1 modifié l'adresse courriel associée au compte « $2 » à cette adresse.\n\nPour le bon fonctionnement de MGWiki, il est nécessaire de confirmer cette nouvelle addresse\nen suivant ce lien dans votre navigateur :\n\n$3\n\nCe lien expirera le $4.\n''Si ce vous n’êtes pas concerné.e par ce compte MGWiki, merci de ne pas ouvrir ce lien.''\n\nMGWiki est un site permettant aux internes en médecine générale \net aux généralistes en formation continue de mutualiser leurs recherches et d’échanger sur leurs pratiques \n({{SERVER}}/wiki/index.php/MGWiki:Présentation).",
+	  "confirmemail_body_mgw-confirm": "$1 modifié l'adresse courriel associée au compte « $2 » à cette adresse.\n\nPour le bon fonctionnement de MGWiki, il est nécessaire de confirmer cette nouvelle addresse\nen suivant ce lien dans votre navigateur :\n\n$3\n\nCe lien expirera le $4.\nSi ce vous n’êtes pas concerné.e par ce compte MGWiki, merci de ne pas ouvrir ce lien.\n\nMGWiki est un site permettant aux internes en médecine générale et aux généralistes en formation continue de mutualiser leurs recherches et d’échanger sur leurs pratiques ({{SERVER}}/wiki/index.php/MGWiki:Présentation).",
 
 		"mgwchangepassword": "Réinitialisation du mot de passe",
 		"mgw-changepassword-header" : "Nom de compte : $1",
@@ -121,7 +121,7 @@
 		"mgw-credentials-changename-replacetex-summary": "Utilisateur renommé",
 		"mgw-credentials-changename-success": "'$1' a été renommé.e '$2'",
 		"mgw-createaccount-feedback": "Une création de compte a été effectuée pour: $1 <br>Un mail d'invitation a été envoyé. Si cela n'a pas marché:\n# demandez de vérifier les mails arrivés dans les SPAMS\n# il se peut que l'adresse mail soit erronnée.\nCorriger une adresse mail : [[MGWiki:Administration|Accueil > Administration > FAQ]]",
-		
+
 		"mgw-userpage-formlink": "Réactualiser mes informations",
 		"mgw-userpage-formlink-tooltip": "modifier les informations affichées sur ma page",
 		"mgw-userpage-credlink": "Mon compte",

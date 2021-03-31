@@ -29,6 +29,13 @@ class MGWikiHooks {
 	static function onBeforePageDisplay( &$out, &$skin ) {
 		global $wgUser;
 
+		// SENDMASSMAIL
+		// Affiche un bandeau d'information sur la page d'édition du corps du mail
+		$string = wfMgwConfig( 'sendmassmail', 'body-page' )['string'];
+		if ( preg_match( '/\/'.$string.'$/', $out->getTitle()->getFullText() ) > 0 ) {
+			$out->prependHTML( '<div class="smw-editpage-help">' . wfMessage( 'mgw-massmail-bodypage-info' )->parse() . '</div>' );
+		}
+
 		// STYLE GENERAL
 		$out->addModules( 'ext.mgwiki' );
 			# styles css séparés du module pour cause de lenteur...
@@ -42,44 +49,46 @@ class MGWikiHooks {
 		# NS_USER
     if ( $namespace == NS_USER && !$action ) {
 			$targetUser = \User::newFromName( $titletext );
-      $out->addModules( 'ext.mgwiki.userpage' );
-			$out->addHeadItems( HtmlF::include_resource_file ( 'userpage.css', 'style' ) );
+			if ( $targetUser && $targetUser->getId() > 0 ) {
+	      $out->addModules( 'ext.mgwiki.userpage' );
+				$out->addHeadItems( HtmlF::include_resource_file ( 'userpage.css', 'style' ) );
 
-				# l'utilisateur est sur sa propre page:
-				# liens vers les formulaires Personne + changeCredentials
-			if ( $titletext == $wgUser->getName() ) {
+					# l'utilisateur est sur sa propre page:
+					# liens vers les formulaires Personne + changeCredentials
+				if ( $titletext == $wgUser->getName() ) {
 
-				$form_url = '/wiki/index.php?title=Utilisateur:'.$titletext.'&action=formedit';
-				$form_tooltip = wfMessage('mgw-userpage-formlink-tooltip')->text();
-				$cred_url = '/wiki/index.php/Special:MgwChangeCredentials?'.
-					'user_name=' . $titletext . '&returnto=' . 'Utilisateur:' . $titletext;
-				$cred_tooltip = wfMessage('mgw-userpage-credlink-tooltip')->text();
-				$inner = HtmlF::edit_button_img( $form_url, $form_tooltip ) .
-								 HtmlF::admin_link( wfMessage('mgw-userpage-formlink')->text(), 'bleu', $form_url, $form_tooltip ) .
-								 HtmlF::admin_link( wfMessage('mgw-userpage-credlink')->text(), 'orange', $cred_url, $cred_tooltip );
-				$out->prependHTML( '<span style="text-align:center; display:block">'. $inner .'</span>' );
+					$form_url = '/wiki/index.php?title=Utilisateur:'.$titletext.'&action=formedit';
+					$form_tooltip = wfMessage('mgw-userpage-formlink-tooltip')->text();
+					$cred_url = '/wiki/index.php/Special:MgwChangeCredentials?'.
+						'user_name=' . $titletext . '&returnto=' . 'Utilisateur:' . $titletext;
+					$cred_tooltip = wfMessage('mgw-userpage-credlink-tooltip')->text();
+					$inner = HtmlF::edit_button_img( $form_url, $form_tooltip ) .
+									 HtmlF::admin_link( wfMessage('mgw-userpage-formlink')->text(), 'bleu', $form_url, $form_tooltip ) .
+									 HtmlF::admin_link( wfMessage('mgw-userpage-credlink')->text(), 'orange', $cred_url, $cred_tooltip );
+					$out->prependHTML( '<span style="text-align:center; display:block">'. $inner .'</span>' );
 
-				$out->addHTML('<div id="mgw-hide-edit" value="true" hidden></div>');
-			}
-			  # si référent ou sysop: credentials
-			elseif ( MgwF::is_user_referent( $wgUser, $targetUser ) ||
-		 					 MgwF::is_user_instit_referent( $wgUser, $targetUser ) ||
-						 	 in_array('sysop', $wgUser->getGroups() ) )
-			{
-				$cred_url = '/wiki/index.php/Special:MgwChangeCredentials?'.
-					'user_name=' . $titletext . '&returnto=Utilisateur:' . $titletext;
-				$cred_tooltip = wfMessage('mgw-userpage-credlink-tooltip-admin')->text();
-				$inner = HtmlF::admin_link( wfMessage('mgw-userpage-credlink-admin')->text(), 'orange', $cred_url, $cred_tooltip );
-				$out->prependHTML( '<span style="text-align:center; display:block">'. $inner .'</span>' );
-
-				if ( !in_array('sysop', $wgUser->getGroups() ) ) {
 					$out->addHTML('<div id="mgw-hide-edit" value="true" hidden></div>');
 				}
-			}
-			else {
-				# balise pour masquer les liens d'édition (via userpage.js)
-				$out->addHTML('<div id="mgw-hide-edit" value="true" hidden></div>');
-				$out->addHTML('<div id="mgw-hide-formedit" value="true" hidden></div>');
+				  # si référent ou sysop: credentials
+				elseif ( MgwF::is_user_referent( $wgUser, $targetUser ) ||
+			 					 MgwF::is_user_instit_referent( $wgUser, $targetUser ) ||
+							 	 in_array('sysop', $wgUser->getGroups() ) )
+				{
+					$cred_url = '/wiki/index.php/Special:MgwChangeCredentials?'.
+						'user_name=' . $titletext . '&returnto=Utilisateur:' . $titletext;
+					$cred_tooltip = wfMessage('mgw-userpage-credlink-tooltip-admin')->text();
+					$inner = HtmlF::admin_link( wfMessage('mgw-userpage-credlink-admin')->text(), 'orange', $cred_url, $cred_tooltip );
+					$out->prependHTML( '<span style="text-align:center; display:block">'. $inner .'</span>' );
+
+					if ( !in_array('sysop', $wgUser->getGroups() ) ) {
+						$out->addHTML('<div id="mgw-hide-edit" value="true" hidden></div>');
+					}
+				}
+				else {
+					# balise pour masquer les liens d'édition (via userpage.js)
+					$out->addHTML('<div id="mgw-hide-edit" value="true" hidden></div>');
+					$out->addHTML('<div id="mgw-hide-formedit" value="true" hidden></div>');
+				}
 			}
     }
 
@@ -87,7 +96,7 @@ class MGWikiHooks {
 		if ( in_array( $namespace, [ NS_MAIN, NS_USER ] ) && !$action ) {
 			$revisionRecord = \WikiPage::factory( $skin->getRelevantTitle() )->getRevisionRecord();
 			if ( $revisionRecord ) {
-				$tmstp = date( 'd/m/Y', wfTimestamp( TS_UNIX, $revisionRecord->getTimestamp() ) );
+				$tmstp = date( 'd-m-Y', wfTimestamp( TS_UNIX, $revisionRecord->getTimestamp() ) );
 				$edit_user = $revisionRecord->getUser();
 				$edit_user = '<strong><a href="'.$edit_user->getUserPage()->getFullURL().'">' .
 					$edit_user->getName() . '</a></strong> (<a href="'.
@@ -110,7 +119,6 @@ class MGWikiHooks {
 
 			$out->prependHTML('<div class="mgw-contentheader-editinfo">' . $header . '</div>' );
 		}
-
 		return true;
 	}
 

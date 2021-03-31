@@ -9,35 +9,41 @@
 	cursor:pointer;
 	margin:0px 5px;
 }
+.mgw-groupe-modifier-btn{
+	padding:0px 5px;
+	margin:0px 5px;
+	border-radius:5px;
+	border:solid 1px;
+	background-color:beige;
+	font-size:small;
+	cursor:pointer;
+}
 .mgw-groupe-archive-btn{
 	padding:0px 5px;
 	margin:0px 5px;
+	border-radius:5px;
 	color:red;
 	font-size:small;
 	cursor:pointer;
 }
-.mgw_confirmed{
-	color:green;
-	font-weight:bold;
-	margin:0px 10px;
+.mgw-user-icon{
+	margin:0px 5px 0px 10px;
 	cursor:help;
 }
-.mgw_unconfirmed{
+.mgw-user-complete{
+	color:green;
+	font-size:large;
+}
+.mgw-user-incomplete{
+	color:orange;
+	font-weight:bold;
+	padding-bottom:3px;
+}
+.mgw-user-wrong{
 	color:red;
-	margin:0px 10px;
-	cursor:help;
 }
 .mgw-changecredentials-link{
-	background:#ffc65f;
-	padding:0px 5px;
-	margin:0px 5px;
-	color:white;
-	font-size:small;
-	border-radius:5px;
-	cursor:pointer;
-}
-.mgw-invite-again{
-	background:#c1bfbf;
+	background:#e8b355;
 	padding:0px 5px;
 	margin:0px 5px;
 	color:white;
@@ -54,9 +60,13 @@
 	border: 2px #8fa9dd outset;
 	border-radius:5px;
 	padding: 4px 6px;
+	margin-left:150px;
 	font-weight:bold;
 	font-size:small;
 	cursor:pointer;
+}
+.mgw-new-groupe-button:hover{
+	background-color:#8ab0fc;
 }
 .mgw-new-recit-button{
 	background-color:#3366cc;
@@ -64,9 +74,13 @@
 	border: 2px #8fa9dd outset;
 	border-radius:5px;
 	padding: 4px 6px;
+	margin-left:150px;
 	font-weight:bold;
 	font-size:small;
 	cursor:pointer;
+}
+.mgw-new-recit-button:hover{
+	background-color:#8ab0fc;
 }
 .mgw-new-page-button{
 	background-color:#3366cc;
@@ -74,8 +88,11 @@
 	border: 2px #8fa9dd outset;
 	border-radius:5px;
 	padding: 4px 6px;
-	margin-left:20px;
+	margin-left:30px;
 	font-weight:bold;
 	font-size:small;
 	cursor:pointer;
+}
+.mgw-new-page-button:hover{
+	background-color:#8ab0fc;
 }

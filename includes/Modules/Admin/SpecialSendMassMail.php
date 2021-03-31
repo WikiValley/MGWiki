@@ -12,16 +12,6 @@ use MediaWiki\Extension\MGWiki\Utilities\HtmlFunctions as HtmlF;
 
 class SpecialSendMassMail extends \SpecialPage {
 
-	/**
-	 * Affiche un bandeau d'information sur la page d'édition du corps du mail
-	 */
-	public static function onBeforePageDisplay( \OutputPage $out, \Skin $skin ) {
-		$string = wfMgwConfig( 'sendmassmail', 'body-page' )['string'];
-		if ( preg_match( '/\/'.$string.'$/', $out->getTitle()->getFullText() ) > 0 ) {
-			$out->prependHTML( '<div class="smw-editpage-help">' . wfMessage( 'mgw-massmail-bodypage-info' )->parse() . '</div>' );
-		}
-	}
-
 	private $special, $body_page, $footer_page, $groups;
 
 	public function __construct() {
@@ -300,7 +290,7 @@ class SpecialSendMassMail extends \SpecialPage {
 			$buttons .= ( !$pending ) ? ''
 				: '<span class="mgw-massmail-history-delete" task_id="'.$task['task_id'].'">supprimer</span>';
 			return '<li>' .
-				PhpF::date( $task['task_update_time'], true ) . ' - ' . $buttons .
+				date( 'd-m-Y H:i:s', wfTimestamp( TS_UNIX, $task['task_update_time'] ) ) . ' - ' . $buttons .
 				'<br><span class="mgw-massmail-history-details-row">' .
 				'<i>Sujet: </i><strong>' . $data['subject'] . '</strong> - <i>Destinataires: </i><strong>' . $groupes .
 				'</strong> - <i>Envois: </i><strong>' . $data['count'] . ' / ' . $data['total'] . '</strong></span></li>';
@@ -343,7 +333,7 @@ class SpecialSendMassMail extends \SpecialPage {
 			$count = '('.$data['count'].' mails envoyés)';
 		}
 
-		$date = PhpF::date( $task['update_time'], true );
+		$date = date( 'd-m-Y H:i:s', $task['update_time'] );
 		$head = '<strong><big>Envoi ' . $type . ' du ' . $date . ' ' . $count . '</big></strong><br><br>';
 
 		$out->addHTML('<div id="mgw-massmail-details-info">' . $head . '</div>' . $head_btn . '<br>');

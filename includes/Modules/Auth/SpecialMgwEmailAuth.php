@@ -127,6 +127,7 @@ class SpecialMgwEmailAuth extends \LoginSignupSpecialPage {
 				$this->successfulAction( true );
 				$this->getOutput()->redirect( \SpecialPage::getSafeTitleFor( 'MgwChangePassword' )->getFullURL() );
 				break;
+
 			case AuthenticationResponse::FAIL:
 				$this->getOutput()->addWikiMsg( 'mgwiki-bad-email-token' );
 				$this->getOutput()->returnToMain();

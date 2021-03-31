@@ -144,24 +144,7 @@ class MGWReplaceText {
 			$canonical[NS_MAIN] = "_";
 			$namespaces = array_flip( $canonical );
 			if ( is_null( $this->nsall ) ) {
-				$namespaces = array_map(
-					function ( $n ) use ( $canonical, $namespaces ) {
-						if ( is_numeric( $n ) ) {
-							if ( isset( $canonical[ $n ] ) ) {
-								return intval( $n );
-							}
-						} else {
-							if ( isset( $namespaces[ $n ] ) ) {
-								return $namespaces[ $n ];
-							}
-						}
-						return null;
-					}, explode( ",", $this->ns ) );
-				$namespaces = array_filter(
-					$namespaces,
-					function ( $val ) {
-						return $val !== null;
-					} );
+				$namespaces = $this->ns;
 			}
 		}
 		$this->namespaces = $namespaces;

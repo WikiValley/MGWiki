@@ -16,6 +16,7 @@ use MediaWiki\Session\SessionManager;
  */
 class SpecialMgwChangePassword extends \AuthManagerSpecialPage {
 	protected static $allowedActions = [ AuthManager::ACTION_CHANGE ];
+	public $done = false;
 
 	protected static $messagePrefix = 'changecredentials';
 
@@ -91,6 +92,7 @@ class SpecialMgwChangePassword extends \AuthManagerSpecialPage {
 
 		switch ( $response->status ) {
 			case AuthenticationResponse::PASS:
+				$this->done = true;
 				$this->success();
 				break;
 			case AuthenticationResponse::FAIL:

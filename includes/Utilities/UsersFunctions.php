@@ -13,6 +13,75 @@ use MediaWiki\Extension\MGWiki\Utilities\MGWStatus as Status;
   */
 class UsersFunctions
 {
+
+  /**
+   * l'utilisateur a-t-il confirmé son compte ?
+   * @param User|string|int $target
+   * @param array &$data = []
+   * @return bool|null (null = utilisateur inexistant)
+   */
+  public function user_status( $target, &$data = [] ) {
+    global $wgDBprefix;
+    $target = self::getUserFromAny( $target );
+    if ( !$target ) {
+      return null;
+    }
+
+    # informations sur l'invitation & l'authentification email
+		$sql = 'SELECT user_id, user_email_authenticated, user_email_token_expires FROM '
+			. $wgDBprefix . 'user WHERE user_id = ' . $target->getId();
+		$req = DbF::mysqli_query( $sql );
+
+		if ( $req ) {
+      $data['email_authenticated'] = (int)$req[0]['user_email_authenticated'];
+			if ( $req[0]['user_email_token_expires'] ) {
+				$data['last_invite'] = wfTimestamp( TS_UNIX, (int)$req[0]['user_email_token_expires'] );
+				$data['last_invite'] = strtotime('-7 days', $data['last_invite'] );
+        $data['last_invite'] = strtotime('-1 hour', $data['last_invite'] );
+			}
+			else $data['last_invite'] = null;
+		}
+		else return null;
+
+    $data[ 'first_edit' ] = $target->getFirstEditTimestamp();
+    $data[ 'last_edit' ] = $target->getLatestEditTimestamp();
+    $data[ 'user_id' ] = $target->getId();
+
+    if ( !$data['email_authenticated'] && !$data[ 'first_edit' ] )
+      $data['user_status'] = MGW_NEVERCONFIRMED; // -1
+    elseif ( $data['email_authenticated'] && $data[ 'first_edit' ] )
+      $data['user_status'] = MGW_CONFIRMED; // 0
+    elseif ( !$data['email_authenticated'] && $data[ 'first_edit' ] )
+      $data['user_status'] = MGW_UNCONFIRMED; // 1
+    else
+      $data['user_status'] = MGW_NOEDITS; // 2
+
+    return (bool)$data['email_authenticated'];
+  }
+
+  /**
+   * @param User|string|int $target
+   * @param bool $allow_new = false (return null if user is new)
+   *
+   * @return User|null
+   */
+  public function getUserFromAny ( $target, $allow_new = false ) {
+    if ( is_int( $target ) ) {
+      $target = User::newFromId( $target );
+    }
+    elseif ( is_string( $target ) ) {
+      $target = User::newFromName( $target );
+    }
+    elseif ( !( $target instanceof User ) ) {
+      return null;
+    }
+
+    if ( !$target || (!$allow_new && $target->getId() < 1) ) {
+      return null;
+    }
+    return $target;
+  }
+
   /**
    * @param string $nom
    * @param string $prenom
@@ -28,6 +97,13 @@ class UsersFunctions
     $user = User::newFromName ($name);
     if ( $check && $user->getId() <= 0 ) return null;
     else return $user;
+  }
+
+  public function countUsersWithName ( $name ) {
+    global $wgDBprefix;
+    $sql = "SELECT user_name FROM {$wgDBprefix}user WHERE user_name LIKE '{$name}%'";
+    $res = DbF::mysqli_query($sql, false);
+    return count($res);
   }
 
   /**
@@ -179,7 +255,7 @@ class UsersFunctions
    */
   public function emailExists( $email ) {
     global $wgDBprefix;
-    $sql = "SELECT user_id, user_name FROM {$wgDBprefix}user WHERE user_email LIKE '{$email}'";
+    $sql = "SELECT user_id, user_name FROM {$wgDBprefix}user WHERE user_email LIKE '{$email}' ORDER BY user_id";
     $res = DbF::mysqli_query( $sql );
     if ( $res ) {
       foreach( $res as $row )
