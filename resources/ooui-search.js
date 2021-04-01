@@ -289,20 +289,22 @@ TODO:
 
   $( function () {
     // on récupère les données cachées dans le DOM
-    dataTransfer = JSON.parse($('#mgw-ooui-data-transfer').html());
-    if ( $('#mgw-ooui-data-context').length > 0 ){
-      window.mgw_context = JSON.parse($('#mgw-ooui-data-context').html());
+    if ( $('#mgw-ooui-data-transfer').length ) {
+      dataTransfer = JSON.parse($('#mgw-ooui-data-transfer').html());
+      if ( $('#mgw-ooui-data-context').length ){
+        window.mgw_context = JSON.parse($('#mgw-ooui-data-context').html());
+      }
+      else window.mgw_context = [];
+      // pour chaque clé on construit le champs
+      searchKeys = Object.keys(dataTransfer);
+      for (let key of searchKeys) {
+        mw.mgwOouiSearch_makeInput(
+          key,
+          dataTransfer[key]
+        );
+      }
+      $(document).click( { names: searchKeys }, mw.mgwOouiSearch_documentCloseLists );
     }
-    else window.mgw_context = [];
-    // pour chaque clé on construit le champs
-    searchKeys = Object.keys(dataTransfer);
-    for (let key of searchKeys) {
-      mw.mgwOouiSearch_makeInput(
-        key,
-        dataTransfer[key]
-      );
-    }
-    $(document).click( { names: searchKeys }, mw.mgwOouiSearch_documentCloseLists );
   });
 
 }( mediaWiki, jQuery ) );
