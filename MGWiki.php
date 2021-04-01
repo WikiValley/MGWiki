@@ -62,7 +62,7 @@ class MGWiki {
 		 * mgw_stats = table destinée à l'observation de l'usage du site
 		 */
 
-		$dir = str_replace( __DIR__ . '/sql' );
+		$dir = __DIR__ . '/sql';
 		$tables = wfMgwConfig('db-tables');
 		echo "\nMGWiki...\n";
 		foreach( $tables as $table ) {
