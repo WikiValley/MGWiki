@@ -65,7 +65,10 @@ class ApiMgwSendMail extends ApiBase {
 	          $data = json_decode( $res[0]['data'], true, 512, JSON_UNESCAPED_UNICODE );
 
 	          $recipients_update = $data['recipients'];
-	          $key = array_key_first( $recipients_update );
+						foreach ( $recipients_update as $k => $recip ) {
+							$key = $k;
+							break;
+						}
 	          $recipient = \User::newFromId( $recipients_update[$key] );
 	          unset( $recipients_update[$key] );
 
