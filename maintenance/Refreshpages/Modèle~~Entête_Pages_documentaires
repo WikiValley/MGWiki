@@ -14,9 +14,9 @@ Modifier la page pour voir le texte du modèle. __NOEDITSECTION__
 |-
 | style="width:5%; border:1px solid #{{{Couleur|}}}; background:#f6f6f6; vertical-align:center; padding: 5 5 0 0; -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius:10px;" class="mgw-border-color" mgwcolor="#{{{Couleur|}}}"|
 {|style="width:100%;"
-| style="width:110px;"> | {{{Image|}}}
+| style="width:110px"> | {{{Image|}}}
 | {{ #if:{{{Texte1|}}}|{{{Texte1|}}}|{{{Texte2|}}} }}
-|  style="width:40px"|<div class="mgw-tooltip"" align="right">{{Mgw-link|content=[[Fichier:Edit-button.png|20px]]|url={{fullurl:{{FULLPAGENAME}}|action=formedit}} }}<span class="mgw-tooltiptext" style="display:none">modifier les champs (formulaire)</span></div>
+|  style="text-align:right;" class="mgw-tooltip"|{{Mgw-link|content=[[Fichier:Edit-button.png|20px]]|url={{fullurl:{{FULLPAGENAME}}|action=formedit}} }}<span class="mgw-tooltiptext" style="display:none">modifier les champs (formulaire)</span>
 {{#ifeq:{{{Texte1|}}}|||
 {{!}}-
 {{!}}
@@ -27,7 +27,7 @@ Modifier la page pour voir le texte du modèle. __NOEDITSECTION__
 __NOTOC__
 {|style="width:100%"
 |align="right"|<div id = "mgw-page-tools"><!--
---><div class="mgw-tooltip" style="margin-right:20px">{{Mgw-link|content=[[Fichier:Edit-button2.png|20px|right]]|url={{fullurl:{{FULLPAGENAME}}|veaction=edit}} }}<span class="mgw-tooltiptext" style="display:none">modifier le texte (éditeur visuel)</span></div><!--
+--><div class="mgw-tooltip" style="margin-right:20px">{{Mgw-link|content=[[Fichier:Edit-button2.png|20px|right]]|url={{fullurl:{{FULLPAGENAME}}|action=edit}} }}<span class="mgw-tooltiptext" style="display:none">modifier le texte (éditeur visuel)</span></div><!--
 --><div class="mgwiki-send-notification-trigger" >{{Mgw-tooltip
 |content=[[Fichier:Logo-review.png|30px]]
 |tooltiptext=demande de relecture

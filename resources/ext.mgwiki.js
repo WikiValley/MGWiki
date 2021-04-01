@@ -41,7 +41,6 @@
 		 // lisibilité: on cache l'option "Titre" aux non-médecins
 		 $('th').each( function(){
 			 if ( $(this).html().match(/Titre\:/) ) {
-			 console.log('COUCOU');
 				 $(this).addClass('mgw-titre-field');
 				 $(this).next('td').addClass('mgw-titre-field');
 			 }
@@ -61,6 +60,11 @@
 		 $('#input_12').click( mw.mgw_hide_titre );
 
 		 mw.mgw_hide_titre();
+
+		 // on cache l'onglet 'modifier le wikitexte'
+		 if ( mw.config.get( 'wgUserGroups').indexOf('sysop') == -1 ) {
+				$('#ca-edit').hide();
+		 }
  	 }
 
 	/**

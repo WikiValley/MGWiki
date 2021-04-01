@@ -51,6 +51,7 @@ class MgwUpdater extends Maintenance {
 			"Option utilisée dans différents contextes (backup --purge, backup --save, backup --restore)", false, false, 'a' );
 		$this->addOption( "db", "db uniquement", false, false, 'db' );
 		$this->addOption( "files", "fichiers uniquement", false, false, 'sf' );
+		$this->addOption( "LocalSettings", "LocalSettings uniquement", false, false, 'sls' );
 		$this->addOption( "purge", "Tous les dossiers de sauvegarde seront supprimés sauf le dernier", false, false, 'P' );
 		$this->addOption( "save", "Sauvegarde", false, false, 'S' );
 		$this->addOption( "restore", "Restauration d'une archive", false, false, 'R' );
@@ -302,8 +303,8 @@ class MgwUpdater extends Maintenance {
 	 	elseif ( $module == "restore" ) {
 			echo "\nRestauration d\'une sauvegarde ... \n\n";
 
-	 		$all = ( ( !$this->getOption( "db" ) && !$this->getOption( "files" ) )
-				|| $this->getOption( "all" ) );
+	 		$all = ( ( !$this->getOption( "db" ) && !$this->getOption( "files" )
+				&& !$this->getOption( "LocalSettings" ) ) || $this->getOption( "all" ) );
 
 	    if ( !$backup && !$this->screen_backups( $directory, $backup ) )
 				return "annulation";
@@ -317,9 +318,14 @@ class MgwUpdater extends Maintenance {
 				if ( !$sql_file ) $sql_file = $backup . '.sql';
 		 		echo $this->backup_db_restore( $sql_file, $directory ) . "\n";
 			}
+			# FILES
 	 		if ( $all || $this->getOption( "files" ) ) {
 				if ( !$copy_dir )	$copy_dir = $backup . '.copy';
 	 			echo $this->backup_files_restore( $copy_dir, $directory ) . "\n";
+			}
+	 		if ( $this->getOption( "LocalSettings" ) ) {
+				if ( !$copy_dir )	$copy_dir = $backup . '.copy';
+	 			echo $this->backup_files_restore( $copy_dir, $directory, 'LocalSettings' ) . "\n";
 			}
 	 		return "... fin de la restauration\n";
 	 	}
@@ -340,7 +346,7 @@ class MgwUpdater extends Maintenance {
 		$console_out = [];
 		$result_code = 2;
 		exec( $cmd, $console_out, $result_code );
-		if ( $string ) $out = implode( "\n", $console_out );
+		if ( $string ) $console_out = implode( "\n", $console_out );
 		return $result_code;
 	}
 

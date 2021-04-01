@@ -332,12 +332,12 @@ class SpecialMgwChangeCredentials extends \SpecialPage {
 			'Personne',
 			[	'prenom' => 'Prénom', 'nom' => 'Nom' ]
 		);
-		if ( !$userData ) $userData = [];
-		else {
+		if ( $userData ) {
 			$userData = $userData[0];
 		  $has_template = true;
 		}
-
+		if ( !isset( $userData['nom'] ) ) $userData['nom'] = '';
+		if ( !isset( $userData['prenom'] ) ) $userData['prenom'] = '';
 		$userData['email'] = $targetUser->getEmail();
 
 		return $userData;
@@ -375,6 +375,8 @@ class SpecialMgwChangeCredentials extends \SpecialPage {
 
   private function displayMainForm( $reqData, $userData, $targetUser, $notify ) {
 		global $wgUser;
+		$is_sysop = in_array('sysop', $wgUser->getGroups());
+
     $out = $this->getOutput( );
 		$out->addModules('ext.mgwiki.specialchangecredentials');
 		$out->addHeadItems( HtmlF::include_resource_file ( 'specialchangecredentials.css', 'style' ) );
@@ -493,7 +495,7 @@ class SpecialMgwChangeCredentials extends \SpecialPage {
 				'name' => 'nom',
 				'type' => 'text',
 				'value' => $reqData['nom'],
-				'required' => true
+				'required' => !($is_sysop)
 			] ) . '<span class="mgw-hidden-data" style="display:none;">'.$userData['nom'].'</span></div>'
 		);
 		$out->addHTML( '<p><strong>Courriel</strong></p><div id="mgw-field-email">' .

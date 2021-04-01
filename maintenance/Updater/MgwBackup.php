@@ -38,7 +38,9 @@ trait MgwBackup {
     # sauvegarde
     $shell_out = '';
     $shell_cmd = "cp {$IP}/LocalSettings.php {$directory}/{$copy_dir}/LocalSettings.php ".
-                "&& cp -r {$IP}/images {$directory}/{$copy_dir}/images";
+                "&& cp -r {$IP}/images {$directory}/{$copy_dir}/images " .
+                "&& mkdir {$directory}/{$copy_dir}/skins" .
+                "&& cp -r {$IP}/skins/MGWiki {$directory}/{$copy_dir}/skins/MGWiki";
     $shell = $this->shell( $shell_cmd, $shell_out );
     if ( $shell != 0 ) {
       return $shell_out . "\n";
@@ -89,7 +91,7 @@ trait MgwBackup {
     return "Sauvegarde de la DB restaurée avec succès";
   }
 
-  private function backup_files_restore( $copy_dir, $directory ) {
+  private function backup_files_restore( $copy_dir, $directory, $sub = '' ) {
     global $IP;
 
     // vérification du répertoire de sauvegarde
@@ -98,7 +100,7 @@ trait MgwBackup {
     $directory = $directory . '/' . $copy_dir;
 
     // restauration des fichiers
-    if ( file_exists( $directory . '/LocalSettings.php' ) ) {
+    if ( ( !$sub || $sub = 'LocalSettings' ) && file_exists( $directory . '/LocalSettings.php' ) ) {
       $shell_cmd = "rm {$IP}/LocalSettings.php && cp {$directory}/LocalSettings.php {$IP}/LocalSettings.php";
       $shell_out = '';
       $shell = $this->shell( $shell_cmd, $shell_out );
@@ -108,9 +110,10 @@ trait MgwBackup {
       }
       else echo "copie de LocalSettings.php: OK\n";
     }
-    else echo "aucun fichier LocalSettings.php dans la sauvegarde: le fichier actuel est inchangé.\n";
+    elseif ( !file_exists( $directory . '/LocalSettings.php' ) ) 
+      echo "aucun fichier LocalSettings.php dans la sauvegarde: le fichier actuel est inchangé.\n";
 
-    if ( file_exists( $directory . '/images' ) ) {
+    if ( !$sub && file_exists( $directory . '/images' ) ) {
       $shell_cmd = "rm -rf {$IP}/images && cp -r {$directory}/images {$IP}/images " .
         "&& chown -R www-data:www-data {$IP}/images";
       $shell_out = '';
@@ -121,7 +124,21 @@ trait MgwBackup {
       }
       else echo "copie de images/ : OK\n";
     }
-    else echo "aucun dossier images/ dans la sauvegarde: le dossier actuel est inchangé.\n";
+    elseif ( !file_exists( $directory . '/images' ) )
+      echo "aucun dossier images/ dans la sauvegarde: le dossier actuel est inchangé.\n";
+
+    if ( !$sub && file_exists( $directory . '/skins/MGWiki' ) ) {
+      $shell_cmd = "rm -rf {$IP}/skins/MGWiki && cp -r {$directory}/skins/MGWiki {$IP}/skins/MGWiki ";
+      $shell_out = '';
+      $shell = $this->shell( $shell_cmd, $shell_out );
+      echo $shell_out . "\n";
+      if ( $shell != 0 ) {
+        echo "copie de skins/MGWiki/ : échec\n";
+      }
+      else echo "copie de skins/MGWiki/ : OK\n";
+    }
+    elseif ( !file_exists( $directory . '/skins/MGWiki' ) )
+      echo "aucun dossier skins/MGWiki/ dans la sauvegarde: le dossier actuel est inchangé.\n";
 
     return '';
   }

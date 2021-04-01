@@ -9,14 +9,14 @@ Les tables et index spécifiques à l'extension sont déclarées dans le fichier
  $wgReadOnly = "MGWiki est en cours de maintenance. L'accès sera rétabli rapidement";
 * Sauvegarder la base de données : 
  cd var/www/html/wiki/extensions/MGWiki/maintenance
- php mgw-updater.php db_save --filename=<ma_sauvegarde.sql>
+ php mgw-updater.php backup --save
 * Mettre à jour les tables:
  cd var/www/html/wiki/maintenance
  php update.php
 '''3. EN CAS DE PLANTAGE: récupération de la base de données sauvegardée'''
  cd var/www/html/wiki/extensions/MGWiki/maintenance
- php mgw-updater.php db_restore --filename=<ma_sauvegarde.sql>
-NB: pour ''db_dump'' et ''db_restore'' le dossier de sauvegarde par défaut est <code>/var/www/backup</code>. Il est possible de spécifier un autre répertoire avec l'option <code>--directory=</mon/répertoire></code>.
+ php mgw-updater.php backup --restore
+NB: pour ''--save'' et ''--restore'' le dossier de sauvegarde par défaut est <code>$wgMGW_backup_dir</code>. Il est possible de spécifier un autre répertoire avec l'option <code>--directory=</mon/répertoire></code>.
 == Implémentation ==
  MGWiki/maintenance/sql-update.php
 

@@ -186,7 +186,7 @@ class MGWikiHooks {
 					$users = UserF::emailExists( $val );
 					if ( $users && count($users) == 1 ) $user_name = $users[0]['user_name'];
 					elseif ( $users && count($users) > 1 ) {
-					  return $val.' est utilisé par plusieurs comptes';
+					  return $val.' : plusieurs comptes possibles';
 					}
 					else {
 						return $val.' : inconnu';

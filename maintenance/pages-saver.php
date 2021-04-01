@@ -51,7 +51,7 @@ class PageSaver extends Maintenance {
 					if ( $title->getArticleID() > 0 ) {
 						$page = \WikiPage::factory($title);
 						$content = $page->getContent()->getNativeData();
-						file_put_contents( $dir_name . '/' . str_replace( [':',' ', '/'], ['~~','_', '°°'], $buffer), $content );
+						file_put_contents( $dir_name . '/' . str_replace( [':',' ', '/', "\n"], ['~~','_', '°°', ''], $buffer ), $content );
 					}
 					else {
 						echo $buffer . " : page inconnue\n";

@@ -1,7 +1,14 @@
-== MGWiki 0.2 ==
+== MGWiki 1.0 ==
 Développement: 
 * WikiValley (Sébastien BEYOU / Nicolas NALLET)
 * [[Utilisateur:Alexandre BRULET|Alexandre BRULET]]
+=== Présentation ===
+Nouveaux développements:
+* réorganisation de l'extension en modules
+* création d'outils de maintenance (pages-saver, backup, check_hooks, ...)
+* débranchement partiel de SMW pour la création & modification des groupes & utilisateurs
+* interface javascript et pages spéciales pour administrer comptes & groupes en quasi-totalité depuis les pages utilisateurs
+* SendMassMail pour envoyer des mails groupés
 === [https://www.mediawiki.org/wiki/MediaWiki/fr MediaWiki 1.33] ===
 * répertoire d'installation: 
  /var/www/html/wiki
@@ -38,4 +45,27 @@ Ce fichier n'est pas lu directement lors de l'installation => [[MGWiki:Développ
   [[MGWiki:Développement/Utilities|/includes/Utilities]]  ensemble de fonctions génériques à toute l'extension
 * Le fichier [[MGWiki:Développement/MGWiki.php|MGWiki.php]] placé à la racine de l'extension comporte une partie du code développé en 2016. Il est destiné à disparaître au profit de <code>includes/MGWikiHooks.php</code> et <code>includes/MGWikiParsers.php</code>
 
-== Bugs ==
+==== Maintenance ====
+* préparation des pages wiki à transférer du site bêta vers git (liste des pages établie dans <code>maintenance/Refreshpages/.refreshpages.txt</code>) :
+ cd /var/www/html/wiki/extensions/MGWiki/maintenance && php pages-saver.php
+* vérification & insertion des hooks:
+ cd /var/www/html/wiki/extensions/MGWiki/maintenance && php mgw-updater.php check_hooks
+* sauvegarde de la BDD et des fichiers (images & LocalSettings):
+ cd /var/www/html/wiki/extensions/MGWiki/maintenance && php mgw-updater.php backup --save
+* màj de la BDD:
+ cd /var/www/html/wiki/maintenance && php update.php
+* màj des contenus (Refreshpages):
+ cd /var/www/html/wiki/extensions/MGWiki/maintenance && php mgw-updater.php refresh_pages
+
+== TODO ==
+===Urgent===
+* SpecialDeleteAccount avec possibilité d'effacer complètement les données d'un utilisateur à sa demande
+* SpecialAdminUsers (mails en doublons, pages utilisateur orphelines, etc.)
+* implémentation des tables mgw_groupe et mgw_archetypes pour finaliser la gestion des utilisateurs autour des groupes de formation
+* réparation du module ADEPUL
+===A prévoir===
+* revue de l'organisation des pages docu & articulation groupe/récit/pages en vue d'un export multiple correctement structuré
+* extension FLOW
+* màj mediawiki
+* chantier autour des insertions biblio
+* pages "Etude:" pour accueillir thèses, mémoires, autres (articulation avec les contenus sur le principe des pages Récit) ?

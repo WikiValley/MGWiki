@@ -16,6 +16,7 @@ use MediaWiki\Auth\AuthenticationResponse;
 use MediaWiki\Extension\MGWiki\Utilities\MgwFunctions as MgwF;
 use MediaWiki\Extension\MGWiki\Utilities\MailFunctions as MailF;
 use MediaWiki\Extension\MGWiki\Utilities\PagesFunctions as PageF;
+use MediaWiki\Extension\MGWiki\Utilities\HtmlFunctions as HtmlF;
 use MediaWiki\Extension\MGWiki\Utilities\UsersFunctions as UserF;
 use MediaWiki\Extension\MGWiki\Utilities\PhpFunctions as PhpF;
 use MediaWiki\Extension\MGWiki\Foreign\MGWRenameuser as Renameuser;
@@ -63,8 +64,9 @@ class MGWiki {
 
 		$dir = str_replace('includes', 'sql', __DIR__);
 		$tables = wfMgwConfig('db-tables');
-
+		echo "\nMGWiki...\n";
 		foreach( $tables as $table ) {
+			echo "... $table\n";
 			$table_file = "$dir/addTable-" . $table . ".sql";
 			$index_file = "$dir/addIndex-" . $table . "_lookup.sql";
 			$updater->addExtensionTable( $table, $table_file );
@@ -72,6 +74,7 @@ class MGWiki {
 				$updater->addExtensionIndex( $table, $table . '_lookup', $index_file );
 			}
 		}
+		echo "done.\n\n";
 	}
 
 	/**
@@ -339,24 +342,58 @@ class MGWiki {
 	 * @return true
 	 */
 	public static function onHTMLBeforeForm( $targetTitle, &$pre_form_html ) {
+		global $wgUser;
 
 		# Only use this hook on user pages
 		if ( empty( $targetTitle ) || $targetTitle->getNamespace() != NS_USER ) return;
 
 		# Get the user account
-		$user = User::newFromName( $targetTitle->getText() )->getId();
+		$user = User::newFromName( $targetTitle->getText() );
 
-		if ( $targetTitle->exists() xor $user ) {
+		if ( $targetTitle->exists() xor $user->getId() ) {
 			$pre_form_html = '<div class="warningbox">';
 			if ( $targetTitle->exists() ) $pre_form_html .= wfMessage( 'mgwiki-userpage-without-useraccount' )->escaped();
 			else $pre_form_html .= wfMessage( 'mgwiki-useraccount-without-userpage' )->escaped();
 			$pre_form_html .= "</div>\n";
 		}
 
-		if ( self::userRequireUpdate() ) {
+		$requireUpdate = self::userRequireUpdate();
+		if ( $requireUpdate ) {
 			$pre_form_html = '<div class="warningbox">';
-			$pre_form_html .= wfMessage( 'mgwiki-userpage-update-needed' )->plain();
+			$pre_form_html .= wfMessage( 'mgwiki-userpage-update-needed', $requireUpdate )->plain();
 			$pre_form_html .= "</div>\n";
+		}
+
+		// infos du compte: affichage seul avec lien vers MgwChangeCredentials
+		$userData = PageF::getPageTemplateInfos ( $targetTitle, 'Personne', [
+			'nom' => 'Nom',
+			'prenom' => 'Prénom' ] );
+		$td1 = [];
+		$td2 = [];
+		$td3 = [];
+		if ( $userData ) {
+			$td1[] = "<strong>Nom: </strong>";
+			$td2[] = $userData[0]['nom'];
+			$td1[] = "<strong>Prénom: </strong>";
+			$td2[] = $userData[0]['prenom'];
+		}
+		if ( $user->getName() == $wgUser->getName() ) {
+			$td1[] = "<strong>E-mail: </strong>";
+			$td2[] = $user->getEmail();
+			$cred_url = '/wiki/index.php/Special:MgwChangeCredentials?'.
+				'user_name=' . $user->getName() . '&returnto=' . 'Utilisateur:' . $user->getName();
+			$cred_tooltip = wfMessage('mgw-userpage-credlink-tooltip')->text();
+			$td3[] = HtmlF::admin_link( 'modifier mon compte', 'orange', $cred_url, $cred_tooltip );
+		}
+		if ( $td1 ) {
+			$pre_form_html .= '<table class="mgw-userform-credentials-table">'; //-> ext.mgwiki.css
+			foreach ( $td1 as $key => $value ) {
+				$pre_form_html .= '<tr>';
+				$pre_form_html .= '<td>' . $td1[$key] . '</td><td>' . $td2[$key] . '</td>';
+				$pre_form_html .= ( isset($td3[$key] ) ) ? '<td>' . $td3[$key] . '</td>' : '<td></td>';
+				$pre_form_html .= '</tr>';
+			}
+			$pre_form_html .= '</table>';
 		}
 
 		return true;
@@ -507,6 +544,9 @@ class MGWiki {
 		return $content;
 	}
 
+	/**
+	 * @return bool|string
+	 */
 	public static function userRequireUpdate() {
 		global $wgUser;
 		global $wgMGWikiUserProperties;
@@ -520,8 +560,16 @@ class MGWiki {
 			SmwF::getSemanticData( $wgUser->getUserPage() ),
 			$complete
 		);
+		// màj requise: pour quelle raison ?
+		if ( count( $update ) == 1 && $update[$wgMGWikiUserProperties['requiredUserUpdate']] ) {
+			$lastRev = \WikiPage::factory( $wgUser->getUserPage() )->getRevisionRecord();
+			if ( $lastRev->getUser()->getName() != $wgUser->getName() )
+				return 'dernière modification faite par un administrateur';
+			else
+				return 'dernière vérification faite il y a plus d\'un an';
+		}
 
-		return ( count( $update ) == 1 && $update[$wgMGWikiUserProperties['requiredUserUpdate']] );
+		return false;
 	}
 
 	/**
