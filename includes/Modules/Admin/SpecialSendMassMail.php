@@ -333,7 +333,7 @@ class SpecialSendMassMail extends \SpecialPage {
 			$count = '('.$data['count'].' mails envoyés)';
 		}
 
-		$date = date( 'd-m-Y H:i:s', $task['update_time'] );
+		$date = date( 'd-m-Y H:i:s', wfTimestamp( TS_UNIX, $task['update_time'] ) );
 		$head = '<strong><big>Envoi ' . $type . ' du ' . $date . ' ' . $count . '</big></strong><br><br>';
 
 		$out->addHTML('<div id="mgw-massmail-details-info">' . $head . '</div>' . $head_btn . '<br>');
@@ -572,7 +572,10 @@ class SpecialSendMassMail extends \SpecialPage {
 		$body .= ( $title->getArticleID() ) ? $page->getContent()->getParserOutput($title)->getRawText() : '';
 
 		if ( $links_replace ) {
+			// la plupart des liens
 			$body = str_replace('="/wiki/', '="'.$this->pre_URL, $body );
+			// nième argument de srcset=""
+			$body = preg_replace('/(srcset=".*, )\/wiki\//', '$1'.$this->pre_URL, $body );
 		}
 		return $body;
 	}

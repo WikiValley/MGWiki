@@ -65,7 +65,8 @@ class ApiMgwSendMail extends ApiBase {
 	          $data = json_decode( $res[0]['data'], true, 512, JSON_UNESCAPED_UNICODE );
 
 	          $recipients_update = $data['recipients'];
-						foreach ( $recipients_update as $k => $recip ) {
+						// équivalent de array_key_first() ...
+						foreach ( $recipients_update as $k => $v ) {
 							$key = $k;
 							break;
 						}

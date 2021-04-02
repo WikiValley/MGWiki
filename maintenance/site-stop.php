@@ -26,9 +26,11 @@
     $settings = file_get_contents ( '/var/www/html/wiki/LocalSettings.php' );
     $settings = explode( "\n", $settings );
     foreach ( $settings as $key => $line ) {
+      /* NON FONCTIONNEL (empêche la maintenance sur la BDD...)
       if ( preg_match( '/^(\$wgReadOnly)/', $line ) ) {
         $settings[$key] = preg_replace( '/^(\$wgReadOnly)/', '#$1', $line );
       }
+      */
       if ( preg_match( '/^(header\("Location\:)/', $line ) ) {
         $settings[$key] = preg_replace( '/^(header\("Location\:)/', '#$1', $line );
       }
@@ -60,19 +62,21 @@
     # /var/www/html/wiki/LocalSettings.php
     $settings = file_get_contents ( '/var/www/html/wiki/LocalSettings.php' );
     $settings = explode( "\n", $settings );
-    $readOnly = false;
+    //$readOnly = false;
     $headerLocation = false;
     foreach ( $settings as $key => $line ) {
+      /* NON FONCTIONNEL (empêche la maintenance sur la BDD...)
       if ( preg_match( '/^(.*)(\$wgReadOnly)/', $line ) ) {
         $settings[$key] = preg_replace( '/^(.*)(\$wgReadOnly)/', '$2', $line );
         $readOnly = true;
       }
+      */
       if ( preg_match( '/^(.*)(header\("Location\:)/', $line ) ) {
         $settings[$key] = preg_replace( '/^(.*)(header\("Location\:)/', '$2', $line );
         $headerLocation = true;
       }
     }
-    if ( !$readOnly ) $settings[] = '$wgReadOnly = "MGWiki est en cours de maintenance. L\'accès sera rétabli rapidement";';
+    //if ( !$readOnly ) $settings[] = '$wgReadOnly = "MGWiki est en cours de maintenance. L\'accès sera rétabli rapidement";';
     if ( !$headerLocation ) $settings[] = 'header("Location: $wgServer");';
     $settings = implode("\n", $settings );
     file_put_contents ( '/var/www/html/wiki/LocalSettings.php', $settings );
@@ -85,8 +89,8 @@
     . "Options:\n\n"
     . "  --run (-r):\n"
     . "    URL principale dirigée sur /wiki/index.php\n"
-    . "    \$wgReadOnly et header() désactivés dans LocalSettings.php\n\n"
+    . "    header() désactivé dans LocalSettings.php\n\n"
     . "  --stop (-s):\n"
     . "    URL principale dirigée sur /travaux/index.html\n"
-    . "    \$wgReadOnly et header('Location: https://mgwiki.univ-lyon1.fr') activés\n\n";
+    . "    header('Location: https://mgwiki.univ-lyon1.fr') activé\n\n";
 ?>

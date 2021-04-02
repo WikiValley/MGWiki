@@ -166,17 +166,19 @@ class MGWikiHooks {
   }
 
  	/**
+	 * TODO: info erreur identifiant...
  	 * login avec mail + authentification insensible à la casse
  	 */
   public static function onAuthChangeFormFields( $requests, $fieldInfo, &$formDescriptor, $action ) {
 
     // uniquement pour le formulaire de login
     global $wgRequest;
-    if ( $wgRequest->getGlobalRequestURL() == '/wiki/index.php/Sp%C3%A9cial:Connexion' )
-    {
+    if ( preg_match( '/Sp(%C3%A9|é|e)cial:Connexion/', $wgRequest->getGlobalRequestURL() ) ) {
       $formDescriptor['username']['label'] = 'E-mail  ou  nom d\'utilisateur';
       $formDescriptor['username']['class'] = 'HTMLTextField';
       $formDescriptor['username']['filter-callback'] = function ( $val, $array ) {
+
+				global $wgOut;
 
         // sécurité
         $val = htmlspecialchars( $val, ENT_QUOTES );
@@ -184,12 +186,20 @@ class MGWikiHooks {
         // si email connu on récupère le nom d'utilisateur correspondant
         if ( preg_match( '/@/', $val ) > 0 ) {
 					$users = UserF::emailExists( $val );
-					if ( $users && count($users) == 1 ) $user_name = $users[0]['user_name'];
+					if ( $users && count($users) == 1 )
+						$user_name = $users[0]['user_name'];
 					elseif ( $users && count($users) > 1 ) {
-					  return $val.' : plusieurs comptes possibles';
+						// prévenir le doublon sur l'affichage (?)
+						if ( !preg_match( '/class="mgw\-alert"/', $wgOut->getHTML() ) )
+							$wgOut->prependHTML( HtmlF::alertMessage( false, 'E-mail invalide: plusieurs comptes correspondent à cette adresse.'
+						 		. '<br>Veuillez utiliser votre nom d\'utilisateur.') );
+					  return $val;
 					}
 					else {
-						return $val.' : inconnu';
+						if ( !preg_match( '/class="mgw\-alert"/', $wgOut->getHTML() ) )
+							$wgOut->prependHTML( HtmlF::alertMessage( false, 'E-mail inconnu.'
+							 	. '<br>Veuillez utiliser votre nom d\'utilisateur.') );
+						return $val;
 					}
 				}
 
@@ -197,7 +207,7 @@ class MGWikiHooks {
         else $user_name = UserF::userExists( $val, false );
 
         if ( !$user_name ) {
-          return $val.' : inconnu.e';
+          return $val;
         }
 
         return $user_name;

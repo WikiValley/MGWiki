@@ -1,6 +1,16 @@
 ( function ( mw, $ ) {
 
 	/**
+	 * LoginForm
+	 * TODO: .js dédié à l'authentificatioin ...
+	 */
+	if ( mw.config.get('wgTitle') == 'Connexion' && $('.mgw-alert').length ) {
+		$('.mgw-alert').css({'margin':'0 0 1em 0', 'padding':'0.5em', 'width':'275px'});
+		$('.mgw-alert i').css({'margin-left':'0'});
+		$('#userloginForm .error').hide();
+	}
+
+	/**
 	 * PATCH TEMPORAIRE MGW 1.0
 	 * adaptation des valeurs par défaut du formulaire "modifier le groupe"
 	 * pour ne pas surcharger le nombre de formulaires spécifiques à chaque

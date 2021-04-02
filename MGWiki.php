@@ -284,6 +284,8 @@ class MGWiki {
 						$userlist .= '<br>* [[Utilisateur:' . $newUser . '|' . $newUser . ']]';
 					}
 					$feedback .= wfMessage( 'mgw-createaccount-feedback', $userlist )->plain();
+					$feedback .= '<br>La mise à jour de la liste des groupes sur votre tableau de bord peut prendre du temps.' .
+						'<br>Si les modifications n\'apparaissent pas, réactualisez les informations de votre tableau de bord.';
 				}
 				if ( $bugs ) {
 					$feedback .= "<br><br>'''Des erreurs sont survenues:'''<br>";
