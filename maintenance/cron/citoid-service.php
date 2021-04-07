@@ -18,7 +18,7 @@
   $options = ['status', 'run', 'stop', 'quiet', 'help'];
   $getOpt = getOpt( 'lrsqh', $options );
   $services = [ "zotero", "citoid" ];
-  $wgEmergencyContact = "mgwiki@localhost";
+  $wgEmergencyContact = "mgwiki@univ-lyon1.fr";
 
   $quiet = ( array_key_exists( 'q', $getOpt ) || array_key_exists( 'quiet', $getOpt ) );
   $mess = '';
