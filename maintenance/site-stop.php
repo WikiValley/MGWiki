@@ -1,4 +1,13 @@
 <?php
+
+  /**
+   * Automatisation de la redirection de toutes les requêtes vers /var/www/html/travaux/index.html
+   *
+   * Usage:
+   *  sudo php site-stop.php --stop (mise en pause du site le temps des travaux de maintenance)
+   *  sudo php site-stop.php --run (remise en production)
+   */
+
   $options = ['run','stop','help'];
   $getOpt = getOpt( 'rsh', $options );
 
