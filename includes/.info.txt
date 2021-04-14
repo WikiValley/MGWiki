@@ -1,0 +1,14 @@
+MGWiki/includes :
+
+Répertoire destiné à accueillir la totalité du code php de l'extension.
+
+* Sous-répertoires:
+  ./Api/        API génériques à toute l'extension (les API spécifiques sont placées dans MGWiki/includes/Modules/<module>)
+  ./Classes/    classes php génériques à toute l'extension (les classes spécifiques à un module sont placés dans MGWiki/includes/Modules/<module>)
+  ./Foreign/    interfaces avec les extensions étrangères à MGWiki
+  ./Modules/    modules spécifiques (1 répertoire par module)
+  ./Specials/   pages spéciales isolées (ne s'intégrant pas dans un module)
+  ./Utilities/  fonctions génériques à toute l'extension
+
+* Fichiers:
+  Les fichiers placés directement dans MGWiki/includes sont les fichiers d'interface avec MediaWiki (Hooks, Parsers, etc.)

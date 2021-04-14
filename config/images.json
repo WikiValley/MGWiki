@@ -1,0 +1,8 @@
+{
+  "form-edit-button": "/wiki/extensions/MGWiki/images/form-edit.png",
+  "admin-link-colors": {
+    "bleu": ["#6ba5f1", "#3b95f9"],
+    "orange": ["#f3b66d", "#ca8b43"],
+    "rouge": ["#f66674", "#cb3a49"]
+  }
+}

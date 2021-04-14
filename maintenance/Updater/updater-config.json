@@ -1,0 +1,15 @@
+{
+  "custom-hooks": {
+    "ApiAllow": {
+      "fileIdentifier": "class ApiMain extends ApiBase",
+      "stringIdentifier": "!$user->isAllowed( 'read' )",
+      "customCode": " && !Hooks::run( 'ApiAllow', [ $module, $user ] )"
+    },
+    "ChangeMailFormFields": {
+      "fileIdentifier": "class SpecialChangeEmail extends FormSpecialPage",
+      "stringIdentifier": "'help-message' => 'changeemail-newemail-help',\n\t\t\t],\n\t\t];",
+      "customCode": "\n\t\tHooks::run( 'ChangeMailFormFields', [ &$fields ] );"
+    }
+  },
+  "screen-hooks": [ "includes", "maintenance", "skins", "extensions" ]
+}

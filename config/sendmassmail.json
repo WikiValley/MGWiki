@@ -1,0 +1,8 @@
+{
+  "body-page": {
+    "pre": "Utilisateur:",
+    "string": "E-mail groupé"
+  },
+  "footer-page": "MediaWiki:Mgw-send-mass-mail-footer",
+  "url-pre": "https://mgwiki.univ-lyon1.fr/wiki/"
+}

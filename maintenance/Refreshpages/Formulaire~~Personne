@@ -1,0 +1,71 @@
+<noinclude>
+
+</noinclude><includeonly>
+<div id="wikiPreview" style="display: none; padding-bottom: 25px; margin-bottom: 25px; border-bottom: 1px solid #AAAAAA;"></div>
+{{{for template|Personne}}}
+{| class="formtable"
+!  width="300px"|Titre: 
+| {{{field|Civilité|input type=checkboxes|values=Dr, MCA, MCU, PA, PU, PU-PH}}}
+|-
+! Statut: 
+| {{{field|Statut personne|input type=radiobutton|mandatory|default=Visiteur|values=Interne, Médecin, Scientifique, Visiteur|show on select=Interne=>interne;Interne=>interneoumedecin;Médecin=>medecin;Médecin=>interneoumedecin}}}
+|-
+! Spécialité ou profession: {{*}} 
+| {{{field|Spécialité ou profession|input type=combobox|mandatory|values from property=Spécialité ou profession|values=Médecine générale|default=Médecine générale}}}
+|-
+!{{#ifingroup:sysop, U2| Statut additionnel:|}}
+|{{#ifingroup:sysop, U2|{{{field|Statut additionnel personne|input type=checkboxes|values=Tuteur, MSU, Formateur, Modérateur|restricted}}}|}}
+|-
+!{{#ifingroup:sysop| Institution de rattachement: {{*}} |}}
+|{{#ifingroup:sysop|{{{field|Institution de rattachement|input type=dropdown|mandatory|values from property=Institution adhérente}}}|}}
+|-
+!{{#ifingroup:sysop| '''Responsable référent:''' {{*}}|}}
+|{{#ifingroup:sysop|{{{field|Responsable référent|input type=dropdown|values from property=Nom U2|mandatory}}}|}}
+|-
+! Présentation personnelle:
+| {{{field|Présentation|input type=textarea}}}
+|}
+<div id="interne">
+{| class="formtable"
+|-
+! width="300px" |Année de promotion: {{*}}
+| {{{field|Année de promotion|input type=dropdown|default=2021|mandatory|values=2019,2020,2021}}}
+|}
+</div>
+<div id="medecin">
+{| class="formtable"
+|-
+! width="300px" |Thèse d'exercice (année et lieu): {{*}} 
+| {{{field|Année de thèse|input type=text|mandatory}}}
+|}
+</div>
+<div id="interneoumedecin">
+</div>
+{{{end template}}}
+'''Lieux de travail/stage/exercice actuel ou passé(s):'''
+{{{for template|Lieux travail|multiple|add button text=Rajouter un lieu de travail/stage/exercice actuel ou passé}}}
+{| class="formtable"
+! Lieu actuel de stage, d'exercice ou de travail: 
+| {{{field|Lieu de travail|input type=text with autocomplete|values from property=Lieu de travail}}}
+|-
+! Période 
+| {{{field|Période|input type=text with autocomplete|values from property=Période}}}
+|}
+{{{end template}}}
+
+{{{for template|Personne2}}}
+{| class="formtable"
+! width="300px"| Rapports et conflits d'intérêts: {{*}} 
+| {{{field|Rapports et conflits d'intérêts|input type=textarea|mandatory|rows=6|cols=80|maxlength=500}}}<!--
+
+ champs de maintenance: 
+-->{{{field|updatetime|hidden}}}{{{field|updateuser|hidden}}}
+|}
+{{{end template}}}
+__NOEDITSECTION__
+
+'''''Je déclare sur l'honneur l'exactitude des informations données'''''
+
+{{{standard input|save}}} {{{standard input|cancel}}} {{{standard input|watch}}}
+
+</includeonly>

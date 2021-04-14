@@ -1,0 +1,8 @@
+.mgw-hidden{
+  display:none;
+}
+.mgw-captcha{
+  border: 1px solid red;
+  border-radius: 10px;
+  background:#f1e8e8;
+}

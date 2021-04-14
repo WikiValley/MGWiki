@@ -1,0 +1,340 @@
+{
+  "1.35": {
+    "composer": {
+      "mediawiki/vector-skin":"1.32.1",
+      "mediawiki/header-footer": "3.0.1",
+      "mediawiki/page-forms": "4.9.4",
+      "mediawiki/semantic-media-wiki": "3.2.3",
+      "mediawiki/semantic-extra-special-properties": "2.1.0",
+      "mediawiki/semantic-result-formats": "3.2.0",
+      "mediawiki/semantic-cite": "2.1.1"
+    },
+    "git": {
+      "AdminLinks": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/AdminLinks",
+        "branch": "REL1_35"
+      },
+      "Arrays": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Arrays",
+        "branch": "REL1_35"
+      },
+      "CategoryTree": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/CategoryTree",
+        "branch": "REL1_35"
+      },
+      "Cite": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Cite",
+        "branch": "REL1_33"
+      },
+      "Citoid": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Citoid",
+        "branch": "REL1_35"
+      },
+      "CodeEditor": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/CodeEditor",
+        "branch": "REL1_35"
+      },
+      "ConfirmEdit": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/ConfirmEdit",
+        "branch": "REL1_35"
+      },
+      "DynamicPageList": {
+        "url": "https://github.com/Universal-Omega/DynamicPageList3.git",
+        "branch": "REL1_35"
+      },
+      "Echo": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Echo",
+        "branch": "REL1_35"
+      },
+      "Flow": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Flow",
+        "branch": "REL1_35"
+      },
+      "Gadgets": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Gadgets",
+        "branch": "REL1_35"
+      },
+      "ImageMap": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/ImageMap",
+        "branch": "REL1_35"
+      },
+      "InputBox": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/InputBox",
+        "branch": "REL1_35"
+      },
+      "Interwiki": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Interwiki",
+        "branch": "REL1_35"
+      },
+      "LabeledSectionTransclusion": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/LabeledSectionTransclusion",
+        "branch": "REL1_35"
+      },
+      "LinkTarget": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/LinkTarget",
+        "branch": "REL1_35"
+      },
+      "MassMessage": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/MassMessage",
+        "branch": "REL1_35"
+      },
+      "MultimediaViewer": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/MultimediaViewer",
+        "branch": "REL1_35"
+      },
+      "MyVariables": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/MyVariables",
+        "branch": "REL1_35"
+      },
+      "Nuke": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Nuke",
+        "branch": "REL1_35"
+      },
+      "OATHAuth": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/OATHAuth",
+        "branch": "REL1_35"
+      },
+      "PageImages": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/PageImages",
+        "branch": "REL1_35"
+      },
+      "ParserFunctions": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/ParserFunctions",
+        "branch": "REL1_35"
+      },
+      "PdfHandler": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/PdfHandler",
+        "branch": "REL1_35"
+      },
+      "Poem": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Poem",
+        "branch": "REL1_35"
+      },
+      "Renameuser": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Renameuser",
+        "branch": "REL1_35"
+      },
+      "ReplaceText": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/ReplaceText",
+        "branch": "REL1_35"
+      },
+      "Scribunto": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Scribunto",
+        "branch": "REL1_35"
+      },
+      "SecureLinkFixer": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/SecureLinkFixer",
+        "branch": "REL1_35"
+      },
+      "SpamBlacklist": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/SpamBlacklist",
+        "branch": "REL1_35"
+      },
+      "SyntaxHighlight_GeSHi": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/SyntaxHighlight_GeSHi",
+        "branch": "REL1_35"
+      },
+      "TemplateData": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/TemplateData",
+        "branch": "REL1_35"
+      },
+      "TextExtracts": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/TextExtracts",
+        "branch": "REL1_35"
+      },
+      "TitleIcon": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/TitleIcon",
+        "branch": "REL1_35"
+      },
+      "TitleBlacklist": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/TitleBlacklist",
+        "branch": "REL1_35"
+      },
+      "UserFunctions": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/UserFunctions",
+        "branch": "REL1_35"
+      },
+      "UserMerge": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/UserMerge",
+        "branch": "REL1_35"
+      },
+      "VisualEditor": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/VisualEditor",
+        "branch": "REL1_35"
+      },
+      "WikiEditor": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/WikiEditor",
+        "branch": "REL1_35"
+      }
+    }
+  },
+  "1.33": {
+    "composer": {
+        "mediawiki/vector-skin":"1.32.1",
+        "mediawiki/header-footer": "3.0.0",
+    		"mediawiki/page-forms": "4.6",
+        "mediawiki/semantic-media-wiki": "3.0.2",
+        "mediawiki/semantic-extra-special-properties": "2.0.0",
+    		"mediawiki/semantic-result-formats": "3.1.0",
+    		"mediawiki/semantic-cite": "2.1.0"
+    },
+    "git": {
+      "AdminLinks": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/AdminLinks",
+        "branch": "REL1_33"
+      },
+      "Arrays": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Arrays",
+        "branch": "REL1_33"
+      },
+      "CategoryTree": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/CategoryTree",
+        "branch": "REL1_33"
+      },
+      "Cite": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Cite",
+        "branch": "REL1_33"
+      },
+      "Citoid": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Citoid",
+        "branch": "REL1_33"
+      },
+      "CodeEditor": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/CodeEditor",
+        "branch": "REL1_33"
+      },
+      "ConfirmEdit": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/ConfirmEdit",
+        "branch": "REL1_33"
+      },
+      "DynamicPageList": {
+        "url": "https://github.com/Universal-Omega/DynamicPageList3.git",
+        "branch": "REL1_35"
+      },
+      "Echo": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Echo",
+        "branch": "REL1_33"
+      },
+      "Flow": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Flow",
+        "branch": "REL1_33"
+      },
+      "Gadgets": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Gadgets",
+        "branch": "REL1_33"
+      },
+      "InputBox": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/InputBox",
+        "branch": "REL1_33"
+      },
+      "ImageMap": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/ImageMap",
+        "branch": "REL1_33"
+      },
+      "Interwiki": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Interwiki",
+        "branch": "REL1_33"
+      },
+      "LabeledSectionTransclusion": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/LabeledSectionTransclusion",
+        "branch": "REL1_33"
+      },
+      "LinkTarget": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/LinkTarget",
+        "branch": "REL1_33"
+      },
+      "MassMessage": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/MassMessage",
+        "branch": "REL1_33"
+      },
+      "MultimediaViewer": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/MultimediaViewer",
+        "branch": "REL1_33"
+      },
+      "MyVariables": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/MyVariables",
+        "branch": "REL1_33"
+      },
+      "Nuke": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Nuke",
+        "branch": "REL1_33"
+      },
+      "OATHAuth": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/OATHAuth",
+        "branch": "REL1_33"
+      },
+      "PageImages": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/PageImages",
+        "branch": "REL1_33"
+      },
+      "ParserFunctions": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/ParserFunctions",
+        "branch": "REL1_33"
+      },
+      "PdfHandler": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/PdfHandler",
+        "branch": "REL1_33"
+      },
+      "Poem": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Poem",
+        "branch": "REL1_33"
+      },
+      "Renameuser": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Renameuser",
+        "branch": "REL1_33"
+      },
+      "ReplaceText": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/ReplaceText",
+        "branch": "REL1_33"
+      },
+      "Scribunto": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Scribunto",
+        "branch": "REL1_33"
+      },
+      "SecureLinkFixer": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/SecureLinkFixer",
+        "branch": "REL1_33"
+      },
+      "SpamBlacklist": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/SpamBlacklist",
+        "branch": "REL1_33"
+      },
+      "SyntaxHighlight_GeSHi": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/SyntaxHighlight_GeSHi",
+        "branch": "REL1_33"
+      },
+      "TemplateData": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/TemplateData",
+        "branch": "REL1_33"
+      },
+      "TextExtracts": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/TextExtracts",
+        "branch": "REL1_33"
+      },
+      "TitleIcon": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/TitleIcon",
+        "branch": "REL1_33"
+      },
+      "TitleBlacklist": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/TitleBlacklist",
+        "branch": "REL1_33"
+      },
+      "UserFunctions": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/UserFunctions",
+        "branch": "REL1_33"
+      },
+      "UserMerge": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/UserMerge",
+        "branch": "REL1_33"
+      },
+      "VisualEditor": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/VisualEditor",
+        "branch": "REL1_33"
+      },
+      "WikiEditor": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/WikiEditor",
+        "branch": "REL1_33"
+      }
+    }
+  }
+}

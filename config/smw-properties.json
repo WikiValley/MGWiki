@@ -1,0 +1,12 @@
+{
+  "user": {
+    "referent": "Responsable référent",
+    "institution": "Institution de rattachement"
+  },
+  "groupe": {
+    "referent": "Tuteur ou modérateur"
+  },
+  "institution": {
+    "referent": "Référent MGWiki"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "stringvars": [
+    "utilisateur_nom",
+    "utilisateur_prenom",
+    "institution_nom",
+    "archetype_nom",
+    "groupe_nom",
+    "page_title",
+    "user_name",
+    "user_email",
+    "task_label",
+    "task_data",
+    "task_extra"
+  ],
+  "mgwlevels": {
+    "0": "U0",
+    "1": "U1",
+    "2": "U2",
+    "3": "U3",
+    "4": "sysop"
+  },
+  "institution-type": {
+    "1": "Institution adhérente",
+    "2": "Institution partenaire"
+  },
+  "archetype-default-name": {
+    "1": "utilisateur",
+    "2": "institution"
+  },
+  "mgw-data-parser": {
+    "archetype": {
+      "fields": [ "id", "nom", "admin_level", "user_level", "default_duration", "default_name" ]
+    },
+    "institution": {
+      "fields": [ "id", "nom", "user_id", "adherente", "archetypes" ]
+    }
+  }
+}

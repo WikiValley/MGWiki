@@ -1,0 +1,98 @@
+/* EDIT */
+#mgw-massmail-edit-body {
+	border:solid 1px;
+	padding: 5px 10px;
+	max-width: 50em;
+}
+/* SEND */
+#mgw-massmail-buttons {
+	display:flex;
+	justify-content:center;
+}
+#mgw-massmail-buttons div {
+	margin:10px;
+}
+#mgw-massmail-feedback {
+	display:flex;
+}
+
+/* DETAILS */
+.mgw-massmail-head {
+	display:flex;
+	padding:5px;
+	max-width: 50em;
+}
+.mgw-massmail-head-quiet-task {
+	justify-content:flex-end;
+}
+.mgw-massmail-head-waiting-task {
+	justify-content:center;
+	background-color: #fbf4e7;
+	border-radius: 10px;
+	margin-bottom:20px;
+}
+.mgw-massmail-head-info-waiting-task {
+	font-style: italic;
+	font-size: small;
+}
+.mgw-massmail-head-info {
+	margin:5px;
+}
+.mgw-massmail-head-btn {
+	margin-left:10px;
+}
+.mgw-massmail-head-btn-quiet-task {
+	float:right;
+}
+#mgw-massmail-details-head {
+	width:90%;
+}
+#mgw-massmail-details-info {
+	font-style: italic;
+	margin-right: 10px;
+	margin-top:5px;
+}
+.mgw-massmail-details-body {
+	border:solid 1px;
+	width:90%;
+	max-width:50em;
+	padding-left:10px;
+}
+.mgw-massmail-details-body-details {
+	width:90%;
+	padding:5px 10px;
+	background-color: #fff;
+	/*border-radius: 10px;*/
+}
+#mgw-massmail-send-info {
+	min-height: 80px;
+}
+#mgw-massmail-feedback div{
+	margin-right:20px;
+}
+
+/* HISTORY */
+.mgw-massmail-history-recall {
+	margin:5px;
+}
+.mgw-massmail-history-details {
+	color:blue;
+	cursor:pointer;
+	margin:5px;
+}
+.mgw-massmail-history-delete {
+	color:red;
+	cursor:pointer;
+	margin:5px;
+}
+.mgw-massmail-fieldset {
+	max-height: 400px;
+	overflow: auto;
+}
+.mgw-massmail-fieldset li {
+	list-style: none;
+	margin-top: 10px;
+}
+.mgw-massmail-history-details-row {
+	padding-left:40px;
+}

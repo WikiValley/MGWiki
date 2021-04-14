@@ -1,0 +1,47 @@
+<noinclude>
+</noinclude><includeonly>
+<div id="wikiPreview" style="display: none; padding-bottom: 25px; margin-bottom: 25px; border-bottom: 1px solid #AAAAAA;"></div>
+{{{for template|Groupe}}}
+{| class="formtable"
+! ''Archiver ce groupe:''
+| {{{field|Archivé|input type=checkbox}}}
+|-
+! Description:
+| {{{field|Type de groupe|hidden}}}{{{field|Description|input type=textarea}}}
+|-
+! Institution de rattachement:  {{*}}
+| {{{field|Institution de rattachement|input type=dropdown|values from property=Institution adhérente|default={{#show:Utilisateur:{{CURRENTUSER}}|?Institution de rattachement#-}}|mandatory}}}
+|-
+! Responsable: {{*}}
+| {{{field|Tuteur ou modérateur|input type=dropdown|values from property=Nom U2|default=current user|mandatory}}}
+|-
+|-
+! Ajouter des membres déjà inscrits : 
+| {{{field|Membres|input type=tokens|placeholder=Entrer le nom des utilisateurs existants|rows=5|property=Utilisateur|values from namespace=Utilisateur}}}
+|}
+{{{end template}}}
+
+'''Inviter de nouveaux membres''' (création de nouveaux comptes):
+{{{for template|Participant Groupe|multiple|add button text=Rajouter un(e) participant(e)}}}
+{| class="formtable"
+|'''Nom'''
+|{{{field|Nom|mandatory|input type=text|size=30}}}
+|-
+|'''Prénom'''
+|{{{field|Prénom|mandatory|input type=text|size=30}}}
+|-
+!E-mail
+|{{{field|E-mail|mandatory|input type=email|size=50}}}
+|-
+!Statut
+|{{{field|Statut personne|input type=radiobutton|mandatory|default=Médecin|values=Visiteur,Interne, Médecin, Scientifique}}}
+|}
+{{{end template}}}
+
+{{{for template|Groupe2}}}
+{{{end template}}}
+
+{{{standard input|watch}}}
+
+{{{standard input|save}}} {{{standard input|cancel}}}
+</includeonly>
