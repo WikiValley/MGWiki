@@ -61,16 +61,13 @@ trait MgwBackup {
     }
 
     # 1: suppression
-    if ( ! $newDB ) {
-      $shell_cmd = "mysqladmin --force -u {$wgDBuser} drop {$DBname}";
-      $shell_out = '';
-       // usage de "MYSQL_PWD=" pour sécuriser l'historique des commandes
-      $shell = $this->shell( "MYSQL_PWD=\"{$wgDBpassword}\" {$shell_cmd}", $shell_out );
-      echo $shell_out . "\n\n";
-      if ( $shell != 0 ) {
-        echo "échec de la commande '$shell_cmd' :\n";
-        return "Veuillez effectuer la suppression manuellement.\n";
-      }
+    $shell_cmd = "mysqladmin --force -u {$wgDBuser} drop {$DBname}";
+    $shell_out = '';
+     // usage de "MYSQL_PWD=" pour sécuriser l'historique des commandes
+    $shell = $this->shell( "MYSQL_PWD=\"{$wgDBpassword}\" {$shell_cmd}", $shell_out );
+    echo $shell_out . "\n\n";
+    if ( $shell != 0 ) {
+      echo "échec de la commande '$shell_cmd' (base probablement inexistante)\n";
     }
 
     # 2: (re-)création de la base
@@ -95,17 +92,21 @@ trait MgwBackup {
     return "Sauvegarde de la DB restaurée dans $DBname avec succès";
   }
 
-  private function backup_files_restore( $copy_dir, $directory, $sub = '' ) {
+  private function backup_files_restore( $copy_dir, $directory, $newPATH = '', $sub = '' ) {
     global $IP;
 
     // vérification du répertoire de sauvegarde
     if ( !$this->check_backup_files( $copy_dir, $directory, false ) )
       return "annulation";
     $directory = $directory . '/' . $copy_dir;
+    $RP = ( $newPATH ) ? $newPATH : $IP;
 
     // restauration des fichiers
     if ( ( !$sub || $sub = 'LocalSettings' ) && file_exists( $directory . '/LocalSettings.php' ) ) {
-      $shell_cmd = "rm {$IP}/LocalSettings.php && cp {$directory}/LocalSettings.php {$IP}/LocalSettings.php";
+      if ( file_exists( $RP . '/LocalSettings.php') ) {
+        $this->shell_dry( "rm {$RP}/LocalSettings.php" );
+      }
+      $shell_cmd = "cp {$directory}/LocalSettings.php {$RP}/LocalSettings.php";
       $shell_out = '';
       $shell = $this->shell( $shell_cmd, $shell_out );
       echo $shell_out . "\n";
@@ -118,7 +119,10 @@ trait MgwBackup {
       echo "aucun fichier LocalSettings.php dans la sauvegarde: le fichier actuel est inchangé.\n";
 
     if ( !$sub && file_exists( $directory . '/images' ) ) {
-      $shell_cmd = "rm -rf {$IP}/images && cp -r {$directory}/images {$IP}/images " .
+      if ( file_exists( $RP . '/images') ) {
+        $this->shell_dry( "rm -rf {$RP}/images" );
+      }
+      $shell_cmd = "cp -r {$directory}/images {$RP}/images " .
         "&& chown -R www-data:www-data {$IP}/images";
       $shell_out = '';
       $shell = $this->shell( $shell_cmd, $shell_out );
@@ -132,7 +136,10 @@ trait MgwBackup {
       echo "aucun dossier images/ dans la sauvegarde: le dossier actuel est inchangé.\n";
 
     if ( !$sub && file_exists( $directory . '/skins/MGWiki' ) ) {
-      $shell_cmd = "rm -rf {$IP}/skins/MGWiki && cp -r {$directory}/skins/MGWiki {$IP}/skins/MGWiki ";
+      if ( file_exists( $RP . '/skins/MGWiki') ) {
+        $this->shell_dry( "rm -rf {$RP}/skins/MGWiki" );
+      }
+      $shell_cmd = "cp -r {$directory}/skins/MGWiki {$RP}/skins/MGWiki ";
       $shell_out = '';
       $shell = $this->shell( $shell_cmd, $shell_out );
       echo $shell_out . "\n";

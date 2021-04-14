@@ -261,6 +261,7 @@ class MgwUpdater extends Maintenance {
 	private function do_backup ( $module = null, $version = null ) {
 
 	 	global $wgMGW_backup_dir;
+		global $wgDBname;
 
 		if ( !$module ) $module = ( $this->getOption( "save" ) ) ? 'save' : null;
 		if ( !$module ) $module = ( $this->getOption( "restore" ) ) ? 'restore' : null;
@@ -319,10 +320,12 @@ class MgwUpdater extends Maintenance {
 				$directory = $directory . '/' . $backup;
 			else return "annulation";
 
+			$newDB = ( $version ) ? 'MW-' . $version : '';
+			$newPATH = ( $version ) ? '/var/www/html/' . $version : '';
+
 			# DB
 	 		if ( $all || $this->getOption( "db" ) ) {
 				if ( !$sql_file ) $sql_file = $backup . '.sql';
-				$newDB = ( $version ) ? 'MW-' . $version : '';
 		 		echo $this->backup_db_restore( $sql_file, $directory, $newDB ) . "\n";
 			}
 			# FILES
@@ -334,6 +337,12 @@ class MgwUpdater extends Maintenance {
 				if ( !$copy_dir )	$copy_dir = $backup . '.copy';
 	 			echo $this->backup_files_restore( $copy_dir, $directory, $newPATH, 'LocalSettings' ) . "\n";
 			}
+			# màj LocalSettings si nouvelle db
+			if ( $version ) {
+				$localSettings = file_get_contents( $newPATH . '/LocalSettings.php' );
+				$localSettings = str_replace( '$wgDBname = "' . $wgDBname . '";', '$wgDBname = "' . $newDB . '";', $localSettings );
+				file_put_contents( $newPATH . '/LocalSettings.php', $localSettings );
+			}
 	 		return "... fin de la restauration\n";
 	 	}
 
@@ -344,9 +353,9 @@ class MgwUpdater extends Maintenance {
 	 	}
 	}
 
-	private function do_check_hooks() {
+	private function do_check_hooks( $version = '' ) {
 		echo "Vérification des Hooks spécifiques à MGWiki ...\n";
-		return $this->checkHooks();
+		return $this->checkHooks( $version );
 	}
 
 	private function do_install() {
