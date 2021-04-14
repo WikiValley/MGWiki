@@ -30,7 +30,7 @@ use MediaWiki\Extension\MGWiki\Modules\Adepul\Adepul;
  *
  * @ingroup API
  */
-class ApiADEPULGroupMember extends ApiBase {
+class ApiADEPULGroupMember extends \ApiBase {
 	public function execute() {
 		global $wgMGWikiSecretKeyADEPUL, $wgMGWikiUserProperties;
 		$params = $this->extractRequestParams();

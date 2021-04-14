@@ -50,9 +50,10 @@ trait MgwBackup {
         "  {$directory}/{$copy_dir}\n\n";
   }
 
-  private function backup_db_restore( $sql_file, $directory ) {
+  private function backup_db_restore( $sql_file, $directory, $newDB = '' ) {
 
     global $wgDBuser, $wgDBpassword, $wgDBname;
+    $DBname = ( $newDB ) ? $newDB : $wgDBname;
 
     # on vérifie le fichier de destination
     if ( ! $this->check_backup_sql( $sql_file, $directory, false ) ) {
@@ -60,35 +61,38 @@ trait MgwBackup {
     }
 
     # 1: suppression
-    $shell_cmd = "mysqladmin --force -u {$wgDBuser} drop {$wgDBname}";
+    if ( ! $newDB ) {
+      $shell_cmd = "mysqladmin --force -u {$wgDBuser} drop {$DBname}";
+      $shell_out = '';
+       // usage de "MYSQL_PWD=" pour sécuriser l'historique des commandes
+      $shell = $this->shell( "MYSQL_PWD=\"{$wgDBpassword}\" {$shell_cmd}", $shell_out );
+      echo $shell_out . "\n\n";
+      if ( $shell != 0 ) {
+        echo "échec de la commande '$shell_cmd' :\n";
+        return "Veuillez effectuer la suppression manuellement.\n";
+      }
+    }
+
+    # 2: (re-)création de la base
+    $shell_cmd = "mysqladmin -u {$wgDBuser} create {$DBname}";
     $shell_out = '';
-     // usage de "MYSQL_PWD=" pour sécuriser l'historique des commandes
     $shell = $this->shell( "MYSQL_PWD=\"{$wgDBpassword}\" {$shell_cmd}", $shell_out );
     echo $shell_out . "\n\n";
     if ( $shell != 0 ) {
       echo "échec de la commande '$shell_cmd' :\n";
-      return "Veuillez effectuer la suppression manuellement.\n";
+      $mess = ( $newDB ) ? "La base {$DBname} existe probablement déjà.\n" : "Veuillez effectuer la re-création de la base manuellement.\n";
+      return $mess;
     }
 
-    # 2: re-création de la base
-    $shell_cmd = "mysqladmin -u {$wgDBuser} create {$wgDBname}";
-    $shell_out = '';
-    $shell = $this->shell( "MYSQL_PWD=\"{$wgDBpassword}\" {$shell_cmd}", $shell_out );
-    echo $shell_out . "\n\n";
-    if ( $shell != 0 ) {
-      echo "échec de la commande '$shell_cmd' :\n";
-      return "Veuillez effectuer la re-création de la base manuellement.\n";
-    }
-
-    # 3: ré-implémentation de la sauvegarde
-    $shell_cmd = "mysql -u {$wgDBuser} {$wgDBname} < {$directory}/{$sql_file}";
+    # 3: implémentation de la sauvegarde
+    $shell_cmd = "mysql -u {$wgDBuser} {$DBname} < {$directory}/{$sql_file}";
     $shell = $this->shell( "MYSQL_PWD=\"{$wgDBpassword}\" {$shell_cmd}", $shell_out );
     echo $shell_out . "\n\n";
     if ( $shell != 0 ) {
       echo "échec de la commande '$shell_cmd' :\n";
       return "Veuillez effectuer la ré-implémentation de la sauvegarde dans la base manuellement.\n";
     }
-    return "Sauvegarde de la DB restaurée avec succès";
+    return "Sauvegarde de la DB restaurée dans $DBname avec succès";
   }
 
   private function backup_files_restore( $copy_dir, $directory, $sub = '' ) {
@@ -110,7 +114,7 @@ trait MgwBackup {
       }
       else echo "copie de LocalSettings.php: OK\n";
     }
-    elseif ( !file_exists( $directory . '/LocalSettings.php' ) ) 
+    elseif ( !file_exists( $directory . '/LocalSettings.php' ) )
       echo "aucun fichier LocalSettings.php dans la sauvegarde: le fichier actuel est inchangé.\n";
 
     if ( !$sub && file_exists( $directory . '/images' ) ) {

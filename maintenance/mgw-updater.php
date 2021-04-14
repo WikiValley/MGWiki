@@ -3,13 +3,16 @@
 /**
  * Programme pour automatiser les màj MGWiki
  *
- * MGWiki V 0.2:
- * - dépannage de la mécanique de création des utilisateurs cassée
- * - début de réogranisation de l'extension en vue de MGWiki V 1.0
+ * MGWiki V 1.0
  *
- * Actions à réaliser DANS L'ORDRE:
- ** php /extensions/MGWiki/maintenance/mgw-updater.php refresh_pages
- ** php /maintenance/update.php
+ * Actions:
+ *   backup --save|--restore|--purge (sauvegarde DB + fichiers)
+ *	 check_hooks (vérification +/- création des hooks dans mediawiki core)
+ *   refresh_pages (màj ou création des pages depuis le répertoire /Refreshpages/ )
+ *   rename_pages (renomme les pages selon la liste établie dans /Refreshpages/.renamepages.txt)
+ *   install --version=<version> (installe mediawiki sous le répertoire /var/www/html/<version> )
+ *   import --version=<version> (importe une sauveg)
+ *   list_groupes (établit la liste des groupes existants => maintenance-list_groupes-report.json)
  */
 
 global $IP;
@@ -25,11 +28,13 @@ $MGW_IP = $IP . '/extensions/MGWiki';
 // externalisation des fonctions principales:
 require_once ( __DIR__ . "/Updater/MgwBackup.php");
 require_once ( __DIR__ . "/Updater/MgwCheckHooks.php");
+require_once ( __DIR__ . "/Updater/MgwInstall.php");
 
 class MgwUpdater extends Maintenance {
 
 	use MgwBackup;
 	use MgwCheckHooks;
+	use MgwInstall;
 
   private $user;
 	private $summary;
@@ -49,16 +54,17 @@ class MgwUpdater extends Maintenance {
 		/* BACKUP */
 		$this->addOption( "all",
 			"Option utilisée dans différents contextes (backup --purge, backup --save, backup --restore)", false, false, 'a' );
-		$this->addOption( "db", "db uniquement", false, false, 'db' );
-		$this->addOption( "files", "fichiers uniquement", false, false, 'sf' );
-		$this->addOption( "LocalSettings", "LocalSettings uniquement", false, false, 'sls' );
-		$this->addOption( "purge", "Tous les dossiers de sauvegarde seront supprimés sauf le dernier", false, false, 'P' );
-		$this->addOption( "save", "Sauvegarde", false, false, 'S' );
-		$this->addOption( "restore", "Restauration d'une archive", false, false, 'R' );
-		$this->addOption( "backup_dir", "Full backup path.", false, true, 'Bd' );
-		$this->addOption( "backup_name", "Backup name.", false, true, 'Bn' );
-		$this->addOption( "backup_sql", "SQL filename.", false, true, 'Bf' );
-		$this->addOption( "backup_copy", "Name of directory for files copy.", false, true, 'Bc' );
+		$this->addOption( "db", "db uniquement", false, false, 'B' );
+		$this->addOption( "files", "fichiers uniquement", false, false, 'F' );
+		$this->addOption( "LocalSettings", "LocalSettings uniquement", false, false, 'L' );
+		$this->addOption( "purge", "Tous les dossiers de sauvegarde seront supprimés sauf le dernier", false, false, 'p' );
+		$this->addOption( "save", "Sauvegarde", false, false, 's' );
+		$this->addOption( "restore", "Restauration d'une archive", false, false, 'r' );
+		$this->addOption( "version", "Mediawiki version number", false, true, 'V' );
+		$this->addOption( "backup_dir", "Full backup path.", false, true, 'D' );
+		$this->addOption( "backup_name", "Backup name.", false, true, 'N' );
+		$this->addOption( "backup_sql", "SQL filename.", false, true, 'Q' );
+		$this->addOption( "backup_copy", "Name of directory for files copy.", false, true, 'C' );
 	}
 
 	private function getTarget() {
@@ -252,7 +258,7 @@ class MgwUpdater extends Maintenance {
 	/**
 	 * @param string $module 'save'|'restore'|'purge'
 	 */
-	private function do_backup ( $module = null ) {
+	private function do_backup ( $module = null, $version = null ) {
 
 	 	global $wgMGW_backup_dir;
 
@@ -316,16 +322,17 @@ class MgwUpdater extends Maintenance {
 			# DB
 	 		if ( $all || $this->getOption( "db" ) ) {
 				if ( !$sql_file ) $sql_file = $backup . '.sql';
-		 		echo $this->backup_db_restore( $sql_file, $directory ) . "\n";
+				$newDB = ( $version ) ? 'MW-' . $version : '';
+		 		echo $this->backup_db_restore( $sql_file, $directory, $newDB ) . "\n";
 			}
 			# FILES
 	 		if ( $all || $this->getOption( "files" ) ) {
 				if ( !$copy_dir )	$copy_dir = $backup . '.copy';
-	 			echo $this->backup_files_restore( $copy_dir, $directory ) . "\n";
+	 			echo $this->backup_files_restore( $copy_dir, $directory, $newPATH ) . "\n";
 			}
 	 		if ( $this->getOption( "LocalSettings" ) ) {
 				if ( !$copy_dir )	$copy_dir = $backup . '.copy';
-	 			echo $this->backup_files_restore( $copy_dir, $directory, 'LocalSettings' ) . "\n";
+	 			echo $this->backup_files_restore( $copy_dir, $directory, $newPATH, 'LocalSettings' ) . "\n";
 			}
 	 		return "... fin de la restauration\n";
 	 	}
@@ -340,6 +347,16 @@ class MgwUpdater extends Maintenance {
 	private function do_check_hooks() {
 		echo "Vérification des Hooks spécifiques à MGWiki ...\n";
 		return $this->checkHooks();
+	}
+
+	private function do_install() {
+	  if ( ! $this->getOption( "version" ) ) echo "l'argument --version doit être précisé";
+		return $this->install_version( $this->getOption( "version" ) );
+	}
+
+	private function do_import() {
+	  if ( ! $this->getOption( "version" ) ) echo "l'argument --version doit être précisé";
+		return $this->import_version( $this->getOption( "version" ) );
 	}
 
 	private function shell( $cmd, &$console_out, $string = true ) {

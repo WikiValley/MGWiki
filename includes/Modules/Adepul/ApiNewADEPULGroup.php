@@ -29,7 +29,7 @@ use MediaWiki\Revision\RevisionRecord;
  *
  * @ingroup API
  */
-class ApiNewADEPULGroup extends ApiBase {
+class ApiNewADEPULGroup extends \ApiBase {
 	public function execute() {
 		global $wgMGWikiSecretKeyADEPUL;
 		$params = $this->extractRequestParams();

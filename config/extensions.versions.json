@@ -1,0 +1,53 @@
+{
+  "1.35": {
+    "composer": {
+      "mediawiki/header-footer": "3.0.1",
+      "mediawiki/page-forms": "4.9.4",
+      "mediawiki/semantic-media-wiki": "3.2.3",
+      "mediawiki/semantic-extra-special-properties": "2.1.0",
+      "mediawiki/semantic-result-formats": "3.2.0",
+      "mediawiki/semantic-cite": "2.1.1"
+
+    },
+    "git": {
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/AdminLinks": "REL1_35",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/Arrays": "REL1_35",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/Citoid": "REL1_35",
+      "https://github.com/Universal-Omega/DynamicPageList3.git": "REL1_35",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/Echo": "REL1_35",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/Flow": "REL1_35",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/LabeledSectionTransclusion": "REL1_35",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/LinkTarget": "REL1_35",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/MassMessage": "REL1_35",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/MyVariables": "REL1_35",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/TitleIcon": "REL1_35",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/UserFunctions": "REL1_35",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/UserMerge": "REL1_35"
+    }
+  },
+  "1.33": {
+    "composer": {
+        "mediawiki/header-footer": "3.0.0",
+    		"mediawiki/page-forms": "4.6",
+        "mediawiki/semantic-media-wiki": "3.0.2",
+        "mediawiki/semantic-extra-special-properties": "2.0.0",
+    		"mediawiki/semantic-result-formats": "3.1.0",
+    		"mediawiki/semantic-cite": "2.1.0"
+    },
+    "git": {
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/AdminLinks": "REL1_33",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/Arrays": "REL1_33",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/Citoid": "REL1_33",
+      "https://github.com/Universal-Omega/DynamicPageList3.git": "REL1_35",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/Echo": "REL1_33",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/Flow": "REL1_33",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/LabeledSectionTransclusion": "REL1_33",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/LinkTarget": "REL1_33",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/MassMessage": "REL1_33",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/MyVariables": "REL1_33",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/TitleIcon": "REL1_33",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/UserFunctions": "REL1_33",
+      "https://gerrit.wikimedia.org/r/mediawiki/extensions/UserMerge": "REL1_33"
+    }
+  }
+}
