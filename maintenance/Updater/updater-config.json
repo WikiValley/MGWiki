@@ -85,7 +85,7 @@
       "require_once \"$IP/extensions/Arrays/Arrays.php\"": "wfLoadExtension('Arrays')",
       "require_once \"$IP/extensions/LinkTarget/LinkTarget.php\"": "wfLoadExtension('LinkTarget')",
       "wfLoadExtension( 'DynamicPageList' )": "wfLoadExtension( 'DynamicPageList3' )",
-      "wfLoadExtension( 'SemanticExtraSpecialProperties' );": "wfLoadExtension( 'SemanticExtraSpecialProperties' );\nglobal $wgDisableCounters;\nif ( !isset($wgDisableCounters) ) $wgDisableCounters = false;"
+      "wfLoadExtension( 'SemanticExtraSpecialProperties' );": "global $wgDisableCounters;\nif ( !isset($wgDisableCounters) ) $wgDisableCounters = false;\nwfLoadExtension( 'SemanticExtraSpecialProperties' );"
     },
     "maintenance-scripts": {
       "extensions/SemanticMediaWiki/maintenance": "php updateEntityCountMap.php"
