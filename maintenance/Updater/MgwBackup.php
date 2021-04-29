@@ -123,7 +123,7 @@ trait MgwBackup {
         $this->shell_dry( "rm -rf {$RP}/images" );
       }
       $shell_cmd = "cp -r {$directory}/images {$RP}/images " .
-        "&& chown -R www-data:www-data {$IP}/images";
+        "&& chown -R www-data:www-data {$RP}/images";
       $shell_out = '';
       $shell = $this->shell( $shell_cmd, $shell_out );
       echo $shell_out . "\n";

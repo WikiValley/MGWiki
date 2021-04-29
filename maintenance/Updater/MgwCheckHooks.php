@@ -9,11 +9,13 @@
 
 trait MgwCheckHooks {
 
-  private function checkHooks() {
+  private function checkHooks( $path = '' ) {
     global $IP;
     global $MGW_IP;
-    $info = json_decode( file_get_contents( $MGW_IP . '/extension.json' ), true );
-    $customHooks = $this->config('custom-hooks');
+    $ip = ( $path ) ? $path : $IP;
+    $mgw_ip = ( $path ) ? $path . "/extensions/MGWiki" : $MGW_IP;
+    $info = json_decode( file_get_contents( $mgw_ip . '/extension.json' ), true );
+    $customHooks = $this->config[$this->version]['custom-hooks'];
 
     $report = fopen('maintenance-report.txt', 'a');
     fputs( $report, "\n
@@ -23,11 +25,14 @@ CheckHooks - " . date('Y-m-d H:i:s') . "
 
     foreach ( $info['Hooks'] as $key => $value ) {
       $shell =  ' && stdbuf -oL grep -r -n -E --exclude-dir=MGWiki "Hooks::run(WithoutAbort)?\( \'' . $key . '\'" | head -n1';
+      $shell2 = ' && stdbuf -oL grep -r -n -E --exclude-dir=MGWiki "\->on'.ucfirst($key).'" | head -n1';
       $grep = 2;
 
       # on vérifie la présence des Hooks dans les fichiers du programme
-      foreach ( $this->config('screen-hooks') as $dir ) {
-        $grep = shell_exec( 'cd ' . $IP . '/' .$dir . $shell );
+      foreach ( $this->config[$this->version]['screen-hooks'] as $dir ) {
+        $grep = shell_exec( 'cd ' . $ip . '/' .$dir . $shell );
+        if ( $grep ) break;
+        $grep = shell_exec( 'cd ' . $ip . '/' .$dir . $shell2 );
         if ( $grep ) break;
       }
       # si absent: on recherche l'existence d'un customHook, on l'insère si nécessaire
@@ -60,14 +65,14 @@ return '';
   # @param array $hook
   # @return bool
   private function addHook( $hook ) {
-    global $IP;
-    $grep = shell_exec( 'cd ' . $IP . ' && grep -r -n -E "' . $hook[ 'fileIdentifier' ] . '"' );
+    global $ip;
+    $grep = shell_exec( 'cd ' . $ip . ' && grep -r -n -E "' . $hook[ 'fileIdentifier' ] . '"' );
     if ( is_null( $grep ) ) {
       $mess = ' : ECHEC A L\'INSERTION (hook customisé)  : occurence "' . $hook[ 'fileIdentifier' ] . '" introuvable dans les fichiers';
     }
     else {
       $grep = explode( ':', $grep );
-      $file = $IP . '/' . $grep[0];
+      $file = $ip . '/' . $grep[0];
       $code = file_get_contents( $file );
       $ret = substr_count( $code, $hook['stringIdentifier'] );
       switch ( $ret ) {

@@ -39,11 +39,14 @@ class MgwUpdater extends Maintenance {
   private $user;
 	private $summary;
   private $target;
+	private $config;
+	private $mw_version;
 
 	public function __construct() {
 		parent::__construct();
 		$this->mDescription = "Programme d'automatisation des màj de MGWiki";
 		$this->summary = "Mise à jour MGWiki 1.0";
+		$this->config = json_decode( file_get_contents('Updater/updater-config.json'), true );
 
 		$this->addDescription( file_get_contents( 'mgw-updater.description.txt' )	);
 
@@ -81,6 +84,15 @@ class MgwUpdater extends Maintenance {
 	public function execute() {
     $this->user = User::newFromId( 1 );
 		$this->target = $this->getTarget();
+		if (!getenv( "MW_VERSION" )){
+			// mediawiki < 1.35
+			global $wgVersion;
+			$version = $wgVersion;
+		}
+		else {
+			$version = getenv( "MW_VERSION" );
+		}
+		$this->mw_version = ( $this->getOption( "version" ) ) ? $this->getOption( "version" ) : $version ;
     $done = $this->{'do_'.$this->target[0]}();
     echo $done . "\n";
 	}
@@ -320,7 +332,7 @@ class MgwUpdater extends Maintenance {
 				$directory = $directory . '/' . $backup;
 			else return "annulation";
 
-			$newDB = ( $version ) ? 'MW-' . $version : '';
+			$newDB = ( $version ) ? 'mediawiki_' . ( str_replace( '.', '_', $version ) ) : '';
 			$newPATH = ( $version ) ? '/var/www/html/' . $version : '';
 
 			# DB
@@ -360,7 +372,7 @@ class MgwUpdater extends Maintenance {
 
 	private function do_install() {
 	  if ( ! $this->getOption( "version" ) ) echo "l'argument --version doit être précisé";
-		return $this->install_version( $this->getOption( "version" ) );
+		return $this->install_mediawiki();
 	}
 
 	private function do_import() {
@@ -382,12 +394,6 @@ class MgwUpdater extends Maintenance {
 		exec( $cmd, $console_out, $result_code );
 		return $result_code;
 	}
-
-  private function config( $module, $item = '' ) {
-    $json = json_decode( file_get_contents( __DIR__ . '/Updater/updater-config.json' ), true );
-    if ( $item ) return $json[$module][$item];
-    return $json[$module];
-  }
 
 	private function do_test() {
 		$shell_out = '';
