@@ -38,7 +38,7 @@ CheckHooks - " . date('Y-m-d H:i:s') . "
       # si absent: on recherche l'existence d'un customHook, on l'insère si nécessaire
       if ( !$grep ) {
          if ( array_key_exists( $key, $customHooks ) ) {
-           $add = $this->addHook( $customHooks[$key] );
+           $add = $this->addHook( $customHooks[$key], $ip );
            fputs($report, $key . $add . "\n");
            echo $key . $add . "\n";
          }
@@ -64,15 +64,14 @@ return '';
   # insère le hook customisé dans MediaWiki-core
   # @param array $hook
   # @return bool
-  private function addHook( $hook ) {
-    global $ip;
-    $grep = shell_exec( 'cd ' . $ip . ' && grep -r -n -E "' . $hook[ 'fileIdentifier' ] . '"' );
+  private function addHook( $hook, $path ) {
+    $grep = shell_exec( 'cd ' . $path . ' && grep -r -n -E "' . $hook[ 'fileIdentifier' ] . '"' );
     if ( is_null( $grep ) ) {
       $mess = ' : ECHEC A L\'INSERTION (hook customisé)  : occurence "' . $hook[ 'fileIdentifier' ] . '" introuvable dans les fichiers';
     }
     else {
       $grep = explode( ':', $grep );
-      $file = $ip . '/' . $grep[0];
+      $file = $path . '/' . $grep[0];
       $code = file_get_contents( $file );
       $ret = substr_count( $code, $hook['stringIdentifier'] );
       switch ( $ret ) {
