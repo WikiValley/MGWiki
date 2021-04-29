@@ -87,7 +87,7 @@ class MgwUpdater extends Maintenance {
 		if (!getenv( "MW_VERSION" )){
 			// mediawiki < 1.35
 			global $wgVersion;
-			$version = $wgVersion;
+			$version = substr($wgVersion,0,4);
 		}
 		else {
 			$version = getenv( "MW_VERSION" );
