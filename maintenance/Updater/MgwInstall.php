@@ -14,7 +14,8 @@ trait MgwInstall {
     $rel = 'REL' . str_replace('.','_',$version);
     if ( !file_exists('/var/www/html/' . $version ) ) {
       $tar_url = $this->config[$version]['mediawiki'];
-      $tar = end( explode('/', $tar_url ) );
+      $temp = explode('/', $tar_url );
+      $tar = end( $temp );
       $dir = str_replace( '.tar.gz', '', $tar );
       $cmd = "cd /var/www/html && wget $tar_url && tar -xzf $tar && rm $tar && mv $dir $version";
       if ( $this->shell_dry( $cmd ) ) {
@@ -104,6 +105,27 @@ trait MgwInstall {
 
     # 6. checkHooks
     $this->do_check_hooks( $MWpath );
+
+    # 7. update
+    echo "\nMediawiki update.php ... \n\n";
+    $cmd = "cd $MWpath/maintenance && php update.php";
+    if ( $this->shell_dry( $cmd ) ) {
+      echo "échec à la mise à jour de la bdd ($cmd).\n Veuillez le faire manuellement.\n\n";
+    }
+    else {
+      echo "... OK\n\n";
+    }
+    foreach ( $this->config[$version]['maintenance-scripts'] as $dir => $shell){
+      $cmd = "cd $MWpath/$dir && $shell";
+        echo $cmd . "... \n\n";
+      if ( $this->shell_dry( $cmd ) ) {
+        echo "échec à la commande $cmd.\n Veuillez le faire manuellement.\n\n";
+      }
+      else {
+        echo "... OK\n\n";
+      }
+
+    }
 
 
     return "\n\n...fin de l'installation. Veuillez poursuivre en exéctant php update.php\n";

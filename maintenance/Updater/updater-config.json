@@ -83,7 +83,12 @@
     "screen-hooks": [ "includes", "maintenance", "skins", "extensions" ],
     "localsettings": {
       "require_once \"$IP/extensions/Arrays/Arrays.php\"": "wfLoadExtension('Arrays')",
-      "require_once \"$IP/extensions/LinkTarget/LinkTarget.php\"": "wfLoadExtension('LinkTarget')"
+      "require_once \"$IP/extensions/LinkTarget/LinkTarget.php\"": "wfLoadExtension('LinkTarget')",
+      "wfLoadExtension( 'DynamicPageList' )": "wfLoadExtension( 'DynamicPageList3' )",
+      "wfLoadExtension( 'SemanticExtraSpecialProperties' );": "wfLoadExtension( 'SemanticExtraSpecialProperties' );\nglobal $wgDisableCounters;\nif ( !isset($wgDisableCounters) ) $wgDisableCounters = false;"
+    },
+    "maintenance-scripts": {
+      "extensions/SemanticMediaWiki/maintenance": "php updateEntityCountMap.php"
     }
   },
   "1.33": {

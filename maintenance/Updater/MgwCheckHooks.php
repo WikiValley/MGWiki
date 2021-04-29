@@ -15,7 +15,7 @@ trait MgwCheckHooks {
     $ip = ( $path ) ? $path : $IP;
     $mgw_ip = ( $path ) ? $path . "/extensions/MGWiki" : $MGW_IP;
     $info = json_decode( file_get_contents( $mgw_ip . '/extension.json' ), true );
-    $customHooks = $this->config[$this->version]['custom-hooks'];
+    $customHooks = $this->config[$this->mw_version]['custom-hooks'];
 
     $report = fopen('maintenance-report.txt', 'a');
     fputs( $report, "\n
@@ -29,7 +29,7 @@ CheckHooks - " . date('Y-m-d H:i:s') . "
       $grep = 2;
 
       # on vérifie la présence des Hooks dans les fichiers du programme
-      foreach ( $this->config[$this->version]['screen-hooks'] as $dir ) {
+      foreach ( $this->config[$this->mw_version]['screen-hooks'] as $dir ) {
         $grep = shell_exec( 'cd ' . $ip . '/' .$dir . $shell );
         if ( $grep ) break;
         $grep = shell_exec( 'cd ' . $ip . '/' .$dir . $shell2 );
