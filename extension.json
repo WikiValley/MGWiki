@@ -199,6 +199,9 @@
 		},
 		"ext.mgwiki-specialaccountrequest": {
 			"packageFiles": [ "specialaccountrequest.js" ]
+		},
+		"jquery.tabIndex": {
+			"packageFiles": [ "jquery.tabIndex.js" ]
 		}
 	},
 	"AvailableRights": [
