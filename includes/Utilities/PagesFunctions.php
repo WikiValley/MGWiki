@@ -27,7 +27,7 @@ class PagesFunctions
    * @param Title|string|int $target
    * @return WikiPage|null
    */
-  public function getPageFromAny ( $target ) {
+  public static function getPageFromAny ( $target ) {
 
     if ( is_int( $target ) ) {
       return WikiPage::newFromId( $target );
@@ -132,7 +132,7 @@ class PagesFunctions
   //////////////////////////////////////
   // FONCTIONS SUR LES MODELES INCLUS
 
-  public function getArchiveContent( $page, $revId = 0 ) {
+  public static function getArchiveContent( $page, $revId = 0 ) {
     global $wgUser;
     if ( ! $revId ) {
       $revId = $page->getLastRevisionId();
@@ -151,7 +151,7 @@ class PagesFunctions
     *
     * @return array [ [ "field" => data, ... ], [...] ]|null ( null = page ou content inexistants )
     */
-	public function getPageTemplateInfos ( $target, $template, $fields, $archive = false ) {
+	public static function getPageTemplateInfos ( $target, $template, $fields, $archive = false ) {
     $page = self::getPageFromAny( $target );
     if ( !$page ) return null;
 
@@ -176,7 +176,7 @@ class PagesFunctions
     *
     * @return array [ [ "field" => data, ... ], [...] ]
     */
-	public function getTemplateInfos ( $content, $template, $fields ) {
+	public static function getTemplateInfos ( $content, $template, $fields ) {
 
     # on échappe les retours à la ligne pour simplifier les regexp
     $content = str_replace( "\n", '\\n', $content );
@@ -210,7 +210,7 @@ class PagesFunctions
     *
     * @return string ( $content )
     */
-  public function updatePageTemplateInfos ( $target, $template, $data, $inline = false, $append = true, $null = false ) {
+  public static function updatePageTemplateInfos ( $target, $template, $data, $inline = false, $append = true, $null = false ) {
     global $wgUser;
 
     $page = self::getPageFromAny( $target );
@@ -236,7 +236,7 @@ class PagesFunctions
    * @param array $data
    * @param bool $inline
    */
-  public function makeTemplate( $template, $data, $inline ){
+  public static function makeTemplate( $template, $data, $inline ){
 
     $template = [];
     $template[] = "{{".$template;
@@ -258,7 +258,7 @@ class PagesFunctions
     *
     * @return string ( $content )
     */
-  public function deleteTemplateFields ( $content, $template, $fields, $inline = false, $n = 1 ) {
+  public static function deleteTemplateFields ( $content, $template, $fields, $inline = false, $n = 1 ) {
     $data = [];
     foreach ( $fields as $field ) $data[$field] = '';
     return self::updateTemplateInfos (
@@ -283,7 +283,7 @@ class PagesFunctions
     *
     * @return string ( $content )
     */
-  public function updateTemplateInfos ( $content, $template, $data, $inline = false, $append = true, $delete = false, $n = 1 ) {
+  public static function updateTemplateInfos ( $content, $template, $data, $inline = false, $append = true, $delete = false, $n = 1 ) {
     $content = str_replace( "\n", '\n', $content );
 
     // récupération des données incluses dans le modèle
@@ -357,7 +357,7 @@ class PagesFunctions
     *
     * @return array|null
     */
-	public function parseTemplates ( $content, $multiple = false ) {
+	public static function parseTemplates ( $content, $multiple = false ) {
 
     // on retire les liens pour les mettre de côté (confusions lors de l'analyse)
     global $j;

@@ -12,7 +12,8 @@
       "mediawiki/semantic-media-wiki": "3.2.3",
       "mediawiki/semantic-extra-special-properties": "2.1.0",
       "mediawiki/semantic-result-formats": "3.2.0",
-      "mediawiki/semantic-cite": "2.1.1"
+      "mediawiki/semantic-cite": "2.1.1",
+  		"pimple/pimple": "~3.0"
     },
     "git": {
       "AdminLinks": {
@@ -27,7 +28,7 @@
         "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Citoid",
         "branch": "REL1_35"
       },
-      "DynamicPageList": {
+      "DynamicPageList3": {
         "url": "https://github.com/Universal-Omega/DynamicPageList3.git",
         "branch": "REL1_35"
       },
@@ -92,8 +93,29 @@
       "wfLoadExtension( 'SemanticExtraSpecialProperties' );": "global $wgDisableCounters;\nif ( !isset($wgDisableCounters) ) $wgDisableCounters = false;\nwfLoadExtension( 'SemanticExtraSpecialProperties' );"
     },
     "maintenance-scripts": {
-      "extensions/SemanticMediaWiki/maintenance": "php updateEntityCountMap.php"
-    }
+      "0": {
+        "dir": "maintenance",
+        "cmd": "php cleanupUsersWithNoId.php --prefix=*"
+      },
+      "1": {
+        "dir": "maintenance",
+        "cmd": "php update.php"
+      },
+      "2": {
+        "dir": "extensions/SemanticMediaWiki/maintenance",
+        "cmd": "php updateEntityCountMap.php"
+      },
+      "3": {
+        "dir": "",
+        "cmd": "chown -R www-data:www-data cache/"
+      }
+    },
+    "backup": [
+      "LocalSettings.php",
+      "images",
+      "skins/MGWiki",
+      "extensions/MGWiki/data/Private"
+    ]
   },
   "1.33": {
     "mediawiki": "https://releases.wikimedia.org/mediawiki/1.33/mediawiki-1.33.4.tar.gz",
@@ -104,7 +126,8 @@
         "mediawiki/semantic-media-wiki": "3.0.2",
         "mediawiki/semantic-extra-special-properties": "2.0.0",
     		"mediawiki/semantic-result-formats": "3.1.0",
-    		"mediawiki/semantic-cite": "2.1.0"
+    		"mediawiki/semantic-cite": "2.1.0",
+    		"pimple/pimple": "~3.0"
     },
     "git": {
       "AdminLinks": {
@@ -119,7 +142,7 @@
         "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Citoid",
         "branch": "REL1_33"
       },
-      "DynamicPageList": {
+      "DynamicPageList3": {
         "url": "https://github.com/Universal-Omega/DynamicPageList3.git",
         "branch": "REL1_35"
       },
@@ -176,6 +199,12 @@
         "customCode": "\n\t\tHooks::run( 'ChangeMailFormFields', [ &$fields ] );"
       }
     },
-    "screen-hooks": [ "includes", "maintenance", "skins", "extensions" ]
+    "screen-hooks": [ "includes", "maintenance", "skins", "extensions" ],
+    "backup": [
+      "LocalSettings.php",
+      "images",
+      "skins/MGWiki",
+      "extensions/MGWiki/data/Private"
+    ]
   }
 }

@@ -36,18 +36,23 @@ trait MgwBackup {
       return "annulation";
 
     # sauvegarde
-    $shell_out = '';
-    $shell_cmd = "cp {$IP}/LocalSettings.php {$directory}/{$copy_dir}/LocalSettings.php ".
-                "&& cp -r {$IP}/images {$directory}/{$copy_dir}/images " .
-                "&& mkdir {$directory}/{$copy_dir}/skins" .
-                "&& cp -r {$IP}/skins/MGWiki {$directory}/{$copy_dir}/skins/MGWiki";
-    $shell = $this->shell( $shell_cmd, $shell_out );
-    if ( $shell != 0 ) {
-      return $shell_out . "\n";
+    $copy_done = [];
+    foreach ( $this->config[$this->mw_version]['backup'] as $back ) {
+      $dest = str_replace('/', '~', $back );
+      $opt = ( is_dir( "$IP/$back") ) ? " -r" : "";
+      $shell_cmd = "cp$opt $IP/$back $directory/$copy_dir/$dest";
+      $shell_out = '';
+      $shell = $this->shell( $shell_cmd, $shell_out );
+      if ( $shell != 0 ) {
+       echo $shell_out . "\n";
+      }
+      else {
+        $copy_done[] = $back;
+      }
     }
-
-    return "La copie des fichiers a été effectuée dans le répertoire: \n" .
-        "  {$directory}/{$copy_dir}\n\n";
+    $copy_done = implode(', ', $copy_done );
+    return ($copy_done) ? "La copie des fichiers: \n$copy_done \na été effectuée dans le répertoire: \n" .
+        "  {$directory}/{$copy_dir}\n\n" : "";
   }
 
   private function backup_db_restore( $sql_file, $directory, $newDB = '' ) {
@@ -102,56 +107,26 @@ trait MgwBackup {
     $RP = ( $newPATH ) ? $newPATH : $IP;
 
     // restauration des fichiers
-    if ( ( !$sub || $sub = 'LocalSettings' ) && file_exists( $directory . '/LocalSettings.php' ) ) {
-      if ( file_exists( $RP . '/LocalSettings.php') ) {
-        $this->shell_dry( "rm {$RP}/LocalSettings.php" );
+    foreach ( $this->config[$this->mw_version]['backup'] as $back ) {
+      $dest = str_replace( '/', '~', $back );
+      if ( ( !$sub || $sub = $back ) && file_exists( $directory . '/' . $dest ) ) {
+        $opt = ( is_dir( "$directory/$dest" ) ) ? " -r" : "";
+        $shell_out = '';
+        $shell_cmd = "cp$opt $directory/$dest $RP/$back";
+        if ( $back == "images" ) {
+          $shell_cmd .= " && chown www-data:www-data $RP/$back";
+        }
+        $shell = $this->shell( $shell_cmd, $shell_out );
+        if ( $shell != 0 ) {
+         echo "copie de $back: echec\n";
+        }
+        else {
+          echo "copie de $back: OK\n";
+        }
       }
-      $shell_cmd = "cp {$directory}/LocalSettings.php {$RP}/LocalSettings.php";
-      $shell_out = '';
-      $shell = $this->shell( $shell_cmd, $shell_out );
-      echo $shell_out . "\n";
-      if ( $shell != 0 ) {
-        echo "copie de LocalSettings.php: echec\n";
-      }
-      else echo "copie de LocalSettings.php: OK\n";
+      elseif ( !file_exists( $directory . '/' . $dest ) )
+        echo "$back inexistant dans la sauvegarde: fichier(s) actuel(s) inchangé(s).\n";
     }
-    elseif ( !file_exists( $directory . '/LocalSettings.php' ) )
-      echo "aucun fichier LocalSettings.php dans la sauvegarde: le fichier actuel est inchangé.\n";
-
-    if ( !$sub && file_exists( $directory . '/images' ) ) {
-      if ( file_exists( $RP . '/images') ) {
-        $this->shell_dry( "rm -rf {$RP}/images" );
-      }
-      $shell_cmd = "cp -r {$directory}/images {$RP}/images " .
-        "&& chown -R www-data:www-data {$RP}/images";
-      $shell_out = '';
-      $shell = $this->shell( $shell_cmd, $shell_out );
-      echo $shell_out . "\n";
-      if ( $shell != 0 ) {
-        echo "copie de images/ : échec\n";
-      }
-      else echo "copie de images/ : OK\n";
-    }
-    elseif ( !file_exists( $directory . '/images' ) )
-      echo "aucun dossier images/ dans la sauvegarde: le dossier actuel est inchangé.\n";
-
-    if ( !$sub && file_exists( $directory . '/skins/MGWiki' ) ) {
-      if ( file_exists( $RP . '/skins/MGWiki') ) {
-        $this->shell_dry( "rm -rf {$RP}/skins/MGWiki" );
-      }
-      $shell_cmd = "cp -r {$directory}/skins/MGWiki {$RP}/skins/MGWiki ";
-      $shell_out = '';
-      $shell = $this->shell( $shell_cmd, $shell_out );
-      echo $shell_out . "\n";
-      if ( $shell != 0 ) {
-        echo "copie de skins/MGWiki/ : échec\n";
-      }
-      else echo "copie de skins/MGWiki/ : OK\n";
-    }
-    elseif ( !file_exists( $directory . '/skins/MGWiki' ) )
-      echo "aucun dossier skins/MGWiki/ dans la sauvegarde: le dossier actuel est inchangé.\n";
-
-    return '';
   }
 
   private function make_backup_name( &$backup ) {
