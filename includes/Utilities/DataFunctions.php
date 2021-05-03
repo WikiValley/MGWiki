@@ -389,7 +389,7 @@ class DataFunctions {
    *
    * @return array|null
    */
-  public function mysqli_query( $sql, $empty_to_null = true, $void = false ) {
+  public static function mysqli_query( $sql, $empty_to_null = true, $void = false ) {
     global $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword;
     $res = mysqli_connect( $wgDBserver, $wgDBuser, $wgDBpassword, $wgDBname );
 		$result = mysqli_query( $res, $sql ) or die ('Erreur avec la requête "' . $sql . '" : ' . $res->error );
@@ -481,7 +481,7 @@ class DataFunctions {
    * @param int $timestamp
    * @return int|array|null $text_id|['text_id' => int, 'rev_id' => int ]
    */
-  public function getTextId( $rev_id = null, $page_id = null, $timestamp = null ) {
+  public static function getTextId( $rev_id = null, $page_id = null, $timestamp = null ) {
 
     global $wgDBprefix;
 

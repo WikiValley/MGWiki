@@ -9,5 +9,4 @@
 
 # MGW
 *-report.txt
-Captcha.json
-TODO.php
+data/Private/*

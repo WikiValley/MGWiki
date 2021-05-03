@@ -20,7 +20,7 @@ class UsersFunctions
    * @param array &$data = []
    * @return bool|null (null = utilisateur inexistant)
    */
-  public function user_status( $target, &$data = [] ) {
+  public static function user_status( $target, &$data = [] ) {
     global $wgDBprefix;
     $target = self::getUserFromAny( $target );
     if ( !$target ) {
@@ -65,7 +65,7 @@ class UsersFunctions
    *
    * @return User|null
    */
-  public function getUserFromAny ( $target, $allow_new = false ) {
+  public static function getUserFromAny ( $target, $allow_new = false ) {
     if ( is_int( $target ) ) {
       $target = User::newFromId( $target );
     }
@@ -89,7 +89,7 @@ class UsersFunctions
    *
    * @return User|null
    */
-  public function getUserFromNames ( $prenom, $nom = null, $check = false ) {
+  public static function getUserFromNames ( $prenom, $nom = null, $check = false ) {
     if ( ! is_null( $nom ) ) {
       $name = $prenom . ' ' . strtoupper( $nom );
     }
@@ -99,7 +99,7 @@ class UsersFunctions
     else return $user;
   }
 
-  public function countUsersWithName ( $name ) {
+  public static function countUsersWithName ( $name ) {
     global $wgDBprefix;
     $sql = "SELECT user_name FROM {$wgDBprefix}user WHERE user_name LIKE '{$name}%'";
     $res = DbF::mysqli_query($sql, false);
@@ -111,7 +111,7 @@ class UsersFunctions
    * @param bool $check (retourne null si inexistant, 0 sinon)
    * @return int|null
    */
-  public function getUserIdFromName ( $name, $check = false ) {
+  public static function getUserIdFromName ( $name, $check = false ) {
     $user = User::newFromName ($name);
     if ( $check && $user->getId() <= 0 ) return null;
     else return $user->getId();
@@ -122,7 +122,7 @@ class UsersFunctions
    *
    * @return User object
    */
-  public function getUserFromId ( $id ) {
+  public static function getUserFromId ( $id ) {
     return User::newFromId ( $id );
   }
 
@@ -131,7 +131,7 @@ class UsersFunctions
    *
    * @return string
    */
-  public function getUserNameFromId ( $id ) {
+  public static function getUserNameFromId ( $id ) {
     $user = User::newFromId ( $id );
     return $user->getName();
   }
@@ -145,7 +145,7 @@ class UsersFunctions
    * @param bool $case_sensitive
    * @return string|bool user_name|false
    */
-  public function userExists( $val, $case_sensitive = false ) {
+  public static function userExists( $val, $case_sensitive = false ) {
 
     if ( is_int( $val ) || preg_match( '/^[0-9]+$/', $val ) > 0 ) {
       if ( !is_int( $val ) ) $val = (int)$val;
@@ -228,7 +228,7 @@ class UsersFunctions
    * @param bool $case_sensitive
    * @return string|bool user_name|false
    */
-  public function mgwUserExists( $mode, $val, $case_sensitive = false ) {
+  public static function mgwUserExists( $mode, $val, $case_sensitive = false ) {
 
     switch ( $mode ) {
       case 'user_id':
@@ -253,7 +253,7 @@ class UsersFunctions
    * @param string $email
    * @return array [ ['user_id'=> (int), 'user_name'=> (string)] ]
    */
-  public function emailExists( $email ) {
+  public static function emailExists( $email ) {
     global $wgDBprefix;
     $sql = "SELECT user_id, user_name FROM {$wgDBprefix}user WHERE user_email LIKE '{$email}' ORDER BY user_id";
     $res = DbF::mysqli_query( $sql );
@@ -279,7 +279,7 @@ class UsersFunctions
    * @param int updater_id
    * @return array [ 'done' => bool, 'message' => string ]
    */
-  public function deleteMGWUser( $user_id, $fullDeletion = false, $updater_id = null ) {
+  public static function deleteMGWUser( $user_id, $fullDeletion = false, $updater_id = null ) {
 
     if ( is_null($updater_id) ) {
       global $wgUser;
@@ -570,6 +570,6 @@ class UsersFunctions
    * @param int $id
    * @return int
    */
-  public function getLevel( $id ) {
+  public static function getLevel( $id ) {
   }
 }

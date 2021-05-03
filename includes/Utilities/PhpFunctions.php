@@ -12,7 +12,7 @@ class PhpFunctions
     * recherche récursivement une clé
     * @return mixed (première valeur retrouvée ou null)
     */
-  public function recursiveArrayKey ( $needle, $array )
+  public static function recursiveArrayKey ( $needle, $array )
   {
     $recursive = self::recursiveIterator( $array );
     foreach ( $recursive as $key => $value ) {
@@ -27,7 +27,7 @@ class PhpFunctions
     * recherche récursivement une paire 'clé' => 'valeur'
     * @return bool
     */
-  public function recursiveArrayKeyValue ( $key, $value, $array )
+  public static function recursiveArrayKeyValue ( $key, $value, $array )
   {
     $recursive = self::recursiveIterator( $array );
     foreach ( $recursive as $kkey => $vvalue ) {
@@ -42,7 +42,7 @@ class PhpFunctions
     * recherche récursivement une clé, fusionne le résultat si plusieurs occurences
     * @return mixed (valeur, array ou array_merge)
     */
-  public function recursiveArrayKeyMerge ( $needle, $array )
+  public static function recursiveArrayKeyMerge ( $needle, $array )
   {
     $recursive = self::recursiveIterator( $array );
     $ret = [];
@@ -82,7 +82,7 @@ class PhpFunctions
     * recherche récursivement une clé, fusionne le résultat si plusieurs occurences
     * @return mixed (valeur, array ou array_merge)
     */
-  public function recursiveArrayKeyValueCount ( $key, $value, $array )
+  public static function recursiveArrayKeyValueCount ( $key, $value, $array )
   {
     $recursive = self::recursiveIterator( $array );
     $ret = 0;
@@ -107,7 +107,7 @@ class PhpFunctions
     * recherche les doublons dans un tableau
     * @return mixed array ou null
     */
-  public function array_doublons( $array ) {
+  public static function array_doublons( $array ) {
     if ( !is_array( $array ) ) return false;
     $r_valeur = Array();
     $array_unique = array_unique($array);
@@ -125,7 +125,7 @@ class PhpFunctions
    * sets $var to $val if null, empty or undefined
    * @param mixed &$var
    */
-   public function false ( &$var, $val = false ) {
+   public static function false ( &$var, $val = false ) {
      if ( !isset( $var ) || is_null( $var ) || empty( $var ) ) {
        $var = $val;
      }
@@ -135,7 +135,7 @@ class PhpFunctions
   * sets $var to $val if empty, false or undefined
   * @param mixed &$var
   */
-  public function null ( &$var, $val = null ) {
+  public static function null ( &$var, $val = null ) {
     if ( !isset( $var ) || empty( $var ) || !$var ) {
       $var = $val;
     }
@@ -148,7 +148,7 @@ class PhpFunctions
    * @param bool $int_escape wether to consider 0 as false or not
    * @return void (changes applied by reference)
    */
-  public function empty ( &$var, $val = '', $int_escape = false ) {
+  public static function empty ( &$var, $val = '', $int_escape = false ) {
     if ( !isset( $var ) || is_null( $var ) ||
     ( (!$int_escape && !$var) || ( $int_escape && !$var && $var !== 0 ) ) ) {
      $var = $val;
@@ -161,7 +161,7 @@ class PhpFunctions
    * @param bool $empty
    * @param bool $keep
    */
-  public function int ( &$var, $empty = false, $keep = false ) {
+  public static function int ( &$var, $empty = false, $keep = false ) {
     $int = (int)$var;
     if ( 'test'.$int == 'test'.$var ) {
       $var = $int;

@@ -9,36 +9,39 @@ trait MgwInstall {
   private function install_mediawiki() {
     global $IP;
     $version = $this->mw_version;
+    $rel = 'REL' . str_replace('.','_',$version);
+    $MWpath = '/var/www/html/' . $version;
 
     # 1. mediawiki
-    $rel = 'REL' . str_replace('.','_',$version);
-    if ( !file_exists('/var/www/html/' . $version ) ) {
+    echo "\nMEDIAWIKI...\n\n";
+    if ( !file_exists( $MWpath ) ) {
       $tar_url = $this->config[$version]['mediawiki'];
       $temp = explode('/', $tar_url );
-      $tar = end( $temp );
-      $dir = str_replace( '.tar.gz', '', $tar );
+      $dir = str_replace( '.tar.gz', '', $temp[array_key_last($temp)] );
       $cmd = "cd /var/www/html && wget $tar_url && tar -xzf $tar && rm $tar && mv $dir $version";
       if ( $this->shell_dry( $cmd ) ) {
         echo "échec au téléchargement de mediawiki. Veuillez le faire manuellement avant de continuer.\n\n";
         return "abandon\n";
       }
     }
+    echo "\nSKINS...\n\n";
     if ( isset( $this->config[$version]['skin'] ) ) {
       // installation de skin
-      if ( file_exists( "/var/www/html/$version/skins/".$this->config[$version]['skin']['name'] ) ) {
-        $skin = $this->config[$version]['skin']['name'];
-        $tar_url = $this->config[$version]['skin']['url'];
-        $tar = end( explode('/', $tar_url ) );
-        $cmd = "cd /var/www/html/$version/skins && rm -rf $skin" .
-          " && wget $tar_url && tar -xzf $tar && rm $tar";
+      if ( file_exists( "$MWpath/skins/".$this->config[$version]['skin']['name'] ) ) {
+        $skin = $this->config[$version]['skin'];
+        $temp = explode('/', $skin['url']);
+        $tar = $temp[array_key_last($temp)];
+        $cmd = "cd $MWpath/skins && rm -rf {$skin['name']}" .
+          " && wget {$skin['url']} && tar -xzf $tar && rm $tar";
         if ( $this->shell_dry( $cmd ) ) {
-          echo "échec à l'installation de $skin ($cmd). Veuillez le faire manuellement avant de continuer.\n\n";
+          echo "échec à l'installation de {$skin['name']} ($cmd). Veuillez le faire manuellement avant de continuer.\n\n";
           return "abandon\n";
         }
       }
     }
 
     # 2. extensions
+    echo "\nEXTENSIONS...\n\n";
     if ( !isset( $this->config[$version] ) ) {
       echo "La liste des extensions n'est pas configurée pour cette version de mediawiki\n.";
       return "Abandon\n";
@@ -54,6 +57,7 @@ trait MgwInstall {
     }
 
       ## git
+    echo "\nGit clone...\n\n";
     foreach ( $this->config[$version]['git'] as $ext => $info ) {
       echo "$ext ... \n";
       // on supprime les répertoires vides
@@ -72,7 +76,7 @@ trait MgwInstall {
     }
 
     # 3. restauration des données + correctifs de version
-    echo "\nRéimplémentation des données depuis la sauvegarde... \n\n";
+    echo "\nDONNEES... \n\n";
     echo $this->do_backup( 'restore', $version );
     echo "\nMise à jour de LocalSettings.php ... \n\n";
     if ( isset( $this->config[$version]['localsettings'] ) ) {
@@ -84,33 +88,16 @@ trait MgwInstall {
     }
     echo "... OK\n\n";
 
-    # 4. droits d'écriture
-    echo "\nParamétrage des droits d'écriture ... \n\n";
-    $cmd = "chown -R www-data:www-data $MWpath/cache";
-    if ( $this->shell_dry( $cmd ) ) {
-      echo "échec à l'ouverture des droits d'écriture du cache ($cmd).\n Veuillez le faire manuellement.\n\n";
-    }
-    else {
-      echo "... OK\n\n";
-    }
-
-    # 5. Hooks
+    # 4. Hooks
     $this->do_check_hooks( $MWpath );
 
-    # 6. update & scripts
-    echo "\nMediawiki update.php ... \n\n";
-    $cmd = "cd $MWpath/maintenance && php update.php";
-    if ( $this->shell_dry( $cmd ) ) {
-      echo "échec à la mise à jour de la bdd ($cmd).\n Veuillez le faire manuellement.\n\n";
-    }
-    else {
-      echo "... OK\n\n";
-    }
-    foreach ( $this->config[$version]['maintenance-scripts'] as $dir => $shell){
-      $cmd = "cd $MWpath/$dir && $shell";
-        echo $cmd . "... \n\n";
+    # 5. scripts
+    echo "\nSCRIPTS... \n\n";
+    foreach ( $this->config[$version]['maintenance-scripts'] as $num => $script ){
+      $cmd = "cd $MWpath/{$script['dir']} && {$script['cmd']}";
+        echo $cmd . "... \n";
       if ( $this->shell_dry( $cmd ) ) {
-        echo "échec à la commande $cmd.\n Veuillez le faire manuellement.\n\n";
+        echo "... ECHEC. Veuillez le faire manuellement.\n\n";
       }
       else {
         echo "... OK\n\n";
@@ -118,7 +105,6 @@ trait MgwInstall {
 
     }
 
-
-    return "\n\n...fin de l'installation. Mediawiki $version est installé dans le répertoire ";
+    return "\n\n...fin de l'installation. \nMediawiki $version est installé dans le répertoire $MWpath\n";
   }
 }

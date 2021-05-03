@@ -87,12 +87,12 @@ class MgwUpdater extends Maintenance {
 		if (!getenv( "MW_VERSION" )){
 			// mediawiki < 1.35
 			global $wgVersion;
-			$version = substr($wgVersion,0,4);
+			$version = $wgVersion;
 		}
 		else {
 			$version = getenv( "MW_VERSION" );
 		}
-		$this->mw_version = ( $this->getOption( "version" ) ) ? $this->getOption( "version" ) : $version ;
+		$this->mw_version = ( $this->getOption( "version" ) ) ? $this->getOption( "version" ) : substr($version,0,4) ;
     $done = $this->{'do_'.$this->target[0]}();
     echo $done . "\n";
 	}

@@ -9,7 +9,7 @@ class Captcha
   function __construct()
   {
     global $IP;
-    $this->answers = json_decode(file_get_contents($IP . "/extensions/MGWikiDev/data/Private/Captcha.json"), true);
+    $this->answers = json_decode(file_get_contents($IP . "/extensions/MGWiki/data/Private/Captcha.json"), true);
   }
 
   public function getRandomKey()
