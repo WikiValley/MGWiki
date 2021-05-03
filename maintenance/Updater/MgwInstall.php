@@ -38,18 +38,7 @@ trait MgwInstall {
       }
     }
 
-    # 2. MGWiki
-    $MWpath = "/var/www/html/$version";
-    $MGWpath = "/var/www/html/$version/extensions/MGWiki";
-    if ( !file_exists( $MGWpath ) ) {
-      $cmd = "cd /var/www/html/$version/extensions && git clone https://github.com/WikiValley/MGWiki.git";
-      if ( $this->shell_dry( $cmd ) ) {
-        echo "échec au téléchargement de l'extension MGWiki. Veuillez le faire manuellement avant de continuer.\n\n";
-        return "abandon\n";
-      }
-    }
-
-    # 3. extensions
+    # 2. extensions
     if ( !isset( $this->config[$version] ) ) {
       echo "La liste des extensions n'est pas configurée pour cette version de mediawiki\n.";
       return "Abandon\n";
@@ -67,9 +56,11 @@ trait MgwInstall {
       ## git
     foreach ( $this->config[$version]['git'] as $ext => $info ) {
       echo "$ext ... \n";
+      // on supprime les répertoires vides
       if ( file_exists( "$MWpath/extensions/$ext" ) && count( glob("$MWpath/extensions/$ext/*") ) === 0 ) {
         $this->shell_dry( "cd $MWpath/extensions && rm -rf $ext/" );
       }
+      // git clone
       if ( ! file_exists( "$MWpath/extensions/$ext" ) ) {
         $cmd = "cd $MWpath/extensions && git clone -b {$info['branch']} {$info['url']}";
         if ( $this->shell_dry( $cmd ) ) {
@@ -80,7 +71,7 @@ trait MgwInstall {
       else echo "\n...ok\n\n";
     }
 
-    # 4. restauration des données + correctifs de version
+    # 3. restauration des données + correctifs de version
     echo "\nRéimplémentation des données depuis la sauvegarde... \n\n";
     echo $this->do_backup( 'restore', $version );
     echo "\nMise à jour de LocalSettings.php ... \n\n";
@@ -93,7 +84,7 @@ trait MgwInstall {
     }
     echo "... OK\n\n";
 
-    # 5. droits d'écriture
+    # 4. droits d'écriture
     echo "\nParamétrage des droits d'écriture ... \n\n";
     $cmd = "chown -R www-data:www-data $MWpath/cache";
     if ( $this->shell_dry( $cmd ) ) {
@@ -103,10 +94,10 @@ trait MgwInstall {
       echo "... OK\n\n";
     }
 
-    # 6. checkHooks
+    # 5. Hooks
     $this->do_check_hooks( $MWpath );
 
-    # 7. update
+    # 6. update & scripts
     echo "\nMediawiki update.php ... \n\n";
     $cmd = "cd $MWpath/maintenance && php update.php";
     if ( $this->shell_dry( $cmd ) ) {
@@ -128,6 +119,6 @@ trait MgwInstall {
     }
 
 
-    return "\n\n...fin de l'installation. Veuillez poursuivre en exéctant php update.php\n";
+    return "\n\n...fin de l'installation. Mediawiki $version est installé dans le répertoire ";
   }
 }

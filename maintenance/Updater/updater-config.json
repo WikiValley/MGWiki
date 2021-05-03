@@ -51,6 +51,10 @@
         "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/MassMessage",
         "branch": "REL1_35"
       },
+      "MGWiki": {
+        "url": "https://github.com/WikiValley/MGWiki.git",
+        "branch": "REL1_35"
+      },
       "MyVariables": {
         "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/MyVariables",
         "branch": "REL1_35"
@@ -137,6 +141,10 @@
       },
       "MassMessage": {
         "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/MassMessage",
+        "branch": "REL1_33"
+      },
+      "MGWiki": {
+        "url": "https://github.com/WikiValley/MGWiki.git",
         "branch": "REL1_33"
       },
       "MyVariables": {
