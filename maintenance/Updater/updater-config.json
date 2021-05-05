@@ -83,6 +83,11 @@
         "fileIdentifier": "class SpecialChangeEmail extends FormSpecialPage",
         "stringIdentifier": "'help-message' => 'changeemail-newemail-help',\n\t\t\t],\n\t\t];",
         "customCode": "\n\t\tHooks::run( 'ChangeMailFormFields', [ &$fields ] );"
+      },
+      "ActorMigrationDebug": {
+        "fileIdentifier": "class ActorMigration {",
+        "stringIdentifier": "$actorId = (int)$dbw->selectField(\n\t\t\t\t'actor',\n\t\t\t\t'actor_id',\n\t\t\t\t$q,\n\t\t\t\t__METHOD__,\n\t\t\t\t[ 'LOCK IN SHARE MODE' ]\n\t\t\t);",
+        "customCode": "\n\t\t\tHooks::run( 'ActorMigrationDebug', [ &$actorId, $dbw->lastQuery() ] );"
       }
     },
     "screen-hooks": [ "includes", "maintenance", "skins", "extensions" ],
