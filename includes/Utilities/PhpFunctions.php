@@ -94,7 +94,7 @@ class PhpFunctions
     return $ret;
   }
 
-  private function recursiveIterator( $array ) {
+  public static function recursiveIterator( $array ) {
     $iterator  = new \RecursiveArrayIterator( $array );
     $recursive = new \RecursiveIteratorIterator(
         $iterator,

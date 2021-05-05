@@ -54,14 +54,17 @@
 		"getjson" : "MediaWiki\\Extension\\MGWiki\\Modules\\Json\\ApiGetJson"
 	},
 	"Hooks": {
+		"ActorMigrationDebug": [
+			"MediaWiki\\Extension\\MGWiki\\MGWikiHooks::onActorMigrationDebug"
+		],
 		"ApiAllow": [
 			"MediaWiki\\Extension\\MGWiki\\MGWikiHooks::onApiAllow"
 		],
 		"AuthChangeFormFields": [
 			"MediaWiki\\Extension\\MGWiki\\MGWikiHooks::onAuthChangeFormFields"
 		],
-		"BaseTemplateToolbox": [
-			"MediaWiki\\Extension\\MGWiki\\Modules\\Notifications\\MGWikiSendNotification::onBaseTemplateToolbox"
+		"SidebarBeforeOutput": [
+			"MediaWiki\\Extension\\MGWiki\\Modules\\Notifications\\MGWikiSendNotification::onSidebarBeforeOutput"
 		],
 		"BeforePageDisplay": [
 			"MediaWiki\\Extension\\MGWiki\\MGWikiHooks::onBeforePageDisplay",

@@ -62,33 +62,6 @@ class MGWikiSendNotification {
 	}
 
 	/**
-	 * Add the link in the toolbox to send a notification to the referrer.
-	 *
-	 * Only on articles when viewing the current revision
-	 *
-	 * This hook is for 1.34-.
-	 */
-	public static function onBaseTemplateToolbox( $template, &$sidebar ) {
-		$skin = $template->getSkin();
-		$out = $skin->getOutput();
-		$context = $out->getContext();
-		$config = $context->getConfig();
-		$wgMGWikiSendNotificationNamespaces = $config->get( 'MGWikiSendNotificationNamespaces' );
-
-		$title = $out->getTitle();
-		$action = \Action::getActionName( $context );
-		$revisionId = $out->getRevisionId();
-
-		if( $out->isArticle() && in_array( $title->getNamespace(), $wgMGWikiSendNotificationNamespaces ) && $action === 'view' && ( $revisionId == 0 || $revisionId == $out->getTitle()->getLatestRevID() ) && $context->getRequest()->getVal( 'oldid' ) === null ) {
-			$sidebar['mgwiki-send-notification'] = [
-				'msg' => 'mgwiki-toolbox-link',
-				'href' => $title->getLocalURL( [ 'action' => 'send-notification' ] ),
-				'class' => 'mgwiki-send-notification',
-			];
-		}
-	}
-
-	/**
 	 * Send the notification.
 	 *
 	 * @param \IContextSource $context Context containing, between other things, the user and the title.

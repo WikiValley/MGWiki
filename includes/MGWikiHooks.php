@@ -229,4 +229,19 @@ class MGWikiHooks {
 				return true;
 		};
 	}
+
+	/**
+	 * DEBUG V 1.35
+	 */
+	public static function onActorMigrationDebug( &$actorId, $sql ) {
+		// bug MW 1.35 lors de certaines requêtes rendant l'auto-renommage impossible.
+		// code 1.36 modifié: probablement pb réglé ...
+		if ( !$actorId ) {
+			$sql = str_replace(' LOCK IN SHARE MODE', '', $sql );
+			$res = \MediaWiki\Extension\MGWiki\Utilities\DataFunctions::mysqli_query( $sql );
+			if ( $res ) {
+				$actorId = (int)$res[0]['actor_id'];
+			}
+		}
+	}
 }

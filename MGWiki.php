@@ -242,7 +242,6 @@ class MGWiki {
 						$userData['Année de promotion'] = $userData['Année'];
 					if ( isset( $userData['Tuteur ou modérateur'] ) )
 						$userData['Responsable référent'] = $userData['Tuteur ou modérateur'];
-
 					if ( self::createUser( $username, $userData ) ) {
 						$newUsers[] = $username;
 					}
@@ -427,7 +426,6 @@ class MGWiki {
 				$userData[$wgMGWikiUserProperties['lastname']] = $userData[$wgMGWikiUserProperties['lastname']] . ' ' . $n;
 			}
 		}
-
 		$properties = [];
 		if ( array_key_exists( $wgMGWikiUserProperties['email'], $userData )
 			&& is_string( $userData[$wgMGWikiUserProperties['email']] ) )

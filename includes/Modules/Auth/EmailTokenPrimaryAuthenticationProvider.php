@@ -13,6 +13,7 @@ use MediaWiki\Auth\AbstractPrimaryAuthenticationProvider;
 use MediaWiki\Auth\AuthManager;
 use MediaWiki\Auth\AuthenticationRequest;
 use MediaWiki\Auth\AuthenticationResponse;
+use MediaWiki\Extension\MGWiki\Modules\Auth\EmailTokenAuthenticationRequest;
 
 class EmailTokenPrimaryAuthenticationProvider
 	extends AbstractPrimaryAuthenticationProvider
@@ -68,11 +69,13 @@ class EmailTokenPrimaryAuthenticationProvider
 
 	public function beginPrimaryAuthentication( array $reqs ) {
 		$req = AuthenticationRequest::getRequestByClass( $reqs, EmailTokenAuthenticationRequest::class );
+		#var_dump($req);
 		if ( !$req || !$req->emailtoken ) {
 			return AuthenticationResponse::newAbstain();
 		}
 
 		$user = User::newFromConfirmationCode( $req->emailtoken, User::READ_LATEST );
+		//$user = User::newFromConfirmationCode( $req->emailtoken );
 		if ( !( $user instanceof User ) || !$user->getId() ) {
 			return AuthenticationResponse::newFail( wfMessage( 'mgwiki-bad-email-token' ) );
 		}

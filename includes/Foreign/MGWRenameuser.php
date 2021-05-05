@@ -35,7 +35,7 @@ class MGWRenameuser {
    *
    * @return array [ 'done' => bool, 'message' => bool, ]
 	 */
-	public function execute( $oldname, $newname, $movepages, $suppressRedirect, $reason, $user = null ) {
+	public static function execute( $oldname, $newname, $movepages, $suppressRedirect, $reason, $user = null ) {
 		global $wgContLang, $wgCapitalLinks, $wgUser;
 
     // ! on AUTORISE les utilisateurs à renommer leur propre compte

@@ -140,7 +140,7 @@ class SpecialMgwDeleteAccountQuery extends \SpecialPage {
   private function displayMainForm( $reqData, $targetUser ) {
     $out = $this->getOutput( );
 		$username = $targetUser->getName();
-		$out->addWikiText( "<h3>[[Utilisateur:$username|$username]]</h3>");
+		$out->addWikiTextAsContent( "<h3>[[Utilisateur:$username|$username]]</h3>");
     $out->addHTML( HtmlF::form( 'open', $hiddenInputs = [
 			'user_id' => $reqData['user_id'],
 			'returnto' => $reqData['returnto'] ] )

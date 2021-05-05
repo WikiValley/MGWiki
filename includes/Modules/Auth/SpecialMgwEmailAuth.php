@@ -70,7 +70,9 @@ class SpecialMgwEmailAuth extends \LoginSignupSpecialPage {
 		$data = [];
 		$data['emailtoken'] = $subPage;
 		$data[$this->getTokenName()] = $this->getToken()->toString();
+		#var_dump($data);
 		$this->setRequest( $data, true );
+		#var_dump($this->savedRequest);
 		parent::beforeExecute( $subPage );
 	}
 

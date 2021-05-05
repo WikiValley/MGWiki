@@ -243,10 +243,10 @@
 				let color = $(".mgw-border-color").attr('style').match(/(#[a-z0-9]{6});/)[1];
 				let col = color.substring(1, 7);
 				$('#content').css('border', '1px solid' + color);
-				$('.vectorTabs,.vectorTabs span,.vectorTabs ul').css('background-image',
-					'url(http://localhost/wiki/extensions/MGWikiDev/images/php/MenuListBorder.php?color='+col+')');
+				//$('.vectorTabs,.vectorTabs span,.vectorTabs ul').css('background-image',
+					//'url(http://localhost/wiki/extensions/MGWiki/images/php/MenuListBorder.php?color='+col+')');
 				$('.vectorTabs li:not(.selected)').css('background-image',
-					'url(http://localhost/wiki/extensions/MGWikiDev/images/php/MenuListBackground.php?color='+col+')');
+					'url(http://localhost/wiki/extensions/MGWiki/images/php/MenuListBackground.php?color='+col+')');
 			}
 		}
 

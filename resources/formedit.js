@@ -1,5 +1,5 @@
 ( function ( mw, $ ) {
-  
+
   /* CONTROLE DES FORMULAIRES DE CREATION DE GROUPES & D'UTILISATEURS */
 
   // définition des variables
@@ -13,21 +13,23 @@
   if ( modifGrp.test( mw.config.get('wgTitle') ) ) {
     var input_trigger_name = 'Rajouter un(e) participant(e)';
     var nom_n = 7, prenom_n = 8, email_n = 9;
-    var autogen_id = '#s2id_autogen1';
+    var autogen_id = '.select2-search__field';
     var trigger_tag_input = true;
     var email_duplicates = {}, name_duplicates = {};
   }
   else if ( newGrp.test( mw.config.get('wgTitle') ) ) {
     var input_trigger_name = 'Rajouter un(e) participant(e)';
     var nom_n = 8, prenom_n = 9, email_n = 10;
-    var autogen_id = '#s2id_autogen2';
+    //var autogen_id = '#s2id_autogen2';
+    var autogen_id = '.select2-search__field';
+    //var autogen_id = '.select2-selection';
     var trigger_tag_input = true;
     var email_duplicates = {}, name_duplicates = {};
   }
   else if ( newDPC.test( mw.config.get('wgTitle') ) ) {
     var input_trigger_name = 'Rajouter un(e) participant(e)';
     var nom_n = 9, prenom_n = 10, email_n = 11;
-    var autogen_id = '#s2id_autogen2';
+    var autogen_id = '.select2-search__field';
     var trigger_tag_input = true;
     var email_duplicates = {}, name_duplicates = {};
   }
@@ -155,7 +157,7 @@
             user_name: new_name,
             num: num
           }, mw.mgw_add_existing_user );
-          $add_user_text = $('<span> '+new_name+'aux membres déjà inscrits</span>');
+          $add_user_text = $('<span> '+new_name+' aux membres déjà inscrits</span>');
           $li = $('<li></li>');
           $li.append($add_user);
           $li.append($add_user_text);
@@ -204,14 +206,26 @@
   }
 
   mw.mgw_add_existing_user = function(e) {
-    var enter = jQuery.Event("keydown");
+    var enter = jQuery.Event("keypup");
     enter.which = 13;
     enter.keyCode = 13;
-    $(autogen_id).focus();
-    $(autogen_id).val( e.data.user_name );
+    var space = jQuery.Event("keyup");
+    space.which = 32;
+    space.keyCode = 32;
+    //$(autogen_id).focus();
     $(autogen_id).click();
-    waitForEl('li.select2-result', function() {
-      $(autogen_id).trigger(enter);
+    //$(autogen_id).val(e.data.user_name);
+    //$(autogen_id).val( e.data.user_name );
+
+    //$(autogen_id).click();
+    //waitForEl('li.select2-result', function() {
+    waitForEl('.select2-container', function() {
+      $(':focus').val(e.data.user_name);
+      $(':focus').trigger(space);
+    });
+    waitForEl('.select2-results__option--highlighted', function() {
+      //$(':focus').trigger(enter);
+      $('.select2-results__option--highlighted').trigger('mouseup');
     });
     $('#mgw-multiple-user-'+e.data.num+' .removeButton').click();
     if ( email_duplicates[e.data.num] !== 'undefined' ) {

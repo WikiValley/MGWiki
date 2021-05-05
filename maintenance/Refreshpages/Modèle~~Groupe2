@@ -1,8 +1,0 @@
-== Pages liées ==
-<!--{{#if:{{#ask:[[:{{FULLPAGENAME}}]][[Category:GEP]]}}
-|{{#formlink:form=SouspageGEP|link text=Créer un nouveau GEP|link type=button|query string=SouspageGEP[Page mère]={{FULLPAGENAME}}}}
-|{{#formlink:form=Souspagegroupe|link text=Créer un nouveau compte-rendu (ou autre sous-page)|link type=button|query string=Souspagegroupe[Page mère]={{FULLPAGENAME}}}} }}
-{{Special:PrefixIndex/{{FULLPAGENAME}}/ |hideredirects=1 |stripprefix=1}}--><!--
-
---><!--{{#formlink:form=Souspagegroupe|link text=Créer un nouveau compte-rendu (ou autre sous-page)|link type=button|query string=Souspagegroupe[Page mère]={{FULLPAGENAME}}}}
-{{Special:PrefixIndex/{{FULLPAGENAME}}/ |hideredirects=1 |stripprefix=1}}-->

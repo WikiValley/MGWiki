@@ -1,8 +1,0 @@
-{{#ifingroup:sysop, U2|
-==={{#formlink:form=GEP|link text=Créer un GEP d'internes}} (Groupe d'Echange de Pratiques)===
-==={{#formlink:form=Stage praticien|link text=Créer un Stage praticien}} (semestre en cabinet MG)===
-<!-- A PREVOIR: 
-*{{#formlink:form=DPC|link text=Créer un DPC}} (formation continue)
-*{{#formlink:form=GAPP|link text=Créer un GAPP de médecins}} (Groupe d'Analyse des Pratiques entre Pairs)
--->
-|}}

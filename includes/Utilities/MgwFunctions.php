@@ -164,7 +164,7 @@ class MgwFunctions {
 
     # on ajoute le message d'info
     if ( $type = 'wikitext' ) {
-      $out->addWikiText( $text );
+      $out->addWikiTextAsContent( $text );
     }
     else {
       $out->addHTML( $text );
