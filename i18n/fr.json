@@ -150,5 +150,8 @@
   "specialaccountrequest-label-submit": "Envoyer la demande",
   "specialaccountrequest-email-subject": "MGWiki: demande de création de compte",
   "specialaccountrequest-email-intro": "Merci beaucoup de votre intérêt pour MGWiki.",
-  "specialaccountrequest-email-end": "Nous essayons de donner suite à votre demande dans les meilleurs délais."
+  "specialaccountrequest-email-end": "Nous essayons de donner suite à votre demande dans les meilleurs délais.",
+
+	"mgw-no-email-warning": "Aucune adresse de courriel n'est associée à votre compte.",
+	"mgw-no-email-link": "enregistrer une adresse de courriel"
 }

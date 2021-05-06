@@ -139,6 +139,7 @@ class SpecialMgwChangeCredentials extends \SpecialPage {
 					}
 				}
 				if ( $reqData['email'] != $userData['email'] ) {
+
 					if ( ! $this->is_email_new( $reqData['email'] ) ) {
 						$mess[] = 'Changement d\'adresse courriel impossible: cette adresse est déjà utilisée par un autre utilisateur.';
 						$continue = false;
@@ -422,7 +423,7 @@ class SpecialMgwChangeCredentials extends \SpecialPage {
 				$title_class = 'mgw-user-incomplete';
 				$info_title = "? compte actif - confirmation courriel en attente";
 				$string = 'Adresse courriel non confirmée';
-				if ( !$notify['confirm'] ) $string .= "(demande de confirmation envoyée le "
+				if ( !$notify['confirm'] ) $string .= "&nbsp;(demande de confirmation envoyée le "
 					. date( 'd-m-Y', wfTimestamp( TS_UNIX, $data['last_invite'] ) ) . ")";
 				$info_li[] = $string;
 				$info_li[] = "Dernière activité le " . date( 'd-m-Y', wfTimestamp( TS_UNIX, $data['last_edit'] ) );
@@ -447,18 +448,7 @@ class SpecialMgwChangeCredentials extends \SpecialPage {
 					'href' => '/wiki/index.php?title=Discussion_utilisateur:' . $targetUser->getName() . '&action=edit',
 					'label' => 'Adresser un message',
 					'flags' => ['progressive']
-				] ) . '</div>');
-			}
-			if ( $info_action == 'create' ) {
-				$out->addHTML( '<div class="mgw-ooui-submit">' . (string)new \OOUI\ButtonWidget( [
-					'href' => SpecialPage::getTitleFor( 'MgwChangeCredentials' )->getLinkURL( [
-						'notify' => 'create',
-						'user_id' => $targetUser->getId(),
-						'returnto' => str_replace('/wiki/index.php/','', $reqData['returnto'] )
-					] ),
-					'label' => 'Renvoyer une invitation',
-					'flags' => ['progressive']
-				] ) . "</div>" );
+				] ) . '&nbsp;&nbsp;les notifications à l\'utilisateur nécessitent une adresse e-mail valide</div>');
 			}
 			if ( $info_action == 'confirm' ) {
 				$out->addHTML( '<div class="mgw-ooui-submit">' . (string)new \OOUI\ButtonWidget( [
@@ -467,10 +457,21 @@ class SpecialMgwChangeCredentials extends \SpecialPage {
 						'user_id' => $targetUser->getId(),
 						'returnto' => str_replace('/wiki/index.php/','', $reqData['returnto'] )
 					] ),
-					'label' => 'Renouveler la demande de confirmation de courriel',
+					'label' => 'Demander la confirmation de l\'e-mail',
 					'flags' => ['progressive']
-				] ) . "</div>");
+				] ) . "&nbsp;&nbsp;l'utilisateur devra se connecter avec son mot de passe pour confirmer son e-mail</div>");
 			}
+		//	if ( $info_action == 'create' ) {
+				$out->addHTML( '<div class="mgw-ooui-submit">' . (string)new \OOUI\ButtonWidget( [
+					'href' => SpecialPage::getTitleFor( 'MgwChangeCredentials' )->getLinkURL( [
+						'notify' => 'create',
+						'user_id' => $targetUser->getId(),
+						'returnto' => str_replace('/wiki/index.php/','', $reqData['returnto'] )
+					] ),
+					'label' => 'Renvoyer une invitation',
+					'flags' => ['progressive']
+				] ) . "&nbsp;&nbsp;avec réinitialisation du mot de passe</div>" );
+			//}
 			$out->addHTML('<hr/>');
 		}
 
@@ -528,6 +529,7 @@ class SpecialMgwChangeCredentials extends \SpecialPage {
 	}
 
 	private function displayEnd( $url, $done, $mess ) {
+
 		$out = $this->getOutput();
 		if ( !$done || $mess ) {
 			$label = ( $done ) ? 'ok' : 'retour';
@@ -535,8 +537,11 @@ class SpecialMgwChangeCredentials extends \SpecialPage {
 					'href' => $url,
 					'label' => $label
 				] ) );
+			return;
 		}
-		else	$out->redirect( $url );
+		else	{
+			$out->redirect( $url );
+		}
 	}
 
 	private function permission( $targetUser ) {

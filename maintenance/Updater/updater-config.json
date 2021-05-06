@@ -28,6 +28,10 @@
         "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Citoid",
         "branch": "REL1_35"
       },
+      "cldr": {
+        "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/cldr",
+        "branch": "REL1_35"
+      },
       "DynamicPageList3": {
         "url": "https://github.com/Universal-Omega/DynamicPageList3.git",
         "branch": "REL1_35"

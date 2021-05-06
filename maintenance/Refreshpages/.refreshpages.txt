@@ -2,3 +2,7 @@ Formulaire:GEP
 Formulaire:DPC
 Formulaire:GAPP
 Formulaire:Stage praticien
+MediaWiki:Changeemail
+MediaWiki:Prefs-changeemail
+MediaWiki:Prefs-help-email
+MediaWiki:Emailnotauthenticated

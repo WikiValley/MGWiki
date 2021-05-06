@@ -83,7 +83,8 @@
 			"MGWiki::onPageContentSaveComplete"
 		],
 		"PostLoginRedirect": [
-			"MGWiki::onPostLoginRedirect"
+			"MGWiki::onPostLoginRedirect",
+			"MediaWiki\\Extension\\MGWiki\\MGWikiHooks::onPostLoginRedirect"
 		],
 		"PageForms::HTMLBeforeForm": [
 			"MGWiki::onHTMLBeforeForm"
@@ -92,7 +93,8 @@
 			"MGWiki::onSpecialPageAfterExecute"
 		],
 		"SpecialPageBeforeExecute": [
-			"MGWiki::onSpecialPageBeforeExecute"
+			"MGWiki::onSpecialPageBeforeExecute",
+			"MediaWiki\\Extension\\MGWiki\\MGWikiHooks::onSpecialPageBeforeExecute"
 		],
 		"userCan": [
 			"MGWiki::onuserCan"

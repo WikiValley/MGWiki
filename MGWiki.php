@@ -301,7 +301,6 @@ class MGWiki {
 	 * Redirect the user just after login if her/his semantic property says
 	 * s/he should update her/his informations.
 	 */
-
 	static function onPostLoginRedirect( &$returnTo, &$returnToQuery, &$type ) {
 		global $wgUser;
 		if ( self::userRequireUpdate() ) {
@@ -311,7 +310,6 @@ class MGWiki {
 		}
 		return true;
 	}
-
 
 	/**
 	 * @param SpecialPage $specialPage

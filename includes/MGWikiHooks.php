@@ -28,6 +28,7 @@ class MGWikiHooks {
 	 */
 	static function onBeforePageDisplay( &$out, &$skin ) {
 		global $wgUser;
+		$context = new \RequestContext();
 
 		// SENDMASSMAIL
 		// Affiche un bandeau d'information sur la page d'édition du corps du mail
@@ -40,6 +41,37 @@ class MGWikiHooks {
 		$out->addModules( 'ext.mgwiki' );
 			# styles css séparés du module pour cause de lenteur...
 		$out->addHeadItems( HtmlF::include_resource_file ( 'ext.mgwiki.css', 'style' ) );
+
+		// ALERTES
+		if ( $context->getRequest()->getVal('mgwarn') ) {
+			$mgwarn = $context->getRequest()->getVal('mgwarn');
+
+			if ( $mgwarn == 'noemail' ) {
+				$out->enableOOUI();
+				$get = [
+					'user_id' => $wgUser->getId(),
+					'returnto' => $out->getPageTitle()
+				];
+				$msg = wfMessage( 'mgw-no-email-warning' )->parse() . '&nbsp;&nbsp;' .
+					new \OOUI\ButtonWidget( [
+						'href' => \SpecialPage::getTitleFor( 'MgwChangeCredentials' )->getLinkURL( $get ),
+						'label' => wfMessage( 'mgw-no-email-link' )->text(),
+					] );
+				$out->prependHTML( HtmlF::alertMessage( false, $msg ) );
+			}
+			elseif ( $mgwarn == 'emailnotauthenticated' ) {
+				$out->enableOOUI();
+				$get = [
+					'returnto' => $out->getPageTitle()
+				];
+				$msg = wfMessage( 'emailnotauthenticated' )->parse() . '&nbsp;&nbsp;' .
+					new \OOUI\ButtonWidget( [
+						'href' => \SpecialPage::getTitleFor( 'Confirmemail' )->getLinkURL( $get ),
+						'label' => wfMessage( 'emailconfirmlink' )->text(),
+					] );
+				$out->prependHTML( HtmlF::alertMessage( false, $msg ) );
+			}
+		}
 
 		// SELON LES NS
 		$namespace = $skin->getRelevantTitle()->getNamespace();
@@ -123,7 +155,6 @@ class MGWikiHooks {
 	}
 
   /**
-   * TODO
    * Gestion des de mails de création / confirmation / passwd-reset
    * en combinaison avec SpecialMgwEmailAuth
    */
@@ -166,7 +197,6 @@ class MGWikiHooks {
   }
 
  	/**
-	 * TODO: info erreur identifiant...
  	 * login avec mail + authentification insensible à la casse
  	 */
   public static function onAuthChangeFormFields( $requests, $fieldInfo, &$formDescriptor, $action ) {
@@ -214,6 +244,39 @@ class MGWikiHooks {
       };
     }
   }
+
+	/**
+	 * Redirection ChangeEmail -> MgwChangeCredentials
+	 * pour interdire la suppression d'e-mail
+	 */
+	public static function onSpecialPageBeforeExecute( $special, $subPage ) {
+		if ( $special->getName() == 'ChangeEmail' ) {
+			global $wgUser;
+			$out = $special->getOutput();
+			$get = [];
+			$get['user_id'] = $wgUser->getId();
+			$context = new \RequestContext();
+			$returnto = $context->getRequest()->getVal('returnto');
+			if ( $returnto ) $get['returnto'] = $returnto;
+			$out->redirect( \SpecialPage::getTitleFor( 'MgwChangeCredentials' )->getLinkURL( $get ) );
+		}
+	}
+
+	/**
+	 * hook utilisé de manière dérivative pour afficher des infos en post login
+	 */
+	static function onPostLoginRedirect( &$returnTo, &$returnToQuery, &$type ) {
+		global $wgUser;
+
+		if ( !$wgUser->getEmail() ) {
+			$returnToQuery['mgwarn'] = 'noemail';
+		}
+		elseif ( !$wgUser->getEmailAuthenticationTimestamp() ) {
+			$returnToQuery['mgwarn'] = 'emailnotauthenticated';
+		}
+
+		return true;
+	}
 
 	/**
 	 * CUSTOM

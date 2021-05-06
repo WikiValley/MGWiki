@@ -125,7 +125,7 @@ class ApiMgwAction extends ApiBase {
 
 					$info = "Le groupe " . $params['groupe_name'] . " a bien été " . $mess .
 						'. Il se peut que l\'affichage se mette à jour avec un certain délai.'.
-						"\n\nSi votre tableau de bord n'affiche aucune modification, réactualizez vos informations personnelles.\n\n";
+						"\n\nSi votre tableau de bord n'affiche aucune modification, réactualisez vos informations personnelles.\n\n";
 					if ( $status->done() ) {
 						$res['done'] = [
 							'status' => 'done',
