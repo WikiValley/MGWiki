@@ -1,0 +1,56 @@
+<noinclude>
+{{#ifingroup:sysop,U2
+|Ce formulaire permet de créer un Stage praticien pour les internes.
+
+{{#formlink:form=Stage praticien|link text=Créer un nouveau Stage praticien|link type=button}}
+|}}
+</noinclude><includeonly>
+<div id="wikiPreview" style="display: none; padding-bottom: 25px; margin-bottom: 25px; border-bottom: 1px solid #AAAAAA;"></div>
+{{{for template|Groupe}}}<!--
+-->{{{field|Archivé|default=Non|hidden}}}<!--
+-->{{{field|Type de groupe|input type=text|default=Stage praticien|hidden}}}<!--
+-->{{{field|Description|input type=text|default=Semestre en cabinet de médecine générale|hidden}}}
+{| class="formtable"
+{{#ifingroup:sysop|
+! Institution de rattachement: {{*}}
+{{!}} {{{field|Institution de rattachement|input type=dropdown|values from property=Institution adhérente|default={{#show:Utilisateur:{{CURRENTUSER}}|?Institution 
+de rattachement#-}}|mandatory}}}
+{{!}}-
+! MSU responsable: {{*}}
+{{!}} {{{field|Tuteur ou modérateur|input type=dropdown|values from property=Nom U2|default={{CURRENTUSER}}|mandatory}}}
+{{!}}-
+|{{{field|Institution de rattachement|hidden|default={{#show:Utilisateur:{{CURRENTUSER}}|?Institution de rattachement#-}} }}}<!--
+-->{{{field|Tuteur ou modérateur|hidden|default=current user}}} }}
+! Année:
+| {{{field|Année|input type=text|default={{CURRENTYEAR}}|size=4|maxlenght=4}}}
+|-
+! Ajouter un interne déjà inscrits : 
+| {{{field|Membres|input type=tokens|placeholder=Entrer le nom des utilisateurs existants|rows=5|property=Utilisateur|values from namespace=Utilisateur}}}
+|}
+{{{end template}}}
+'''Inviter un nouvel interne''' (création de nouveau compte): 
+{{{for template|Participant Groupe|multiple|add button text=Rajouter un(e) participant(e)}}}
+{| class="formtable"
+|'''Nom'''
+|{{{field|Nom|mandatory|input type=text|size=30}}}
+|-
+|'''Prénom'''
+|{{{field|Prénom|mandatory|input type=text|size=30}}}
+|-
+!E-mail
+|{{{field|E-mail|mandatory|input type=text|size=50}}}
+|-
+!Statut
+|{{{field|Statut personne|input type=radiobutton|mandatory|default=Interne|values=Interne, Médecin, Scientifique}}}
+|}
+{{{end template}}}
+
+{{{for template|Groupe2}}}
+{{{end template}}}
+
+{{{info|page name=Groupe:<Groupe[Type de groupe]><unique number> <Groupe[Tuteur ou modérateur]> <Groupe[Année]>}}}
+
+{{{standard input|watch}}}
+
+{{{standard input|save}}} {{{standard input|cancel}}}
+</includeonly>

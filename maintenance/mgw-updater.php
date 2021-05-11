@@ -29,12 +29,14 @@ $MGW_IP = $IP . '/extensions/MGWiki';
 require_once ( __DIR__ . "/Updater/MgwBackup.php");
 require_once ( __DIR__ . "/Updater/MgwCheckHooks.php");
 require_once ( __DIR__ . "/Updater/MgwInstall.php");
+require_once ( __DIR__ . "/Updater/MgwPagesSaver.php");
 
 class MgwUpdater extends Maintenance {
 
 	use MgwBackup;
 	use MgwCheckHooks;
 	use MgwInstall;
+	use MgwPagesSaver;
 
   private $user;
 	private $summary;
@@ -49,15 +51,16 @@ class MgwUpdater extends Maintenance {
 		$version = ( getenv( "MW_VERSION" ) ) ? getenv( "MW_VERSION" ) : $wgVersion;
 		$version = substr($version,0,4) ;
 		*/
-		if ( !is_readable( "$IP/config/maintenance.json" ) ) {
-			die( "$IP/config/maintenance.json needs to be set to your MGWiki installation.\n" );
+		global $MGW_IP;
+		if ( !is_readable( "$MGW_IP/config/maintenance.json" ) ) {
+			die( "$MGW_IP/config/maintenance.json needs to be set to your MGWiki installation.\n" );
 		}
-		$this->config = json_decode( file_get_contents("$IP/config/maintenance.json"), true );
+		$this->config = json_decode( file_get_contents("$MGW_IP/config/maintenance.json"), true );
 
 		$this->mDescription = "Programme d'automatisation des màj de MGWiki";
 		$this->summary = "Mise à jour MGWiki 1.0";
 
-		$this->addDescription( file_get_contents( 'mgw-updater.description.txt' )	);
+		$this->addDescription( file_get_contents( 'help-mgw-updater.txt' )	);
 
 		$this->addArg( "action", "Action à réaliser.", false ); // 'list_groupes'
 
@@ -98,176 +101,6 @@ class MgwUpdater extends Maintenance {
     $done = $this->{'do_'.$this->target[0]}();
     echo $done . "\n";
 	}
-
-  private function do_list_groupes() {
-    # constructeurs
-    $groupe_controller = new MediaWiki\Extension\MGWikiDev\Specials\Groupe;
-    $groupe_constructor = new MediaWiki\Extension\MGWikiDev\Classes\MGWSpecialConstructor ( 'groupe' );
-    $set = ['display'=>'pages', 'action' => 'show' ];
-    $groupe_constructor->set( $set );
-    $list = $groupe_controller->list( $groupe_constructor->getQuery() );
-
-    # on établit la liste des membres
-    $fails = [];
-    foreach( $list as $key => $groupe ) {
-
-      $fails[$key]['groupe'] = 'Groupe:'.$groupe['page_name'];
-      $fails[$key]['fails'] = false;
-      $fails[$key]['users'] = [];
-
-      if ( $groupe['template'] ) {
-
-        $list[$key]['referent'] = trim($groupe['referent']);
-        $list[$key]['referent_id'] = User::newFromName($list[$key]['referent'])->getId();
-         # récupération des utilisateurs non reconnus
-        if ( $list[$key]['referent_id'] == 0 ) {
-          $fails[$key]['fails'] = true;
-          $fails[$key]['users'][] = $list[$key]['referent'];
-        }
-
-        $list[$key]['membres'] = explode(',', $groupe['membres'] );
-        foreach ($list[$key]['membres'] as $kkey => $membre) {
-          $membre = trim($membre);
-          if (!$membre){
-            unset($list[$key]['membres'][$kkey]);
-          }
-          else {
-            $list[$key]['membres'][$kkey] = $membre;
-            $user = User::newFromName($membre);
-            $list[$key]['membres_ids'][$kkey] = $user->getId();
-             if ( $list[$key]['membres_ids'][$kkey] == 0 ) {
-               $fails[$key]['fails'] = true;
-               $fails[$key]['users'][] = $membre;
-             }
-          }
-        }
-      }
-    }
-
-    # liste des échecs
-    $report = '';
-    foreach ( $fails as $fail ) {
-      if ( $fail['fails'] ) {
-        $report .= $fail['groupe'] . "\n";
-        foreach ( $fail['users'] as $user ) {
-          $report .= $user . "\n";
-        }
-        $report .= "\n";
-      }
-    }
-
-    # on sauvegarde le résultat
-    if ( !$report ) {
-      file_put_contents( 'maintenance-list_groupes-report.json', json_encode($list) );
-      unlink('maintenance-list_groupes-fails-report.txt');
-      return 'done';
-    }
-    else {
-      file_put_contents( 'maintenance-list_groupes-fails-report.txt', $report );
-      return "\nCertains utilisateurs n\'ont pas été reconnus\n\n" .
-            "Veuillez corriger les groupes avant de poursuivre\n" .
-            "=> maintenance-list_groupes-fails-report.txt\n";
-    }
-  }
-
-	private function do_rename_pages() {
-		echo "Renommage des pages... \n\n";
-
-		$fails = '';
-		$handle = fopen('Refreshpages/.renamepages.txt', 'r');
-		if ($handle)
-		{
-			/*Tant que l'on est pas à la fin du fichier*/
-			$i = 1;
-			while (!feof($handle))
-			{
-				/*On lit la ligne courante*/
-				$buffer = fgets($handle);
-				if ($buffer) {
-					if ( preg_match( '/"(.*)"[ ]?=>[ ]?"(.*)"/', $buffer, $matches ) > 0 ) {
-						$oldTitle = \Title::newFromText( $matches[1] );
-						if ( $oldTitle->getArticleID() == 0 ) {
-							$report = $matches[1] . " : page inconnue\n";
-							$fails .= $report;
-							echo $report;
-						}
-						else {
-							# on vérifie que la redirection n'est pas déjà faite
-							$page = \WikiPage::factory($oldTitle);
-							if ( $page->isRedirect() ) {
-								$target = $page->getRedirectTarget()->getFullText();
-								if ( $target == $matches[2] ) {
-									echo $matches[1] . ' => ' . $target . " (redirection déjà présente)\n";
-								}
-								else {
-									$report = $matches[1] . ' : une autre redirection existe vers la page "' . $target . '"' . "\n";
-									$fails .= $report;
-									echo $report;
-								}
-							}
-							else {
-								# on renomme la page
-								$newTitle = \Title::newFromText( $matches[2] );
-								$move = new \MovePage( $oldTitle, $newTitle );
-								$move->move( $this->user, $this->summary, true );
-								echo $matches[1] . ' => ' . $matches[2] . "\n";
-							}
-						}
-					}
-					else {
-						$report = $i . ' "' . $buffer . '" : ligne invalide' . "\n";
-						$fails .= $report;
-						echo $report;
-					}
-				}
-				$i++;
-			}
-			/*On ferme le fichier*/
-			fclose($handle);
-		}
-		if ( $fails ) {
-			file_put_contents( 'maintenance-rename_pages-fails-report.txt', $fails );
-			echo "\n" . '... des erreurs sont survenues : consulter "maintenance-rename_pages-fails-report.txt"' . "\n";
-		}
-		else {
-	    echo "\n\n... OK\n";
-		}
-    return 'done';
-	}
-
-  private function do_refresh_pages() {
-
-		# MAJ CONTENU
-    $filelist = array();
-    $dir_name = __DIR__ . '/Refreshpages';
-    if ( $handle = opendir( $dir_name ) ) {
-        while ($entry = readdir($handle)) {
-            $filelist[] = $entry;
-        }
-        closedir( $handle );
-    }
-
-    echo "Mise à jour des pages...\n\n";
-    foreach ( $filelist as $file ) {
-			if ( !in_array( $file, ['.PagesSaver.php','.refreshpages.txt','.renamepages.txt','.','..'] ) ) {
-				$page = str_replace( ['~~','_','°°'], [':',' ','/'], $file );
-	      if ( preg_match( '/^[\.]*$/', $page ) == 0 ) {
-	        $content = file_get_contents( $dir_name . '/' . $file );
-	        $status = \MediaWiki\Extension\MGWiki\Utilities\PagesFunctions::edit(
-	          $page,
-	          $this->summary,
-	          $this->user,
-	          $content,
-						true
-	        );
-	        echo $page . ' ' . str_replace( ['<p>','</p>'], '', $status->mess() ) . "\n\n";
-	      }
-			}
-    }
-    echo "\n... OK\n";
-
-    return 'done';
-  }
 
 	/**
 	 * @param string $module 'save'|'restore'|'purge'
@@ -367,20 +200,106 @@ class MgwUpdater extends Maintenance {
 	 	}
 	}
 
-	private function do_check_hooks( $version = '' ) {
-		echo "Vérification des Hooks spécifiques à MGWiki ...\n";
-		return $this->checkHooks( $version );
-	}
-
 	private function do_install() {
-	  if ( ! $this->getOption( "version" ) ) echo "l'argument --version doit être précisé";
+	  if ( ! $this->getOption( "version" ) )
+		 	return"l'argument --version doit être précisé";
 		return $this->install_mediawiki( $this->getOption( "version" ) );
 	}
 
-	private function do_import() {
-	  if ( ! $this->getOption( "version" ) ) echo "l'argument --version doit être précisé";
-		return $this->import_version( $this->getOption( "version" ) );
+	private function do_install_scripts() {
+		return $this->install_mediawiki( $this->getOption( "version" ) );
 	}
+
+	private function do_check_hooks() {
+		echo "Vérification des Hooks spécifiques à MGWiki ...\n";
+		return $this->checkHooks();
+	}
+
+	private function do_save_pages() {
+		echo "Sauvegarde des pages ...\n";
+		$this->save_pages();
+	}
+
+  private function do_refresh_pages() {
+		echo "Implémentation des pages ...\n";
+		$this->refresh_pages();
+  }
+
+	private function do_rename_pages() {
+		echo "Renommage des pages ...\n";
+		$this->rename_pages();
+	}
+
+  private function do_list_groupes() {
+    # constructeurs
+    $groupe_controller = new MediaWiki\Extension\MGWikiDev\Specials\Groupe;
+    $groupe_constructor = new MediaWiki\Extension\MGWikiDev\Classes\MGWSpecialConstructor ( 'groupe' );
+    $set = ['display'=>'pages', 'action' => 'show' ];
+    $groupe_constructor->set( $set );
+    $list = $groupe_controller->list( $groupe_constructor->getQuery() );
+
+    # on établit la liste des membres
+    $fails = [];
+    foreach( $list as $key => $groupe ) {
+
+      $fails[$key]['groupe'] = 'Groupe:'.$groupe['page_name'];
+      $fails[$key]['fails'] = false;
+      $fails[$key]['users'] = [];
+
+      if ( $groupe['template'] ) {
+
+        $list[$key]['referent'] = trim($groupe['referent']);
+        $list[$key]['referent_id'] = User::newFromName($list[$key]['referent'])->getId();
+         # récupération des utilisateurs non reconnus
+        if ( $list[$key]['referent_id'] == 0 ) {
+          $fails[$key]['fails'] = true;
+          $fails[$key]['users'][] = $list[$key]['referent'];
+        }
+
+        $list[$key]['membres'] = explode(',', $groupe['membres'] );
+        foreach ($list[$key]['membres'] as $kkey => $membre) {
+          $membre = trim($membre);
+          if (!$membre){
+            unset($list[$key]['membres'][$kkey]);
+          }
+          else {
+            $list[$key]['membres'][$kkey] = $membre;
+            $user = User::newFromName($membre);
+            $list[$key]['membres_ids'][$kkey] = $user->getId();
+             if ( $list[$key]['membres_ids'][$kkey] == 0 ) {
+               $fails[$key]['fails'] = true;
+               $fails[$key]['users'][] = $membre;
+             }
+          }
+        }
+      }
+    }
+
+    # liste des échecs
+    $report = '';
+    foreach ( $fails as $fail ) {
+      if ( $fail['fails'] ) {
+        $report .= $fail['groupe'] . "\n";
+        foreach ( $fail['users'] as $user ) {
+          $report .= $user . "\n";
+        }
+        $report .= "\n";
+      }
+    }
+
+    # on sauvegarde le résultat
+    if ( !$report ) {
+      file_put_contents( 'maintenance-list_groupes-report.json', json_encode($list) );
+      unlink('maintenance-list_groupes-fails-report.txt');
+      return 'done';
+    }
+    else {
+      file_put_contents( 'maintenance-list_groupes-fails-report.txt', $report );
+      return "\nCertains utilisateurs n\'ont pas été reconnus\n\n" .
+            "Veuillez corriger les groupes avant de poursuivre\n" .
+            "=> maintenance-list_groupes-fails-report.txt\n";
+    }
+  }
 
 	private function shell( $cmd, &$console_out, $string = true ) {
 		$console_out = [];

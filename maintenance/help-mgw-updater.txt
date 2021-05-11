@@ -1,0 +1,69 @@
+Programme d'automatisation des tâches de maintenance de MGWiki.
+
+USAGE: sudo php mgw-updater [action] [--options]
+
+LEGENDE: --required  [--optionnel] *[--par défaut]
+
+ACTIONS:
+
+
+## backup --save|restore|purge
+
+  Automatisation de la sauvegarde db et fichiers.
+  Structure des sauvegardes:
+    [dir]/[name]/[sql]
+    [dir]/[name]/[copy]/LocalSettings.php
+    [dir]/[name]/[copy]/images/[...]
+
+  Options:
+    [--backup_dir]: chemin complet du répertoire de sauvegarde
+      (default = $wgMGW_backup_dir)
+
+    [--backup_name]: nom de la sauvegarde (généré par défaut)
+
+    [--backup_sql]: nom du fichier .sql de destination (généré par défaut)
+
+    [--backup_copy]: nom du répertoire pour les fichiers de sauvegarde.
+      (généré par défaut)
+
+    --save
+     *[--all] [--backup_dir] [--backup_name] : sauvegarde complète
+      [--db] [--backup_dir] [--backup_name] [--backup_sql] : db
+      [--files] [--backup_dir] [--backup_name] [--backup_copy] : fichiers
+
+    --restore
+     *[--all] [--backup_dir] [--backup_name]
+      [--db] [--backup_dir] [--backup_name] [--backup_sql]
+      [--files] [--backup_dir] [--backup_name] [--backup_copy]
+
+    --purge : choix des archives à conserver dans le répertoire de sauvegarde
+
+
+## install --version
+
+  Automatisation de l'installation d'une nouvelle version de MediaWiki.
+  ! dépendance obligatoire à la branche "REL[version]" du dépôt git MGWiki
+
+  L'installation s'effectue dans le dossier /var/www/html/[version]/
+  ! la migration finale vers /var/www/html/wiki/ doit se faire manuellement
+
+  --version = [version]
+    numéro de version principal avec "." pour séparateur
+    exemple: php mgw-updater.php install --version="1.35"
+       -> installation selon les paramètres de la branche "REL1_35"
+       de MGWiki (MGWiki/config/maintenance.json)
+
+
+## save_pages
+
+  Copie la version actuelle du contenu des pages listées dans
+  maintenance/Refreshpages/.refreshpages.txt vers des fichiers
+  dans le même répertoire.
+
+
+## refresh_pages
+
+  Intégration des pages contenues dans le répertoire maintenance/Refreshpages
+
+
+DESCRIPTION AUTOMATISEE:

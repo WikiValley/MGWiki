@@ -1,7 +1,4 @@
 <?php
-<<<<<<< HEAD
-=======
-
   /**
    * Automatisation de la redirection de toutes les requêtes vers /var/www/html/travaux/index.html
    *
@@ -10,9 +7,10 @@
    *  sudo php site-stop.php --run (remise en production)
    */
 
->>>>>>> version-1.0
   $options = ['run','stop','help'];
-  $getOpt = getOpt( 'rsh', $options );
+  if ( !isset($getOpt) ) {
+    $getOpt = getOpt( 'rsh', $options );
+  }
 
   if ( array_key_exists( 'r', $getOpt ) || array_key_exists( 'run', $getOpt ) ) {
 
@@ -38,17 +36,11 @@
     $settings = file_get_contents ( '/var/www/html/wiki/LocalSettings.php' );
     $settings = explode( "\n", $settings );
     foreach ( $settings as $key => $line ) {
-<<<<<<< HEAD
-      if ( preg_match( '/^(\$wgReadOnly)/', $line ) ) {
-        $settings[$key] = preg_replace( '/^(\$wgReadOnly)/', '#$1', $line );
-      }
-=======
       /* NON FONCTIONNEL (empêche la maintenance sur la BDD...)
       if ( preg_match( '/^(\$wgReadOnly)/', $line ) ) {
         $settings[$key] = preg_replace( '/^(\$wgReadOnly)/', '#$1', $line );
       }
       */
->>>>>>> version-1.0
       if ( preg_match( '/^(header\("Location\:)/', $line ) ) {
         $settings[$key] = preg_replace( '/^(header\("Location\:)/', '#$1', $line );
       }
@@ -80,34 +72,21 @@
     # /var/www/html/wiki/LocalSettings.php
     $settings = file_get_contents ( '/var/www/html/wiki/LocalSettings.php' );
     $settings = explode( "\n", $settings );
-<<<<<<< HEAD
-    $readOnly = false;
-    $headerLocation = false;
-    foreach ( $settings as $key => $line ) {
-=======
     //$readOnly = false;
     $headerLocation = false;
     foreach ( $settings as $key => $line ) {
       /* NON FONCTIONNEL (empêche la maintenance sur la BDD...)
->>>>>>> version-1.0
       if ( preg_match( '/^(.*)(\$wgReadOnly)/', $line ) ) {
         $settings[$key] = preg_replace( '/^(.*)(\$wgReadOnly)/', '$2', $line );
         $readOnly = true;
       }
-<<<<<<< HEAD
-=======
       */
->>>>>>> version-1.0
       if ( preg_match( '/^(.*)(header\("Location\:)/', $line ) ) {
         $settings[$key] = preg_replace( '/^(.*)(header\("Location\:)/', '$2', $line );
         $headerLocation = true;
       }
     }
-<<<<<<< HEAD
-    if ( !$readOnly ) $settings[] = '$wgReadOnly = "MGWiki est en cours de maintenance. L\'accès sera rétabli rapidement";';
-=======
-    //if ( !$readOnly ) $settings[] = '$wgReadOnly = "MGWiki est en cours de maintenance. L\'accès sera rétabli rapidement";';
->>>>>>> version-1.0
+    //if ( !$readOnly ) $settings[] = '$wgReadOnly = "MGWiki est en cours de maintenance. L\'accès sera rétabli rapidement";'
     if ( !$headerLocation ) $settings[] = 'header("Location: $wgServer");';
     $settings = implode("\n", $settings );
     file_put_contents ( '/var/www/html/wiki/LocalSettings.php', $settings );
@@ -120,15 +99,8 @@
     . "Options:\n\n"
     . "  --run (-r):\n"
     . "    URL principale dirigée sur /wiki/index.php\n"
-<<<<<<< HEAD
-    . "    \$wgReadOnly et header() désactivés dans LocalSettings.php\n\n"
-    . "  --stop (-s):\n"
-    . "    URL principale dirigée sur /travaux/index.html\n"
-    . "    \$wgReadOnly et header('Location: https://mgwiki.univ-lyon1.fr') activés\n\n";
-=======
     . "    header() désactivé dans LocalSettings.php\n\n"
     . "  --stop (-s):\n"
     . "    URL principale dirigée sur /travaux/index.html\n"
     . "    header('Location: https://mgwiki.univ-lyon1.fr') activé\n\n";
->>>>>>> version-1.0
 ?>

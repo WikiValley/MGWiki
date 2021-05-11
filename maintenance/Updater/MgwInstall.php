@@ -6,17 +6,46 @@
 
 trait MgwInstall {
 
+  /**
+   * Installation de MediaWiki [$version]
+   * dans le répertoire /var/www/html/[$version]
+   *
+   * A compléter par $this->install_scripts() pour terminer l'installation
+   * APRES AVOIR RENOMME LE REPERTOIRE /var/www/html/wiki
+   */
   private function install_mediawiki( $version ) {
 
     global $IP;
     $rel = 'REL' . str_replace('.','_',$version);
     $MWpath = '/var/www/html/' . $version;
 
-    //on remplace le fichier de config par celui de la version demandée
+    // on remplace le fichier de config par celui de la version demandée
     global $wgMgwGitRawUrl;
     // temporaire...
     if ( !isset($wgMgwGitRawUrl) ) $wgMgwGitRawUrl = 'https://raw.githubusercontent.com/WikiValley/MGWiki';
     $this->config = json_decode( wget("$wgMgwGitRawUrl/$rel/maintenance/Updater/updater-config.json"), true )[$version];
+
+    // si le site est actif, on propose de le mettre en maintenance
+    $localSettings = file_get_contents( $IP . '/LocalSettings.php' );
+    if ( ! preg_match('/^header\("Location: \$wgServer"\)/', $localSettings ) ) {
+      echo "Ce script ne peut continuer car MGWiki est en cours de production.\n" .
+        " Souhaitez-vous le mettre à l'arrêt [o/n] ?";
+      if ( $this->readconsole('> ') != 'o' ) {
+        return "\n...installation annulée.\n";
+      }
+      $getOpt = [ 'stop' ];
+      include ( '../site-stop.php');
+    }
+
+    // on propose de réaliser une sauvegarde:
+    echo "Souhaitez-vous effectuer une sauvegarde de l'état actuel de " .
+      "la bdd et des fichiers [o/n] ?\n".
+      "NB: l'existence d'une sauvegarde est indispensable au bon déroulement de l'installation.\n";
+    if ( $this->readconsole('> ') == 'o' ) {
+      if ( $this->do_backup( "save" ) == 'annulation' ) {
+        return "Echec de la sauvegarde, annulation.\n";
+      }
+    }
 
     # 1. mediawiki
     echo "\nMEDIAWIKI...\n\n";
@@ -48,10 +77,6 @@ trait MgwInstall {
 
     # 2. extensions
     echo "\nEXTENSIONS...\n\n";
-    if ( !isset( $this->config ) ) {
-      echo "La liste des extensions n'est pas configurée pour cette version de mediawiki\n.";
-      return "Abandon\n";
-    }
 
       ## composer
     $composer = [ "require" => $this->config['composer'] ];
@@ -94,12 +119,25 @@ trait MgwInstall {
     }
     echo "... OK\n\n";
 
-    # 4. Hooks
-    $this->do_check_hooks( $MWpath );
+    return "\n\nMediawiki $version est installé dans le répertoire $MWpath\n" .
+      "Veuillez terminer l'installation avec 'php mgw-updater.php install_scripts'\n" .
+      "après avoir déplacé le répertoire vers '/var/www/html/wiki/'.";
+  }
 
-    # 5. scripts
+
+  /**
+   * Scripts pour achever l'installation de mediawiki
+   */
+  private function install_scripts() {
+
+    global $MGW_IP;
+
+    # 1. Hooks
+    $this->do_check_hooks();
+
+    # 2. scripts
     echo "\nSCRIPTS... \n\n";
-    foreach ( $this->config['maintenance-scripts'] as $num => $script ){
+    foreach ( $this->config['maintenance-scripts'] as $num => $script ) {
       $cmd = "cd $MWpath/{$script['dir']} && {$script['cmd']}";
         echo $cmd . "... \n";
       if ( $this->shell_dry( $cmd ) ) {
@@ -108,9 +146,20 @@ trait MgwInstall {
       else {
         echo "... OK\n\n";
       }
-
     }
 
-    return "\n\n...fin de l'installation. \nMediawiki $version est installé dans le répertoire $MWpath\n";
+    # 3. refreshPages
+    if ( file_get_contents( $MGW_IP . "/maintenance/Refreshpages/.refreshpages.txt") ) {
+      $this->refresh_pages();
+    }
+    if ( file_get_contents( $MGW_IP . "/maintenance/Refreshpages/.refreshpages.txt") ) {
+      $this->rename_pages();
+    }
+
+    # 4. remise en production
+    $getOpt = [ 'run' ];
+    include ( '../site-stop.php');
+
+    return "Installation de MediaWiki terminée."; 
   }
 }
