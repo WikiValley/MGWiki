@@ -9,12 +9,10 @@
 
 trait MgwCheckHooks {
 
-  private function checkHooks( $path = '' ) {
+  private function checkHooks( ) {
     global $IP;
     global $MGW_IP;
-    $ip = ( $path ) ? $path : $IP;
-    $mgw_ip = ( $path ) ? $path . "/extensions/MGWiki" : $MGW_IP;
-    $info = json_decode( file_get_contents( $mgw_ip . '/extension.json' ), true );
+    $info = json_decode( file_get_contents( $MGW_IP . '/extension.json' ), true );
     $customHooks = $this->config['custom-hooks'];
 
     $report = fopen('maintenance-report.txt', 'a');
@@ -30,15 +28,15 @@ CheckHooks - " . date('Y-m-d H:i:s') . "
 
       # on vérifie la présence des Hooks dans les fichiers du programme
       foreach ( $this->config['screen-hooks'] as $dir ) {
-        $grep = shell_exec( 'cd ' . $ip . '/' .$dir . $shell );
+        $grep = shell_exec( 'cd ' . $IP . '/' .$dir . $shell );
         if ( $grep ) break;
-        $grep = shell_exec( 'cd ' . $ip . '/' .$dir . $shell2 );
+        $grep = shell_exec( 'cd ' . $IP . '/' .$dir . $shell2 );
         if ( $grep ) break;
       }
       # si absent: on recherche l'existence d'un customHook, on l'insère si nécessaire
       if ( !$grep ) {
          if ( array_key_exists( $key, $customHooks ) ) {
-           $add = $this->addHook( $customHooks[$key], $ip );
+           $add = $this->addHook( $customHooks[$key], $IP );
            fputs($report, $key . $add . "\n");
            echo $key . $add . "\n";
          }
@@ -65,6 +63,7 @@ return '';
   # @param array $hook
   # @return bool
   private function addHook( $hook, $path ) {
+
     $grep = shell_exec( 'cd ' . $path . ' && grep -r -n -E "' . $hook[ 'fileIdentifier' ] . '"' );
     if ( is_null( $grep ) ) {
       $mess = ' : ECHEC A L\'INSERTION (hook customisé)  : occurence "' . $hook[ 'fileIdentifier' ] . '" introuvable dans les fichiers';
