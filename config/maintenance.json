@@ -1,0 +1,90 @@
+{
+  "mediawiki": "https://releases.wikimedia.org/mediawiki/1.33/mediawiki-1.33.4.tar.gz",
+  "composer": {
+      "mediawiki/vector-skin":"1.32.1",
+      "mediawiki/header-footer": "3.0.0",
+      "mediawiki/page-forms": "4.6",
+      "mediawiki/semantic-media-wiki": "3.0.2",
+      "mediawiki/semantic-extra-special-properties": "2.0.0",
+      "mediawiki/semantic-result-formats": "3.1.0",
+      "mediawiki/semantic-cite": "2.1.0",
+      "pimple/pimple": "~3.0"
+  },
+  "git": {
+    "AdminLinks": {
+      "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/AdminLinks",
+      "branch": "REL1_33"
+    },
+    "Arrays": {
+      "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Arrays",
+      "branch": "REL1_33"
+    },
+    "Citoid": {
+      "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Citoid",
+      "branch": "REL1_33"
+    },
+    "DynamicPageList3": {
+      "url": "https://github.com/Universal-Omega/DynamicPageList3.git",
+      "branch": "REL1_35"
+    },
+    "Echo": {
+      "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Echo",
+      "branch": "REL1_33"
+    },
+    "Flow": {
+      "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/Flow",
+      "branch": "REL1_33"
+    },
+    "LabeledSectionTransclusion": {
+      "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/LabeledSectionTransclusion",
+      "branch": "REL1_33"
+    },
+    "LinkTarget": {
+      "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/LinkTarget",
+      "branch": "REL1_33"
+    },
+    "MassMessage": {
+      "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/MassMessage",
+      "branch": "REL1_33"
+    },
+    "MGWiki": {
+      "url": "https://github.com/WikiValley/MGWiki.git",
+      "branch": "REL1_33"
+    },
+    "MyVariables": {
+      "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/MyVariables",
+      "branch": "REL1_33"
+    },
+    "TitleIcon": {
+      "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/TitleIcon",
+      "branch": "REL1_33"
+    },
+    "UserFunctions": {
+      "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/UserFunctions",
+      "branch": "REL1_33"
+    },
+    "UserMerge": {
+      "url": "https://gerrit.wikimedia.org/r/mediawiki/extensions/UserMerge",
+      "branch": "REL1_33"
+    }
+  },
+  "custom-hooks": {
+    "ApiAllow": {
+      "fileIdentifier": "class ApiMain extends ApiBase",
+      "stringIdentifier": "!$user->isAllowed( 'read' )",
+      "customCode": " && !Hooks::run( 'ApiAllow', [ $module, $user ] )"
+    },
+    "ChangeMailFormFields": {
+      "fileIdentifier": "class SpecialChangeEmail extends FormSpecialPage",
+      "stringIdentifier": "'help-message' => 'changeemail-newemail-help',\n\t\t\t],\n\t\t];",
+      "customCode": "\n\t\tHooks::run( 'ChangeMailFormFields', [ &$fields ] );"
+    }
+  },
+  "screen-hooks": [ "includes", "maintenance", "skins", "extensions" ],
+  "backup": [
+    "LocalSettings.php",
+    "images",
+    "skins/MGWiki",
+    "extensions/MGWiki/data/Private"
+  ]
+}
