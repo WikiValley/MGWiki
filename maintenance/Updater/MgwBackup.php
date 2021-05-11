@@ -37,7 +37,7 @@ trait MgwBackup {
 
     # sauvegarde
     $copy_done = [];
-    foreach ( $this->config[$this->mw_version]['backup'] as $back ) {
+    foreach ( $this->config['backup'] as $back ) {
       $dest = str_replace('/', '~', $back );
       $opt = ( is_dir( "$IP/$back") ) ? " -r" : "";
       $shell_cmd = "cp$opt $IP/$back $directory/$copy_dir/$dest";
@@ -107,7 +107,7 @@ trait MgwBackup {
     $RP = ( $newPATH ) ? $newPATH : $IP;
 
     // restauration des fichiers
-    foreach ( $this->config[$this->mw_version]['backup'] as $back ) {
+    foreach ( $this->config['backup'] as $back ) {
       $dest = str_replace( '/', '~', $back );
       if ( ( !$sub || $sub = $back ) && file_exists( $directory . '/' . $dest ) ) {
         $opt = ( is_dir( "$directory/$dest" ) ) ? " -r" : "";

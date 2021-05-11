@@ -6,16 +6,22 @@
 
 trait MgwInstall {
 
-  private function install_mediawiki() {
+  private function install_mediawiki( $version ) {
+
     global $IP;
-    $version = $this->mw_version;
     $rel = 'REL' . str_replace('.','_',$version);
     $MWpath = '/var/www/html/' . $version;
+
+    //on remplace le fichier de config par celui de la version demandée
+    global $wgMgwGitRawUrl;
+    // temporaire...
+    if ( !isset($wgMgwGitRawUrl) ) $wgMgwGitRawUrl = 'https://raw.githubusercontent.com/WikiValley/MGWiki';
+    $this->config = json_decode( wget("$wgMgwGitRawUrl/$rel/maintenance/Updater/updater-config.json"), true )[$version];
 
     # 1. mediawiki
     echo "\nMEDIAWIKI...\n\n";
     if ( !file_exists( $MWpath ) ) {
-      $tar_url = $this->config[$version]['mediawiki'];
+      $tar_url = $this->config['mediawiki'];
       $temp = explode('/', $tar_url );
       $dir = str_replace( '.tar.gz', '', $temp[array_key_last($temp)] );
       $cmd = "cd /var/www/html && wget $tar_url && tar -xzf $tar && rm $tar && mv $dir $version";
@@ -25,10 +31,10 @@ trait MgwInstall {
       }
     }
     echo "\nSKINS...\n\n";
-    if ( isset( $this->config[$version]['skin'] ) ) {
+    if ( isset( $this->config['skin'] ) ) {
       // installation de skin
-      if ( file_exists( "$MWpath/skins/".$this->config[$version]['skin']['name'] ) ) {
-        $skin = $this->config[$version]['skin'];
+      if ( file_exists( "$MWpath/skins/".$this->config['skin']['name'] ) ) {
+        $skin = $this->config['skin'];
         $temp = explode('/', $skin['url']);
         $tar = $temp[array_key_last($temp)];
         $cmd = "cd $MWpath/skins && rm -rf {$skin['name']}" .
@@ -42,13 +48,13 @@ trait MgwInstall {
 
     # 2. extensions
     echo "\nEXTENSIONS...\n\n";
-    if ( !isset( $this->config[$version] ) ) {
+    if ( !isset( $this->config ) ) {
       echo "La liste des extensions n'est pas configurée pour cette version de mediawiki\n.";
       return "Abandon\n";
     }
 
       ## composer
-    $composer = [ "require" => $this->config[$version]['composer'] ];
+    $composer = [ "require" => $this->config['composer'] ];
     file_put_contents( "$MWpath/composer.local.json", json_encode( $composer ) );
 
     $cmd = "cd $MWpath && composer update --no-dev";
@@ -58,7 +64,7 @@ trait MgwInstall {
 
       ## git
     echo "\nGit clone...\n\n";
-    foreach ( $this->config[$version]['git'] as $ext => $info ) {
+    foreach ( $this->config['git'] as $ext => $info ) {
       echo "$ext ... \n";
       // on supprime les répertoires vides
       if ( file_exists( "$MWpath/extensions/$ext" ) && count( glob("$MWpath/extensions/$ext/*") ) === 0 ) {
@@ -79,9 +85,9 @@ trait MgwInstall {
     echo "\nDONNEES... \n\n";
     echo $this->do_backup( 'restore', $version );
     echo "\nMise à jour de LocalSettings.php ... \n\n";
-    if ( isset( $this->config[$version]['localsettings'] ) ) {
+    if ( isset( $this->config['localsettings'] ) ) {
       $ls_content = file_get_contents( "$MWpath/LocalSettings.php" );
-      foreach ( $this->config[$version]['localsettings'] as $str => $rpl ) {
+      foreach ( $this->config['localsettings'] as $str => $rpl ) {
         $ls_content = str_replace( $str, $rpl, $ls_content );
       }
       file_put_contents( "$MWpath/LocalSettings.php", $ls_content );
@@ -93,7 +99,7 @@ trait MgwInstall {
 
     # 5. scripts
     echo "\nSCRIPTS... \n\n";
-    foreach ( $this->config[$version]['maintenance-scripts'] as $num => $script ){
+    foreach ( $this->config['maintenance-scripts'] as $num => $script ){
       $cmd = "cd $MWpath/{$script['dir']} && {$script['cmd']}";
         echo $cmd . "... \n";
       if ( $this->shell_dry( $cmd ) ) {

@@ -40,13 +40,22 @@ class MgwUpdater extends Maintenance {
 	private $summary;
   private $target;
 	private $config;
-	private $mw_version;
 
 	public function __construct() {
+
 		parent::__construct();
+/*
+		global $wgVersion; // mediawiki < 1.35
+		$version = ( getenv( "MW_VERSION" ) ) ? getenv( "MW_VERSION" ) : $wgVersion;
+		$version = substr($version,0,4) ;
+		*/
+		if ( !is_readable( "$IP/config/maintenance.json" ) ) {
+			die( "$IP/config/maintenance.json needs to be set to your MGWiki installation.\n" );
+		}
+		$this->config = json_decode( file_get_contents("$IP/config/maintenance.json"), true );
+
 		$this->mDescription = "Programme d'automatisation des màj de MGWiki";
 		$this->summary = "Mise à jour MGWiki 1.0";
-		$this->config = json_decode( file_get_contents('Updater/updater-config.json'), true );
 
 		$this->addDescription( file_get_contents( 'mgw-updater.description.txt' )	);
 
@@ -82,17 +91,10 @@ class MgwUpdater extends Maintenance {
 	 * @inheritDoc
 	 */
 	public function execute() {
+
     $this->user = User::newFromId( 1 );
 		$this->target = $this->getTarget();
-		if (!getenv( "MW_VERSION" )){
-			// mediawiki < 1.35
-			global $wgVersion;
-			$version = $wgVersion;
-		}
-		else {
-			$version = getenv( "MW_VERSION" );
-		}
-		$this->mw_version = ( $this->getOption( "version" ) ) ? $this->getOption( "version" ) : substr($version,0,4) ;
+
     $done = $this->{'do_'.$this->target[0]}();
     echo $done . "\n";
 	}
@@ -372,7 +374,7 @@ class MgwUpdater extends Maintenance {
 
 	private function do_install() {
 	  if ( ! $this->getOption( "version" ) ) echo "l'argument --version doit être précisé";
-		return $this->install_mediawiki();
+		return $this->install_mediawiki( $this->getOption( "version" ) );
 	}
 
 	private function do_import() {
