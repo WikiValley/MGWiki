@@ -172,10 +172,12 @@ class MgwUpdater extends Maintenance {
 
 			# DB
 	 		if ( $all || $this->getOption( "db" ) ) {
+				echo "restauration de la base...\n";
 				if ( !$sql_file ) $sql_file = $backup . '.sql';
 		 		echo $this->backup_db_restore( $sql_file, $directory, $newDB ) . "\n";
 			}
 			# FILES
+			echo "restauration des fichiers...\n";
 	 		if ( $all || $this->getOption( "files" ) ) {
 				if ( !$copy_dir )	$copy_dir = $backup . '.copy';
 	 			echo $this->backup_files_restore( $copy_dir, $directory, $newPATH ) . "\n";
@@ -207,7 +209,7 @@ class MgwUpdater extends Maintenance {
 	}
 
 	private function do_install_scripts() {
-		return $this->install_mediawiki( $this->getOption( "version" ) );
+		return $this->install_scripts();
 	}
 
 	private function do_check_hooks() {

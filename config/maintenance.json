@@ -80,6 +80,7 @@
       "branch": "REL1_35"
     }
   },
+  "screen-hooks": [ "includes", "maintenance", "skins", "extensions" ],
   "custom-hooks": {
     "ApiAllow": {
       "fileIdentifier": "class ApiMain extends ApiBase",
@@ -97,7 +98,12 @@
       "customCode": "\n\t\t\tHooks::run( 'ActorMigrationDebug', [ &$actorId, $dbw->lastQuery() ] );"
     }
   },
-  "screen-hooks": [ "includes", "maintenance", "skins", "extensions" ],
+  "backup": [
+    "LocalSettings.php",
+    "images",
+    "skins/MGWiki",
+    "extensions/MGWiki/data/Private"
+  ],
   "localsettings": {
     "require_once \"$IP/extensions/Arrays/Arrays.php\"": "wfLoadExtension('Arrays')",
     "require_once \"$IP/extensions/LinkTarget/LinkTarget.php\"": "wfLoadExtension('LinkTarget')",
@@ -121,11 +127,5 @@
       "dir": "",
       "cmd": "chown -R www-data:www-data cache/"
     }
-  },
-  "backup": [
-    "LocalSettings.php",
-    "images",
-    "skins/MGWiki",
-    "extensions/MGWiki/data/Private"
-  ]
+  }
 }

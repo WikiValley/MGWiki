@@ -77,16 +77,19 @@ trait MgwInstall {
     echo "\nSKINS...\n\n";
     if ( isset( $this->config['skin'] ) ) {
       // installation de skin
-      if ( file_exists( "$MWpath/skins/".$this->config['skin']['name'] ) ) {
-        $skin = $this->config['skin'];
-        $temp = explode('/', $skin['url']);
-        $tar = $temp[array_key_last($temp)];
-        $cmd = "cd $MWpath/skins && rm -rf {$skin['name']}" .
-          " && wget {$skin['url']} && tar -xzf $tar && rm $tar";
-        if ( $this->shell_dry( $cmd ) ) {
-          echo "échec à l'installation de {$skin['name']} ($cmd). Veuillez le faire manuellement avant de continuer.\n\n";
-          return "abandon\n";
-        }
+      $skin = $this->config['skin'];
+      $abort = false;
+      if ( file_exists( "$MWpath/skins/".$skin['name'] ) ) {
+        $cmd = "rm -rf $MWpath/skins/".$skin['name'];
+        if ( $this->shell_dry( $cmd ) ) $abort = true;
+      }
+      $temp = explode('/', $skin['url']);
+      $key = count($temp) - 1;
+      $tar = $temp[$key];
+      $cmd = "cd $MWpath/skins && wget {$skin['url']} && tar -xzf $tar && rm $tar";
+      if ( $this->shell_dry( $cmd ) || $abort ) {
+        echo "échec à l'installation de {$skin['name']} ($cmd). Veuillez le faire manuellement avant de continuer.\n\n";
+        return "abandon\n";
       }
     }
 
@@ -145,6 +148,7 @@ trait MgwInstall {
    */
   private function install_scripts() {
 
+    global $IP;
     global $MGW_IP;
 
     # 1. Hooks
@@ -153,7 +157,7 @@ trait MgwInstall {
     # 2. scripts
     echo "\nSCRIPTS... \n\n";
     foreach ( $this->config['maintenance-scripts'] as $num => $script ) {
-      $cmd = "cd $MWpath/{$script['dir']} && {$script['cmd']}";
+      $cmd = "cd $IP/{$script['dir']} && {$script['cmd']}";
         echo $cmd . "... \n";
       if ( $this->shell_dry( $cmd ) ) {
         echo "... ECHEC. Veuillez le faire manuellement.\n\n";
