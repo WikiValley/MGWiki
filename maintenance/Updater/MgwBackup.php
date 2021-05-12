@@ -113,6 +113,9 @@ trait MgwBackup {
         $opt = ( is_dir( "$directory/$dest" ) ) ? " -r" : "";
         $shell_out = '';
         $shell_cmd = "cp$opt $directory/$dest $RP/$back";
+        if ( file_exists( "$RP/$back" ) ) {
+          $shell_cmd = "rm$opt $RP/$back && " . $shell_cmd;
+        }
         if ( $back == "images" ) {
           $shell_cmd .= " && chown www-data:www-data $RP/$back";
         }

@@ -16,6 +16,7 @@ trait MgwInstall {
   private function install_mediawiki( $version ) {
 
     global $IP;
+    global $MGW_IP;
     $rel = 'REL' . str_replace('.','_',$version);
     $MWpath = '/var/www/html/' . $version;
 
@@ -23,18 +24,30 @@ trait MgwInstall {
     global $wgMgwGitRawUrl;
     // temporaire...
     if ( !isset($wgMgwGitRawUrl) ) $wgMgwGitRawUrl = 'https://raw.githubusercontent.com/WikiValley/MGWiki';
-    $this->config = json_decode( wget("$wgMgwGitRawUrl/$rel/maintenance/Updater/updater-config.json"), true )[$version];
+    $this->config = json_decode( file_get_contents("$wgMgwGitRawUrl/$rel/config/maintenance.json"), true );
+    if ( !$this->config ) {
+      return "Echec au téléchargement du fichier de configuration pour la version $version";
+    }
 
     // si le site est actif, on propose de le mettre en maintenance
     $localSettings = file_get_contents( $IP . '/LocalSettings.php' );
-    if ( ! preg_match('/^header\("Location: \$wgServer"\)/', $localSettings ) ) {
+    $localSettings = explode( "\n", $localSettings );
+    $running = true;
+    foreach( $localSettings as $line ) {
+      if ( preg_match('/^header\("Location: \$wgServer"\)/', $line ) ) {
+        $running = false;
+        break;
+      }
+    }
+    if ( $running ) {
       echo "Ce script ne peut continuer car MGWiki est en cours de production.\n" .
         " Souhaitez-vous le mettre à l'arrêt [o/n] ?";
       if ( $this->readconsole('> ') != 'o' ) {
         return "\n...installation annulée.\n";
       }
-      $getOpt = [ 'stop' ];
-      include ( '../site-stop.php');
+      $getOpt = [ 's' => 'stop' ];
+      include ( $MGW_IP . '/maintenance/site-stop.php');
+      echo "\n";
     }
 
     // on propose de réaliser une sauvegarde:
@@ -52,7 +65,9 @@ trait MgwInstall {
     if ( !file_exists( $MWpath ) ) {
       $tar_url = $this->config['mediawiki'];
       $temp = explode('/', $tar_url );
-      $dir = str_replace( '.tar.gz', '', $temp[array_key_last($temp)] );
+      $key = count($temp) -1;
+      $tar = $temp[$key];
+      $dir = str_replace( '.tar.gz', '', $tar );
       $cmd = "cd /var/www/html && wget $tar_url && tar -xzf $tar && rm $tar && mv $dir $version";
       if ( $this->shell_dry( $cmd ) ) {
         echo "échec au téléchargement de mediawiki. Veuillez le faire manuellement avant de continuer.\n\n";
@@ -62,16 +77,19 @@ trait MgwInstall {
     echo "\nSKINS...\n\n";
     if ( isset( $this->config['skin'] ) ) {
       // installation de skin
-      if ( file_exists( "$MWpath/skins/".$this->config['skin']['name'] ) ) {
-        $skin = $this->config['skin'];
-        $temp = explode('/', $skin['url']);
-        $tar = $temp[array_key_last($temp)];
-        $cmd = "cd $MWpath/skins && rm -rf {$skin['name']}" .
-          " && wget {$skin['url']} && tar -xzf $tar && rm $tar";
-        if ( $this->shell_dry( $cmd ) ) {
-          echo "échec à l'installation de {$skin['name']} ($cmd). Veuillez le faire manuellement avant de continuer.\n\n";
-          return "abandon\n";
-        }
+      $skin = $this->config['skin'];
+      $abort = false;
+      if ( file_exists( "$MWpath/skins/".$skin['name'] ) ) {
+        $cmd = "rm -rf $MWpath/skins/".$skin['name'];
+        if ( $this->shell_dry( $cmd ) ) $abort = true;
+      }
+      $temp = explode('/', $skin['url']);
+      $key = count($temp) - 1;
+      $tar = $temp[$key];
+      $cmd = "cd $MWpath/skins && wget {$skin['url']} && tar -xzf $tar && rm $tar";
+      if ( $this->shell_dry( $cmd ) || $abort ) {
+        echo "échec à l'installation de {$skin['name']} ($cmd). Veuillez le faire manuellement avant de continuer.\n\n";
+        return "abandon\n";
       }
     }
 
@@ -130,6 +148,7 @@ trait MgwInstall {
    */
   private function install_scripts() {
 
+    global $IP;
     global $MGW_IP;
 
     # 1. Hooks
@@ -138,7 +157,7 @@ trait MgwInstall {
     # 2. scripts
     echo "\nSCRIPTS... \n\n";
     foreach ( $this->config['maintenance-scripts'] as $num => $script ) {
-      $cmd = "cd $MWpath/{$script['dir']} && {$script['cmd']}";
+      $cmd = "cd $IP/{$script['dir']} && {$script['cmd']}";
         echo $cmd . "... \n";
       if ( $this->shell_dry( $cmd ) ) {
         echo "... ECHEC. Veuillez le faire manuellement.\n\n";
@@ -157,8 +176,8 @@ trait MgwInstall {
     }
 
     # 4. remise en production
-    $getOpt = [ 'run' ];
-    include ( '../site-stop.php');
+    $getOpt = [ 'r' => 'run' ];
+    include ( $MGW_IP . '/maintenance/site-stop.php');
 
     return "Installation de MediaWiki terminée.";
   }
