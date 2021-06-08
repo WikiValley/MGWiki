@@ -2,7 +2,7 @@
   "mediawiki": "https://releases.wikimedia.org/mediawiki/1.35/mediawiki-1.35.2.tar.gz",
   "skin": {
     "name": "Vector",
-    "url": "https://extdist.wmflabs.org/dist/skins/Vector-REL1_35-37d7761.tar.gz"
+    "url": "https://extdist.wmflabs.org/dist/skins/Vector-REL1_35-1b03baf.tar.gz"
   },
   "composer": {
     "mediawiki/vector-skin":"1.32.1",
