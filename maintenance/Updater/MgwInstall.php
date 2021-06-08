@@ -147,7 +147,7 @@ trait MgwInstall {
    * Scripts pour achever l'installation de mediawiki
    */
   private function install_scripts() {
-
+ 
     global $IP;
     global $MGW_IP;
 

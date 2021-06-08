@@ -105,10 +105,18 @@
     "extensions/MGWiki/data/Private"
   ],
   "localsettings": {
+    "/******************\n   MAIN SETTINGS": "// màj: 10/05/2021\n// MediaWiki 1.35\n\n/******************\n   MAIN SETTINGS",
+    "$wgDBmysql5 = true;": "//$wgDBmysql5 = true; (MediaWiki < 1.33)",
+    "$wgUseInstantCommons = true;": "$wgUseInstantCommons = false;",
+    "#$wgHashedUploadDirectory = false;": "//$wgHashedUploadDirectory = false;",
+    "$wgUseAjax = true;": "//$wgUseAjax = true; // deprecated in 1.31",
+    "$wgVirtualRestConfig['modules']['parsoid'] = array(\n'url' => 'http://127.0.0.1:8142',\n'domain' => 'localhost',\n'forwardCookies' => true,\n);": "/*\n$wgVirtualRestConfig['modules']['parsoid'] = array(\n'url' => 'http://127.0.0.1:8142',\n'domain' => 'localhost',\n'forwardCookies' => true,\n);\n*/",
+    "$wgSessionsInObjectCache = true;": "//$wgSessionsInObjectCache = true;",
     "require_once \"$IP/extensions/Arrays/Arrays.php\"": "wfLoadExtension('Arrays')",
     "require_once \"$IP/extensions/LinkTarget/LinkTarget.php\"": "wfLoadExtension('LinkTarget')",
     "wfLoadExtension( 'DynamicPageList' )": "wfLoadExtension( 'DynamicPageList3' )",
-    "wfLoadExtension( 'SemanticExtraSpecialProperties' );": "global $wgDisableCounters;\nif ( !isset($wgDisableCounters) ) $wgDisableCounters = false;\nwfLoadExtension( 'SemanticExtraSpecialProperties' );"
+    "wfLoadExtension( 'SemanticExtraSpecialProperties' );": "global $wgDisableCounters;\nif ( !isset($wgDisableCounters) ) $wgDisableCounters = false;\nwfLoadExtension( 'SemanticExtraSpecialProperties' );",
+    "# MGWIKI": "# MGWIKI\n$wgMgwGitRawUrl = 'https://raw.githubusercontent.com/WikiValley/MGWiki'; // scripts de maintenance"
   },
   "maintenance-scripts": {
     "0": {
