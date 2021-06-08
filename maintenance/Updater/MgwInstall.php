@@ -24,6 +24,7 @@ trait MgwInstall {
     global $wgMgwGitRawUrl;
     // temporaire...
     if ( !isset($wgMgwGitRawUrl) ) $wgMgwGitRawUrl = 'https://raw.githubusercontent.com/WikiValley/MGWiki';
+      echo "$wgMgwGitRawUrl/$rel/config/maintenance.json";
     $this->config = json_decode( file_get_contents("$wgMgwGitRawUrl/$rel/config/maintenance.json"), true );
     if ( !$this->config ) {
       return "Echec au téléchargement du fichier de configuration pour la version $version";
@@ -74,6 +75,7 @@ trait MgwInstall {
         return "abandon\n";
       }
     }
+    /*
     echo "\nSKINS...\n\n";
     if ( isset( $this->config['skin'] ) ) {
       // installation de skin
@@ -92,6 +94,7 @@ trait MgwInstall {
         return "abandon\n";
       }
     }
+    */
 
     # 2. extensions
     echo "\nEXTENSIONS...\n\n";
