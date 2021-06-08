@@ -21,6 +21,8 @@ trait MgwInstall {
     $MWpath = '/var/www/html/' . $version;
 
     // on remplace le fichier de config par celui de la version demandée
+    $this->config = json_decode( file_get_contents( "$MGW_IP/maintenance/Updater/config-1.35.json" ), true );
+    /*
     global $wgMgwGitRawUrl;
     // temporaire...
     if ( !isset($wgMgwGitRawUrl) ) $wgMgwGitRawUrl = 'https://raw.githubusercontent.com/WikiValley/MGWiki';
@@ -29,6 +31,7 @@ trait MgwInstall {
     if ( !$this->config ) {
       return "Echec au téléchargement du fichier de configuration pour la version $version";
     }
+    */
 
     // si le site est actif, on propose de le mettre en maintenance
     $localSettings = file_get_contents( $IP . '/LocalSettings.php' );
